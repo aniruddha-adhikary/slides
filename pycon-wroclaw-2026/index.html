@@ -164,32 +164,14 @@ svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow
 
   <div data-b="0" data-until="1" style="left:60px;top:440px;width:1480px">
     <div class="h1" style="font-size:66px">This talk <em>zoomed out too.</em></div>
-    <p class="lead" style="margin:22px 0 0;max-width:50em">I proposed a talk about what agents should read. Then the industry moved fast, and many new things became possible. The talk grew outward, so I zoomed out with it.</p>
     <div class="mono" style="margin-top:40px;display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px;color:var(--ink)"><span style="font-size:16px">a line</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:19px">a file</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:22px">modules</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:26px">the codebase</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:30px">two systems</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:35px">the agent</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:41px">the team</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:50px">you</span></div>
   </div>
   <div data-b="0" data-until="1" class="hand" style="left:760px;top:790px;font-size:40px">look at the corner &#x2198;</div>
   <div data-b="1" data-until="2" style="left:60px;top:440px;width:1480px">
-    <div class="h1" style="font-size:64px;margin-bottom:40px">Engineers, with <em>better tools.</em></div>
-    <div style="display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:28px;align-items:center">
-      <div class="panel" style="position:relative;padding:26px 28px;text-align:center;opacity:.75"><div style="font-size:48px;color:var(--red);line-height:1">&#x2717;</div><div class="h3" style="margin-top:14px;font-size:28px;color:var(--dim)">Agents replace engineers</div></div>
-      <div class="panel" style="position:relative;padding:34px 30px;text-align:center;border:2px solid var(--amber);background:rgba(255,178,36,.07)"><div style="font-size:56px;color:var(--green);line-height:1">&#x2713;</div><div class="h3" style="margin-top:16px;font-size:34px">Engineers using the new tools well</div></div>
-      <div class="panel" style="position:relative;padding:26px 28px;text-align:center;opacity:.75"><div style="font-size:48px;color:var(--red);line-height:1">&#x2717;</div><div class="h3" style="margin-top:14px;font-size:28px;color:var(--dim)">Agents are hype</div></div>
-    </div>
-  </div>
-  <div data-b="2" data-until="3" style="left:60px;top:470px;width:1480px">
-    <h2 class="h1" style="font-size:76px">Rethink three things.</h2>
-  </div>
-  <div data-b="2" data-until="3" style="left:60px;top:590px;width:1480px;display:grid;grid-template-columns:repeat(3,1fr);gap:28px">
-    <div class="panel" style="position:relative;padding:28px 30px"><div class="eb" style="margin-bottom:14px">Task size</div><div class="h3">One ticket covers a whole <em>class</em> of problems.</div></div>
-    <div class="panel" style="position:relative;padding:28px 30px"><div class="eb" style="margin-bottom:14px">Authority</div><div class="h3">Agents own their instruments. You own the plan and the metric.</div></div>
-    <div class="panel" style="position:relative;padding:28px 30px"><div class="eb" style="margin-bottom:14px">Where we interject</div><div class="h3">At the plan, the boundary, the decision. Never as a proxy.</div></div>
-  </div>
-
-  <div data-b="3" data-until="4" style="left:60px;top:440px;width:1480px">
     <div class="h1" style="font-size:62px">Impractical tooling is <em>practical now.</em></div>
-    <p class="lead" style="margin:18px 0 0;max-width:52em">AI-written code is cheap. With guardrails and evaluations around it, you can trust it.</p>
+    <p class="lead" style="margin:18px 0 0;max-width:52em">With checks around it, I trust AI-written tooling.</p>
   </div>
-  <svg data-b="3" data-until="4" viewBox="0 0 1480 290" style="left:60px;top:600px;width:1480px;height:290px" role="img" aria-label="Cost to build five kinds of developer tooling falls from above the worth-building line before to below it now">
+  <svg data-b="1" data-until="2" viewBox="0 0 1480 290" style="left:60px;top:600px;width:1480px;height:290px" role="img" aria-label="Cost to build five kinds of developer tooling falls from above the worth-building line before to below it now">
     <g font-family="JetBrains Mono, monospace">
       <text x="0" y="16" font-size="15" fill="#8FA8C1">cost to build, for one codebase</text>
       <line x1="120" x2="1180" y1="122" y2="122" stroke="#FFB224" stroke-width="2" stroke-dasharray="8 7"/>
@@ -204,15 +186,14 @@ svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow
       <text x="1000" y="282" font-size="16" fill="#FFB224" text-anchor="middle" font-weight="600">now</text>
     </g>
   </svg>
-  <div data-b="4" data-until="5" style="left:60px;top:430px;width:1480px">
+  <div data-b="2" data-until="3" style="left:60px;top:430px;width:1480px">
     <div class="h2" style="font-size:44px;margin-bottom:14px">What I built, and <em>how I checked it.</em></div>
-    <div style="display:grid;grid-template-columns:1fr 1.15fr;column-gap:48px;font:400 20px/1.3 var(--body)">
+    <div style="display:grid;grid-template-columns:1fr 1.15fr;column-gap:48px;font:400 23px/1.35 var(--body)">
       <div class="eb" style="padding-bottom:10px;border-bottom:1px solid var(--line)">Tool</div><div class="eb" style="padding-bottom:10px;border-bottom:1px solid var(--line);color:var(--green)">Check</div>
-      <div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">Code graph joined with the database graph</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Static and runtime edges agree</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">A query API over the code</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">A known result in each query</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">One graph for the workflow and the classes</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">A solver flags duplicate and conflicting rules</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">Codemods for syntax and for meaning</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Old pattern count goes to zero, behavior stays the same</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">Code migrations</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Plan and metric reviewed before the run</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">Trace hooks and field mappers</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Old and new traces match</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">tools/who_writes.py</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Each scan reports what it read, skipped and failed</div>
+      <div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">Code &#x22C8; DB graph</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Static and runtime edges agree</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">Code query API</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">A known result in each query</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">One graph for the workflow and the classes</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">A solver flags duplicate and conflicting rules</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">Codemods</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Pattern count 0, traces match</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">Code migrations</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Plan and metric reviewed before the run</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">Trace hooks and field mappers</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Old and new traces match</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">tools/who_writes.py</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Each scan reports what it read, skipped and failed</div>
     </div>
-    <div style="margin-top:16px;font-size:18px;color:var(--dim)">These are my examples. Your codebase needs its own tools and its own checks.</div>
   </div>
-  <div data-b="5" data-until="6" style="left:60px;top:450px;width:1480px">
+  <div data-b="3" data-until="4" style="left:60px;top:450px;width:1480px">
     <div class="h1" style="font-size:60px;margin-bottom:30px">On Monday</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:26px">
       <div class="panel" style="position:relative;padding:26px 30px"><div style="font:800 64px/1 var(--display);font-stretch:112%;color:var(--amber)">1</div><div class="h3" style="margin-top:14px;font-size:32px">Survey your agent's sessions</div></div>
@@ -220,16 +201,16 @@ svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow
       <div class="panel" style="position:relative;padding:26px 30px"><div style="font:800 64px/1 var(--display);font-stretch:112%;color:var(--amber)">3</div><div class="h3" style="margin-top:14px;font-size:32px">Build that tool, <em>with a check</em></div></div>
     </div>
   </div>
-  <div data-b="5" data-until="6" style="left:60px;top:800px;width:1180px;display:flex;justify-content:space-between;align-items:baseline">
+  <div data-b="3" data-until="4" style="left:60px;top:800px;width:1180px;display:flex;justify-content:space-between;align-items:baseline">
     <div class="hand" style="font-size:56px">zoom out.</div>
     <div class="mono" style="font-size:20px;color:var(--dim)">Ani &#xB7; PyCon Wroc&#x142;aw 2026</div>
   </div>
-  <div data-b="6" style="left:60px;top:430px;width:1480px">
+  <div data-b="4" style="left:60px;top:430px;width:1480px">
     <div class="h1" style="font-size:150px;line-height:.95">Thank <em>you.</em></div>
     <div class="hand" style="margin-top:26px;font-size:60px">Questions?</div>
   </div>
-  <div data-b="6" style="left:1180px;top:470px"><div class="sticker"><svg width="54" height="56" viewBox="0 0 26 27" fill="none" aria-hidden="true"><path d="M21.5652 23.1901C19.4189 23.9207 17.0834 23.8686 14.9718 23.0431C12.8603 22.2176 11.1087 20.6719 10.027 18.6794C8.94523 16.6869 8.60306 14.376 9.06099 12.1555C9.51892 9.93507 10.7474 7.9481 12.5292 6.54613" stroke="#4B4352" stroke-width="2.97113"/><path d="M21.17 11.8725C20.9104 13.3235 20.3081 14.6916 19.4132 15.863C18.5183 17.0344 17.3567 17.9752 16.0249 18.6072C14.6932 19.2392 13.2298 19.5441 11.7565 19.4966C10.2832 19.4491 8.84247 19.0506 7.5542 18.3342C6.26592 17.6177 5.1673 16.6041 4.34969 15.3775C3.53208 14.1509 3.01911 12.7469 2.85344 11.2821C2.68776 9.8174 2.87417 8.33426 3.39716 6.95606C3.92015 5.57786 4.76461 4.34443 5.86031 3.35834" stroke="#4B4352" stroke-width="2.97113"/><path d="M21.142 12.0339C21.3822 10.9114 21.2617 9.74174 20.7976 8.69185C20.3335 7.64195 19.5496 6.7655 18.5578 6.18761C17.566 5.60972 16.417 5.35992 15.2748 5.47389C14.1325 5.58786 13.0555 6.05975 12.1974 6.82222" stroke="#4B4352" stroke-width="2.97113"/><circle cx="21.5766" cy="23.1402" r="2.2093" transform="rotate(12.0788 21.5766 23.1402)" fill="#D196FF" stroke="#4B4352" stroke-width="1.47287"/><circle cx="5.85395" cy="3.3684" r="2.2093" transform="rotate(12.0788 5.85395 3.3684)" fill="#4B4352" stroke="#D196FF" stroke-width="1.47287"/></svg><div><b>PyCon</b><span>Wroc&#x142;aw #2026</span></div></div></div>
-  <div data-b="6" style="left:60px;top:760px;width:1160px;display:grid;grid-template-columns:auto 1fr;gap:8px 28px;font:500 22px var(--mono);color:var(--ink)">
+  <div data-b="4" style="left:1180px;top:470px"><div class="sticker"><svg width="54" height="56" viewBox="0 0 26 27" fill="none" aria-hidden="true"><path d="M21.5652 23.1901C19.4189 23.9207 17.0834 23.8686 14.9718 23.0431C12.8603 22.2176 11.1087 20.6719 10.027 18.6794C8.94523 16.6869 8.60306 14.376 9.06099 12.1555C9.51892 9.93507 10.7474 7.9481 12.5292 6.54613" stroke="#4B4352" stroke-width="2.97113"/><path d="M21.17 11.8725C20.9104 13.3235 20.3081 14.6916 19.4132 15.863C18.5183 17.0344 17.3567 17.9752 16.0249 18.6072C14.6932 19.2392 13.2298 19.5441 11.7565 19.4966C10.2832 19.4491 8.84247 19.0506 7.5542 18.3342C6.26592 17.6177 5.1673 16.6041 4.34969 15.3775C3.53208 14.1509 3.01911 12.7469 2.85344 11.2821C2.68776 9.8174 2.87417 8.33426 3.39716 6.95606C3.92015 5.57786 4.76461 4.34443 5.86031 3.35834" stroke="#4B4352" stroke-width="2.97113"/><path d="M21.142 12.0339C21.3822 10.9114 21.2617 9.74174 20.7976 8.69185C20.3335 7.64195 19.5496 6.7655 18.5578 6.18761C17.566 5.60972 16.417 5.35992 15.2748 5.47389C14.1325 5.58786 13.0555 6.05975 12.1974 6.82222" stroke="#4B4352" stroke-width="2.97113"/><circle cx="21.5766" cy="23.1402" r="2.2093" transform="rotate(12.0788 21.5766 23.1402)" fill="#D196FF" stroke="#4B4352" stroke-width="1.47287"/><circle cx="5.85395" cy="3.3684" r="2.2093" transform="rotate(12.0788 5.85395 3.3684)" fill="#4B4352" stroke="#D196FF" stroke-width="1.47287"/></svg><div><b>PyCon</b><span>Wroc&#x142;aw #2026</span></div></div></div>
+  <div data-b="4" style="left:60px;top:760px;width:1160px;display:grid;grid-template-columns:auto 1fr;gap:8px 28px;font:500 22px var(--mono);color:var(--ink)">
     <span style="color:var(--dim)">Ani</span><span>adhikary.net &#xB7; github.com/aniruddha-adhikary</span>
     <span style="color:var(--dim)">Slides</span><span style="color:var(--amber)">aniruddha-adhikary.github.io/slides/pycon-wroclaw-2026</span>
   </div>
@@ -274,8 +255,24 @@ svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow
       <div style="padding:14px 0;border-bottom:1px solid var(--line-faint)">Give ownership</div><div style="padding:14px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">It builds and owns its instruments</div>
       <div style="padding:14px 0;border-bottom:1px solid var(--line-faint)">Set frameworks</div><div style="padding:14px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Recipes, code migrations, guard rules</div>
       <div style="padding:14px 0;border-bottom:1px solid var(--line-faint)">Define what success looks like</div><div style="padding:14px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Behavior flat, violations to zero</div>
-      <div style="padding:14px 0;border-bottom:1px solid var(--line-faint)">Keep them accountable</div><div style="padding:14px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Calibrated tools, golden masters, "was the node visited?"</div>
-      <div style="padding:14px 0">Do not read over their shoulder</div><div style="padding:14px 0;color:var(--dim)">Review the plan and the metric, not every line</div>
+      <div style="padding:14px 0;border-bottom:1px solid var(--line-faint)">Keep them accountable</div><div style="padding:14px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Tested tools, golden masters</div>
+      <div style="padding:14px 0">Do not read over their shoulder</div><div style="padding:14px 0;color:var(--dim)">I review the plan and the metric</div>
+    </div>
+  </div>
+  <div class="ov panel" data-b="3" data-until="4" style="left:40px;top:40px;width:1520px;height:830px;padding:190px 70px">
+    <div class="h1" style="font-size:72px;margin-bottom:60px">Three things <em>changed for me.</em></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px">
+      <div class="panel" style="position:relative;padding:28px 30px"><div class="eb" style="margin-bottom:14px">Task size</div><div class="h3">One ticket covers a whole <em>class</em> of problems.</div></div>
+      <div class="panel" style="position:relative;padding:28px 30px"><div class="eb" style="margin-bottom:14px">Authority</div><div class="h3">Agents own their instruments. I own the plan and the metric.</div></div>
+      <div class="panel" style="position:relative;padding:28px 30px"><div class="eb" style="margin-bottom:14px">Where I step in</div><div class="h3">At the plan, the boundary case and the rule decision.</div></div>
+    </div>
+  </div>
+  <div class="ov panel" data-b="4" style="left:40px;top:40px;width:1520px;height:830px;padding:190px 70px">
+    <div class="h1" style="font-size:72px;margin-bottom:70px">Engineers, with <em>better tools.</em></div>
+    <div style="display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:28px;align-items:center">
+      <div class="panel" style="position:relative;padding:26px 28px;text-align:center;opacity:.75"><div style="font-size:48px;color:var(--red);line-height:1">&#x2717;</div><div class="h3" style="margin-top:14px;font-size:28px;color:var(--dim)">Agents replace engineers</div></div>
+      <div class="panel" style="position:relative;padding:34px 30px;text-align:center;border:2px solid var(--amber);background:rgba(255,178,36,.07)"><div style="font-size:56px;color:var(--green);line-height:1">&#x2713;</div><div class="h3" style="margin-top:16px;font-size:34px">Engineers using the new tools well</div></div>
+      <div class="panel" style="position:relative;padding:26px 28px;text-align:center;opacity:.75"><div style="font-size:48px;color:var(--red);line-height:1">&#x2717;</div><div class="h3" style="margin-top:14px;font-size:28px;color:var(--dim)">Agents are hype</div></div>
     </div>
   </div>
 </section>
@@ -289,7 +286,7 @@ svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow
   <div class="slabel" style="left:60px;top:800px">session 31 &#xB7; extract payments &#xB7; <b style="color:var(--red)">ran out</b></div>
   <div class="eb" style="left:660px;top:56px">06 &#xB7; The agent</div>
 
-  <div data-b="0" style="left:660px;top:104px;width:880px"><div class="h1" style="font-size:66px">Point the agent at <em>its own history.</em></div></div>
+  <div data-b="0" style="left:660px;top:104px;width:880px"><div class="h1" style="font-size:60px">I pointed the agent at <em>its own history.</em></div></div>
   <div id="tiles" style="left:660px;top:340px;width:880px;height:500px;display:grid;grid-template-columns:repeat(5,1fr);gap:14px"></div>
 
   <div class="ov panel" data-b="1" style="left:640px;top:96px;width:920px;height:760px">
@@ -322,9 +319,11 @@ sync_erp</span>
   </div>
 
   <div class="ov panel" data-b="3" style="left:640px;top:96px;width:920px;height:760px">
-    <div class="h2" style="font-size:44px;margin-bottom:14px">Test the tool <em>before you trust it.</em></div>
+    <div class="h2" style="font-size:44px;margin-bottom:14px">I test each tool <em>before I trust it.</em></div>
     <svg id="calviz" viewBox="0 0 844 590" style="width:844px;height:590px;display:block" role="img" aria-label="Three checks: scan coverage per file, a planted canary found, static and runtime edges compared"></svg>
   </div>
+  <div class="ov hand" data-b="0" data-until="1" style="left:660px;top:262px;width:880px;font-size:36px;line-height:1.15">Every tool so far came from here.</div>
+  <div class="ov hand" data-b="1" data-until="2" style="left:60px;top:436px;width:560px;font-size:32px;line-height:1.15">This time the agent asked itself.</div>
 </section>
 
 <!-- &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; T &#xB7; COLD OPEN (1:81, a tile inside L6) &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; -->
@@ -386,8 +385,8 @@ sync_erp</span>
 
   <div data-b="0" data-until="1" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Two systems. <em>Do they behave the same?</em></div></div>
   <div class="ov" data-b="1" data-until="2" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Every flow starts at <em>a door.</em></div></div>
-  <div class="ov" data-b="2" data-until="3" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Hook <em>every layer.</em></div></div>
-  <div class="ov" data-b="3" data-until="4" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Map, then <em>derive the transform.</em></div></div>
+  <div class="ov" data-b="2" data-until="3" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">I hooked <em>every layer.</em></div></div>
+  <div class="ov" data-b="3" data-until="4" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">I mapped, then <em>derived the transform.</em></div></div>
   <div class="ov" data-b="4" data-until="5" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Every door, through <em>every layer.</em></div></div>
   <div class="ov" data-b="5" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Understanding should be <em>executable.</em></div></div>
 
@@ -418,7 +417,7 @@ sync_erp</span>
     <div class="mono" style="margin-top:14px;font-size:17px;color:var(--amber)">old &#x2261; new <span style="color:var(--green)">&#x2713;</span></div>
   </div>
   <div class="ov" data-b="1" data-until="4" style="left:60px;top:196px;width:1480px;height:690px"><svg id="flowviz" viewBox="0 0 1480 690" style="width:1480px;height:690px;display:block" role="img" aria-label="A refund flows through entrypoint, logic, persistence and side-effect layers in both systems; each layer is hooked, mapped into a common plane, and the transform between them is derived"></svg></div>
-  <div class="ov" data-b="4" data-until="5" style="left:60px;top:196px;width:1480px;height:690px"><svg id="covviz" viewBox="0 0 1480 690" style="width:1480px;height:690px;display:block" role="img" aria-label="Coverage matrix of entrypoint types against layers; most cells are fully mapped, signals and cron jobs have gaps"></svg></div>
+  <div class="ov" data-b="4" data-until="5" style="left:60px;top:196px;width:1480px;height:690px"><svg id="covviz" viewBox="0 0 1480 690" style="width:1480px;height:690px;display:block" role="img" aria-label="Coverage matrix of entrypoint types against layers; most cells are fully mapped, most door types have gaps; signals and cron jobs have the most"></svg></div>
   <div class="ov" data-b="5" style="left:60px;top:196px;width:1480px;height:690px;background:#07131F;border:1px solid var(--line);border-radius:14px">
     <svg viewBox="0 0 1480 690" style="position:absolute;inset:0;width:1480px;height:690px" aria-hidden="true">
       <defs><marker id="ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#FFB224"/></marker></defs>
@@ -440,32 +439,35 @@ sync_erp</span>
       <div class="code" style="font-size:17px;line-height:1.6"><span class="f">refund</span>(user, order) <span class="p">&#x2192;</span> Refund
 <span class="p">door  </span> POST /refunds
 <span class="p">reads </span> orders, users
-<span class="p">writes</span> orders.total, ledger</div>
+<span class="p">writes</span> orders.status, ledger</div>
       <div class="slabel" style="position:absolute;left:22px;bottom:16px">from the doors and layers</div>
     </div>
     <div data-b="6" style="position:absolute;background:#0C2136;border-radius:12px;padding:18px 22px;left:1030px;top:50px;width:420px;height:280px;border:2px solid var(--amber);background:rgba(255,178,36,.07)">
       <div class="eb" style="font-size:14px;margin-bottom:12px">3 &#xB7; Transform</div>
-      <div class="code" style="font-size:16px;line-height:1.7">eligible = age &lt; 26
-       &#x2227; booked &lt; 1 Mar
-amount   = total &#xD7; 0.97
+      <div class="code" style="font-size:15px;line-height:1.6">eligible = status == PAID
+         &#x2227; not user.is_legacy
+         &#x2227; days &lt; 30
+amount   = (total &#xD7; 0.97).quantize(0.01)
 state    = REFUNDED if eligible</div>
-      <div class="slabel" style="position:absolute;left:22px;bottom:16px">derived from both sides &#xB7; <b>z3 checks the boundary</b></div>
+      <div class="slabel" style="position:absolute;left:22px;bottom:16px"><b>z3 finds the boundary: day 30</b></div>
     </div>
     <div data-b="7" style="position:absolute;background:#0C2136;border-radius:12px;padding:18px 22px;left:180px;top:420px;width:520px;height:240px;border:2px solid var(--green)">
-      <div class="eb" style="font-size:14px;margin-bottom:12px;color:var(--green)">Tests</div>
+      <div class="eb" style="font-size:14px;margin-bottom:12px;color:var(--green)">Tests &#xB7; &#x2713; check</div>
       <div class="code" style="font-size:16px;line-height:1.6"><span class="d">@given</span>(users(), orders())
+<span class="d">@example</span>(any_user(), order_on_day(30))
 <span class="k">def</span> <span class="f">test_refund</span>(u, o):
     <span class="k">assert</span> impl(u, o) == transform(u, o)</div>
-      <div style="margin-top:14px;font:500 16px/1.5 var(--mono);color:var(--red)">old code fails at age 26, booked 1 Mar: it used &lt;=</div>
+      <div style="margin-top:14px;font:500 16px/1.5 var(--mono);color:var(--red)">old code refunds on day 30 (.days &lt; 31)</div>
     </div>
     <div data-b="7" style="position:absolute;background:#0C2136;border-radius:12px;padding:18px 22px;left:780px;top:420px;width:520px;height:240px;border:2px solid var(--blue)">
       <div class="eb" style="font-size:14px;margin-bottom:12px;color:var(--blue)">Implementation</div>
       <div class="code" style="font-size:16px;line-height:1.6"><span class="k">class</span> <span class="f">RefundService</span>:
     <span class="k">def</span> <span class="f">run</span>(self, user, order):
         <span class="k">return</span> transform(user, order)</div>
-      <div style="margin-top:14px;font:400 16px/1.5 var(--body);color:var(--dim)">The new service follows the transform. The tests gate every change.</div>
+      <div style="margin-top:14px;font:400 16px/1.5 var(--body);color:var(--dim)"></div>
     </div>
   </div>
+  <div class="ov hand" data-b="0" data-until="1" style="left:60px;top:196px;width:1100px;font-size:34px;line-height:1.15">I wish I could box old and new as one unit &#x2192; ask it.</div>
 </section>
 
 <!-- &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; L4 &#xB7; THE CODEBASE (1:27) &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; -->
@@ -487,16 +489,16 @@ state    = REFUNDED if eligible</div>
   <div data-b="0" style="left:880px;top:92px;width:680px"><div class="h1" style="font-size:56px">Same refund logic, <em>41 places.</em></div></div>
   <div data-b="0" class="panel" style="left:880px;top:236px;width:680px;padding:20px 24px">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px"><span class="eb" style="font-size:14px"><span style="color:var(--amber)">&#x25CF;</span> Tier 1 &#xB7; same syntax</span><span class="mono" style="font-size:16px;color:var(--amber)">23 found</span></div>
-    <div class="code" style="font-size:16px;line-height:1.55"><span class="k">if</span> <span class="d">$O</span>.status == 3 <span class="d">$$$</span>:
+    <div class="code" style="font-size:16px;line-height:1.55"><span class="k">if</span> <span class="d">$O</span>.status == 3 <span class="k">and</span> <span class="d">$C</span>:
     <span class="d">$AMT</span> = <span class="d">$O</span>.total * Decimal(<span class="s">'0.97'</span>)</div>
-    <div style="margin-top:8px;font-size:16px;color:var(--dim)">A syntax pattern (ast-grep) finds these. A plain codemod can move them.</div>
+    <div style="margin-top:8px;font-size:16px;color:var(--dim)">ast-grep pattern + codemod</div>
   </div>
   <div data-b="0" class="panel" style="left:880px;top:420px;width:680px;padding:20px 24px;border-color:var(--blue)">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px"><span class="eb" style="font-size:14px;color:var(--blue)"><span>&#x25CF;</span> Tier 2 &#xB7; same behavior, different code</span><span class="mono" style="font-size:16px;color:var(--blue)">18 more</span></div>
     <div class="code" style="font-size:15px;line-height:1.6"><span class="k">if</span> o.status == OrderStatus.PAID:            <span class="c"># alias</span>
 <span class="k">if</span> getattr(o, <span class="s">"status"</span>) <span class="k">in</span> PAID_STATES:   <span class="c"># dynamic</span>
 self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</span></div>
-    <div style="margin-top:10px;font-size:16px;color:var(--dim)">These need a semantic model: types, scopes, the call graph and config values. Kotlin PSI does this for Kotlin. For Python, use LibCST and a type checker. An agent edits some cases, and traces check each edit.</div>
+    <div style="margin-top:10px;font-size:16px;color:var(--dim)">LibCST + type checker + call graph</div>
   </div>
   <div data-b="0" style="left:880px;top:676px;width:680px">
     <div style="display:flex;height:14px;border-radius:7px;overflow:hidden"><div style="width:56%;background:var(--amber)"></div><div style="width:44%;background:var(--blue)"></div></div>
@@ -523,17 +525,17 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
   5/5 applied &#xB7; <span class="s">traces match</span> &#xB7; 36 to go</div>
     </div>
     <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:22px">
-      <span class="chip" style="color:var(--blue)">generate</span><span class="chip" style="color:var(--blue)">preview like sqlmigrate</span><span class="chip" style="color:var(--blue)">run on a subset</span><span class="chip" style="color:var(--blue)">roll back</span>
+      <span class="chip" style="color:var(--blue)">generate</span><span class="chip" style="color:var(--blue)">preview like migrate --plan</span><span class="chip" style="color:var(--blue)">run on a subset</span><span class="chip" style="color:var(--blue)">roll back</span>
     </div>
   </div>
 
   <div class="ov panel" data-b="2" style="left:860px;top:90px;width:700px;height:740px">
-    <div class="h2" style="font-size:42px;margin-bottom:22px">Review the plan <em>and the metric.</em></div>
-    <svg viewBox="0 0 640 270" style="width:100%;display:block" role="img" aria-label="Old pattern count falls from 41 to 0 over eight runs while behavior stays at 100 percent">
+    <div class="h2" style="font-size:42px;margin-bottom:22px">I review the plan <em>and the metric.</em> <span class="chip" style="color:var(--green);font-size:15px;vertical-align:middle">&#x2713; check</span></div>
+    <svg viewBox="0 0 640 270" style="width:100%;display:block" role="img" aria-label="Old pattern count falls from 23 to 0 over eight runs while behavior stays at 100 percent">
       <g font-family="JetBrains Mono, monospace" font-size="13" fill="#8FA8C1">
         <text x="0" y="14">old pattern &#xB7; ast-grep count</text>
         <text x="0" y="168">behavior &#xB7; traces matching</text>
-        <text x="640" y="14" text-anchor="end" fill="#FFB224">41 &#x2192; 0</text>
+        <text x="640" y="14" text-anchor="end" fill="#FFB224">23 &#x2192; 0</text>
         <text x="640" y="168" text-anchor="end" fill="#5FDDA4">100% &#x2192; 100%</text>
       </g>
       <g stroke="rgba(170,205,240,.14)"><line x1="20" x2="620" y1="130" y2="130"/><line x1="20" x2="620" y1="250" y2="250"/></g>
@@ -553,6 +555,7 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
 <span class="k">fix</span>: <span class="s">$O.status == OrderStatus.PAID</span></div>
     </div>
   </div>
+  <div class="ov hand" data-b="0" data-until="1" style="left:40px;top:40px;width:820px;font-size:34px;line-height:1.15">41 copies of one rule? I wish it found every copy &#x2192; ask it.</div>
 </section>
 
 <!-- &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; L3 &#xB7; SEE (1:9) &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; -->
@@ -600,18 +603,18 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
       <div class="eb" style="font-size:12px;text-align:center;color:var(--dim)">rigid<br>enough</div>
       <div class="eb" style="font-size:12px;text-align:center;color:var(--dim)">flexible<br>enough</div>
 
-      <div style="padding:14px 18px;border:1px solid var(--line-faint);border-radius:10px"><div class="eb" style="font-size:13px;color:var(--dim);margin-bottom:6px">Fixed tools</div><div class="code" style="font-size:15px;line-height:1.5">find_callers(<span class="s">"refund_view"</span>)</div><div style="color:var(--dim);font-size:16px;margin-top:6px">Answers only the questions someone planned for.</div></div>
+      <div style="padding:14px 18px;border:1px solid var(--line-faint);border-radius:10px"><div class="eb" style="font-size:13px;color:var(--dim);margin-bottom:6px">Fixed tools</div><div class="code" style="font-size:15px;line-height:1.5">find_callers(<span class="s">"refund_view"</span>)</div><div style="color:var(--dim);font-size:16px;margin-top:6px">Only planned questions.</div></div>
       <div style="text-align:center;font-size:34px;color:var(--green)">&#x2713;</div>
       <div style="text-align:center;font-size:34px;color:var(--red)">&#x2717;</div>
 
       <div style="padding:14px 18px;border:2px solid var(--amber);border-radius:10px;background:rgba(255,178,36,.06)"><div class="eb" style="font-size:13px;margin-bottom:6px">Query surface</div><div class="code" style="font-size:15px;line-height:1.5">Code.functions
   .filter(writes=<span class="s">"orders.total"</span>)
-  .exclude(module__startswith=<span class="s">"tests"</span>)</div><div style="color:var(--dim);font-size:16px;margin-top:6px">Composable queries, plus plain Python when needed.</div></div>
+  .exclude(module__startswith=<span class="s">"tests"</span>)</div><div style="color:var(--dim);font-size:16px;margin-top:6px">Composable queries + Python.</div></div>
       <div style="text-align:center;font-size:34px;color:var(--green)">&#x2713;</div>
       <div style="text-align:center;font-size:34px;color:var(--green)">&#x2713;</div>
 
       <div style="padding:14px 18px;border:1px solid var(--line-faint);border-radius:10px"><div class="eb" style="font-size:13px;color:var(--dim);margin-bottom:6px">Raw code</div><div class="code" style="font-size:15px;line-height:1.5"><span class="k">for</span> f <span class="k">in</span> glob(<span class="s">"**/*.py"</span>):
-    ast.parse(open(f).read())</div><div style="color:var(--dim);font-size:16px;margin-top:6px">Any question is possible. Each one starts from zero.</div></div>
+    ast.parse(open(f).read())</div><div style="color:var(--dim);font-size:16px;margin-top:6px">Each question starts from zero.</div></div>
       <div style="text-align:center;font-size:34px;color:var(--red)">&#x2717;</div>
       <div style="text-align:center;font-size:34px;color:var(--green)">&#x2713;</div>
     </div>
@@ -655,6 +658,7 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
       <div><b style="color:var(--red)">Contradicts:</b> the workflow accepts legacy students. The class rejects them. This is the bug.</div>
     </div>
   </div>
+  <div class="ov hand" data-b="3" style="left:40px;top:210px;width:760px;font-size:34px;line-height:1.15">the rule lives in two places?<br>I wish it were one graph &#x2192; ask it.</div>
 </section>
 
 <!-- &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; L2 &#xB7; A FILE (1:3) &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; -->
@@ -667,7 +671,7 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
 
   <div class="ov" data-b="0" data-until="1" style="left:660px;top:120px;width:880px">
     <div class="h1" style="font-size:80px">Reading is the only door <em>we gave it.</em></div>
-    <p class="lead" style="margin-top:34px">The agent gets the system as text, one file at a time: Read(), Grep(), Read().</p>
+    <p class="lead" style="margin-top:34px">Read() &#xB7; Grep() &#xB7; Read()</p>
   </div>
 
   <div class="ov" data-b="1" data-until="3" style="left:660px;top:104px;width:880px">
@@ -701,7 +705,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
   <div class="ov" data-b="3" style="left:660px;top:120px;width:880px">
     <div class="h1" style="font-size:78px">I wish I could show my agent how <em>I</em> see this system.</div>
     <div class="hand" style="margin-top:56px;font-size:72px;transform:rotate(-2deg);transform-origin:left">Make your wish come true:<br>ask it.</div>
-    <p class="lead" style="margin-top:40px;font-size:24px">Tooling like this was too expensive to build for one codebase. Cheap code changes that.</p>
+    <p class="lead" style="margin-top:40px;font-size:24px">This tooling was too expensive to build for one codebase. Cheap AI-written code, with checks around it, changed that.</p>
   </div>
 </section>
 
@@ -812,40 +816,40 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     ['T',4,'So where did all the tokens go? Let us look.'],
     ['L1',0,'Did you feel this? The agent reads the same file for the third time. It still does not know what status 3 means or who else writes order.status.'],
     ['L2',0,'Zoom out to the file: 2,914 lines. Reading text is the only door we gave the agent into this system.'],
-    ['L2',1,'Look at what we built for ourselves so that we do not read code like this. Folding, call hierarchies, ER diagrams, debuggers, whiteboards and the minimap. Do not point at the corner. Let the room find it.'],
+    ['L2',1,'Look at what we built for ourselves so that we do not read code like this: folding, call hierarchies, ER diagrams, debuggers and whiteboards.'],
     ['L2',2,'And then we gave our agents a file reader.'],
-    ['L2',3,'I wish I could show my agent how I see this system. Make your wish come true: ask it. Then state the thesis quietly. Tooling like this was too expensive for one codebase. Cheap code changes that. The end of the talk comes back to this. By the third time, the room says "ask it" with you.'],
+    ['L2',3,'I wish I could show my agent how I see this system. Make your wish come true: ask it. This tooling was too expensive to build for one codebase. Cheap AI-written code, with checks around it, changed that. The end of the talk comes back to this. By the third time, the room says "ask it" with you.'],
     ['L3',0,'Before the tools start, say this: everything from here is an example of how I built it. It is not a product. Your codebase needs its own versions. Zoom out. The file becomes one node. Show what talks to what.'],
-    ['L3',1,'Join the database world to the code world. Four apps write orders.total. This is the seam question: where can I split payments out, and where should I? No single file shows this.'],
-    ['L3',2,'The instrument is a programmable surface: an ORM for your code. It sits between a fixed menu of endpoints and raw grep. It is rigid enough that the agent does not write a whole program every time. It is flexible enough that it can stretch.'],
-    ['L3',3,'Wish: the rule lives in two places. Half is in the BPMN workflow, and half is in the classes. Put both in one graph and let a solver check it. The solver finds redundant checks and contradictions. The contradiction is your bug.'],
-    ['L4',0,'Zoom out to the whole codebase. The same refund logic is in 41 places. Be honest about the split. 23 places use the same syntax, and a pattern plus a codemod moves them. The other 18 do the same thing with different code: an alias constant, getattr, or a mixin that reads a setting. These need a semantic model, the Python version of Kotlin PSI: LibCST, a type checker, the call graph and config values. An agent edits some of them, and traces check each edit. One ticket still covers all 41.'],
-    ['L4',1,'Django migrations, for code. makecodemigrations generates the codemod. The --plan flag is the sqlmigrate preview, like EXPLAIN for a refactor. Run it on a sample first, then on the rest. These are concept commands. You build them for each project from ast-grep and LibCST.'],
-    ['L4',2,'How do you review 41 files? Review the plan and the metric before the work starts. Use two axes: behavior stays flat, and violations go to zero. Then add a guard rule so that the old pattern cannot come back.'],
-    ['L5',0,'Two systems: the old monolith and the new service. The question is simple: do they behave the same? Reading both codebases does not answer it.'],
-    ['L5',1,'Every flow starts at a door. Here the door is the refund endpoint. Follow the request through the layers on both sides: entrypoint, logic, persistence and side effects.'],
-    ['L5',2,'Hook every layer on both sides. On the old side, use sys.monitoring and the DB query log. On the new side, use OpenTelemetry spans and the event bus. Record the raw values. They do not match.'],
-    ['L5',3,'Map each layer into a common plane. Then derive the transform that explains the difference: pk becomes order, total times 0.97 becomes amount, cents divided by 100 becomes amount. When every layer matches, the two systems behave the same.'],
-    ['L5',4,'Objection: this covers one door. So list every door: routes, cron jobs, commands, signals, queues and DB triggers. Static analysis lists them. The hooks walk each door through every layer. The gaps become numbers.'],
-    ['L5',5,'Now make the understanding executable. First map the entity: what a refund is, in the shared shape. Then map the operation: refund takes a user and an order and returns a refund.'],
-    ['L5',6,'Then compute the transform. It comes from both systems: eligibility, the amount and the state. z3 checks the exact boundary of the rule.'],
-    ['L5',7,'The transform gives you two things. Tests: property tests check any implementation against the transform. They found that the old code used <= at the boundary. Nobody knew. And the implementation: the new service follows the transform, and the tests gate every change.'],
-    ['L6',0,'Zoom out to the agent. Below is the session that ran out of tokens at the start. Above it is the work of today. Point the agent at its own history.'],
-    ['L6',1,'The agent asks the same questions again and again. It asked who writes this table 23 times. Parameterize the question once. Every instrument in this talk started this way.'],
-    ['L6',2,'The mode switch is the same zoom move as the whole talk. The agent is stuck at the task. It zooms out and builds the tool. Then it zooms in, and the task is solved. Without help, agents stay in implementer mode. Like people, they need context and permission to build the tool. An ambitious task can start it. A request to reflect can also start it. Also unlearn the rule that all code must stay. Most probes are disposable. Promote the probes that come back. Keep the code that needs an audit trail.'],
-    ['L6',3,'Who checks the x-ray? The agent built this tool, so test it before you trust it. First check: did it read every file? It read 1,204, skipped 31 generated files, and failed on 3 dynamic imports. Now we know its blind spots.'],
-    ['L6',4,'Second check: plant a fact that you know is true, and ask the tool. Refund_view writes orders.total. The tool found it. If it misses a planted fact, do not trust its other answers.'],
-    ['L6',5,'Third check: compare what the code says with what the running system did. 412 edges agree. 46 do not. Review those 46 first. This is EXPLAIN ANALYZE for your own tools.'],
+    ['L3',1,'I joined the database graph to the code graph. Four apps write orders.total. This is the seam question: where can I split payments out, and where should I? No single file shows this.'],
+    ['L3',2,'The instrument is a programmable surface: an ORM for your code. It sits between a fixed menu of endpoints and raw grep. Rigid enough that the agent does not write a whole program every time. Flexible enough that it can really stretch.'],
+    ['L3',3,'Did you feel this? The rule lives in two places: half in the BPMN workflow, half in the classes. I wished for one graph, so I asked for it. I put both in one graph, and a solver, z3, checked it. It found a duplicate check and a contradiction. The contradiction was the bug.'],
+    ['L4',0,'Zoom out to the whole codebase. The same refund logic is in 41 places. 23 use the same syntax, and an ast-grep pattern plus a codemod moved them. The other 18 do the same thing with different code: an alias constant, getattr, or a mixin that reads a setting. Those needed a semantic model. For Python, I used LibCST metadata for scopes and names, plus a type checker. I resolved getattr and settings with my own rules. Kotlin has PSI plus the Analysis API for this. The agent edited some cases directly, and traces checked each edit. One ticket still covered all 41.'],
+    ['L4',1,'Django migrations, for code. makecodemigrations generates the codemod. The --plan flag works like Django migrate --plan. A --diff flag would be the sqlmigrate equivalent. I ran it on a sample first, then on the rest. These are concept commands. I built them for each project from ast-grep and LibCST.'],
+    ['L4',2,'How did I review 41 files? I reviewed the plan and the metric before the work started. Two axes: behavior stays flat, and the ast-grep count goes from 23 to zero. The semantic tier had its own count. Then I added a guard rule so that the old pattern cannot come back.'],
+    ['L5',0,'Two systems: the old monolith and the new service. Did you feel this? Reading both codebases does not tell you whether they behave the same. I wished I could box old and new as one unit, so I asked for it.'],
+    ['L5',1,'Every flow starts at a door. Here the door is the refund endpoint. I followed the request through the layers on both sides: entrypoint, logic, persistence and side effects.'],
+    ['L5',2,'I hooked every layer on both sides. On the old side, I used sys.monitoring, which needs Python 3.12 or later, and the DB query log. The callbacks give code locations, so I read the values from the frame. On older Pythons, sys.setprofile does the same job. On the new side, I used OpenTelemetry spans and the event bus. The raw values do not match.'],
+    ['L5',3,'I mapped each layer into a common plane. Then I derived the transform that explains the difference: pk becomes order, and cents divided by 100 become the amount. When every layer matches, the two systems behave the same.'],
+    ['L5',4,'Objection: this covers one door. So I listed every door: routes, cron jobs, commands, signals, queues and DB triggers. Static analysis listed them. The hooks walked each door through every layer. The gaps became numbers.'],
+    ['L5',5,'Then I made the understanding executable. First the entity: what a refund is, in the shared shape. Then the operation: refund takes a user and an order and returns a refund.'],
+    ['L5',6,'Then I computed the transform from both systems: eligibility, the amount with its rounding, and the state. z3 found the exact boundary of the rule: day 30.'],
+    ['L5',7,'The transform gave me two things. Tests: z3 found the boundary input, and I pinned it with @example. The property test shows that the old code refunds on day 30, because it used .days < 31. Nobody knew. And the implementation: the new service follows the transform, and the tests gate every change.'],
+    ['L6',0,'Zoom out to the agent. Below is the session that ran out of tokens at the start. Above it is the work of today. I pointed the agent at its own history. Every tool so far came from here.'],
+    ['L6',1,'The agent asked the same questions again and again. It asked who writes this table 23 times. This time the agent asked itself. I parameterized the question once, and it became a tool.'],
+    ['L6',2,'The mode switch is the same zoom move as the whole talk. The agent is stuck at the task. It zooms out and builds the tool. Then it zooms in, and the task is solved. Without help, agents stay in implementer mode. They need context and permission to build the tool. An ambitious task started it for me. A request to reflect also started it. I also unlearned the rule that all code must stay. Most probes are disposable. I promoted the probes that came back. I kept the code that needs an audit trail.'],
+    ['L6',3,'Who checks the x-ray? The agent built this tool, so I test it before I trust it. First check: did it read every file? It read 1,204, skipped 31 generated files, and failed on 3 dynamic imports. Now I know its blind spots.'],
+    ['L6',4,'Second check: I planted a fact that I knew was true and asked the tool. Refund_view writes orders.status. The tool found it. When a tool misses a planted fact, I do not trust its other answers.'],
+    ['L6',5,'Third check: I compared what the code says with what the running system did. 412 edges agree. 46 do not. I reviewed those 46 first. This is EXPLAIN ANALYZE for my own tools.'],
     ['L7',0,'Zoom out to the team. Today, many teams split work this way: each person has an agent, and each handoff is text generation. Watch the rule decay. AI slop built on AI slop built on AI slop.'],
     ['L7',1,'Instead, run one job with shared context. People join where their judgment matters: the rule decision, the plan and metric, and the boundary case. Humans should not be meat-proxies.'],
     ['L7',2,'This is not new to anyone who leads a junior engineer well. Give ownership, set frameworks, define success, keep people accountable, and do not read over their shoulder.'],
+    ['L7',3,'Three things changed for me. Task size: one ticket now covers a whole class of problems. Authority: agents own their instruments, and I own the plan and the metric. Where I step in: at the plan, the boundary case and the rule decision.'],
+    ['L7',4,'This is where I stand. Agents do not make engineers unnecessary. Agents are not hype either. This talk is about engineers who use the new tools well.'],
     ['L8',0,'Reveal. Point at the minimap in the corner. It started as a dot on the first slide. This talk zoomed out too. I proposed a talk about what agents should read. The industry moved fast, and many new things became possible. The talk grew, so I zoomed out with it.'],
-    ['L8',1,'Be clear about where this talk stands. It does not say that agents are so good that we do not need engineers. It does not say that agents are hype. It is about engineers who use the new tools well.'],
-    ['L8',2,'All the way out: you. Augmenting with AI is not the same as giving everyone an agent. It means rethinking task size, authority and where we interject.'],
-    ['L8',3,'This is the takeaway. Developer tooling for one codebase was impractical before: transpilers, codemod engines, code graphs and custom linters. AI-written code is cheap now, so many of these tools are practical. Trust them only with guardrails and evaluations around them.'],
-    ['L8',4,'Look back at the whole talk as one table. Each row is a tool that I built and the check that I used on it. These are my examples. They are not a product or a recipe. Your codebase needs its own tools and its own checks.'],
-    ['L8',5,'Monday: sit with your agent. Ask it to survey its own sessions and tool calls. Find the tasks that it repeats. Let it build a tool for them, with a check that proves the tool works. Zoom out. Thank you.'],
-    ['L8',6,'Thank you. Point at the slides link so people can find the deck. Then take questions.'],
+    ['L8',1,'This is the takeaway. Developer tooling for one codebase was impractical before: transpilers, codemod engines, code graphs and custom linters. AI-written code is cheap now, so many of these tools became practical. I trust them only with checks around them.'],
+    ['L8',2,'Here is the whole talk as one table. Each row is a tool that I built and the check that I used on it. These are my examples, not a product or a recipe. Your codebase needs its own tools and its own checks.'],
+    ['L8',3,'I started by asking my agent to survey its own sessions and tool calls. It found what it repeats and built a tool for it, with a check. Try this on Monday.'],
+    ['L8',4,'Thank you. Point at the slides link so people can find the deck. Then take questions.'],
   ];
   const idx = {}; STEPS.forEach(([f, b], i) => { idx[f + ':' + b] = i; });
   const first = {}; STEPS.forEach(([f], i) => { if (!(f in first)) first[f] = i; });
@@ -961,7 +965,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     LAYERS.forEach((l, i) => { g1 += T(COLX[i] + BW / 2, 26, l.toUpperCase(), { c: DIM, s: 13, w: 600, ls: 2, a: 'middle' }); });
     g1 += T(0, OY + 36, 'monolith', { s: 19, w: 700 }) + T(0, OY + 60, '2016', { c: DIM, s: 14 });
     g1 += T(0, NY + 36, 'payments-svc', { s: 19, w: 700 }) + T(0, NY + 60, '2026', { c: DIM, s: 14 });
-    g2 += T(0, OY + 82, 'hook: sys.monitoring', { c: '#E0896A', s: 13 }) + T(0, OY + 100, '+ DB query log', { c: '#E0896A', s: 13 });
+    g2 += T(0, OY + 82, 'hook: sys.monitoring', { c: '#E0896A', s: 13 }) + T(0, OY + 100, '(3.12+) + DB query log', { c: '#E0896A', s: 13 });
     g2 += T(0, NY + 82, 'hook: OpenTelemetry', { c: '#E0896A', s: 13 }) + T(0, NY + 100, '+ event tap', { c: '#E0896A', s: 13 });
     [[OLD, OY], [NEW, NY]].forEach(([lane, y]) => {
       lane.forEach(([name, raw], i) => {
@@ -1035,7 +1039,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     const fx = 20 + HX * 50 + 40, fy = 44 + HY * 58 + 21;
     lf += `<path d="M${fx} ${fy} C 430 ${fy}, 440 82, 516 82" stroke="${AMB}" stroke-width="2" fill="none" marker-end="url(#aml)"/>` + T(420, 72, 'promote', { c: AMB, s: 14, a: 'middle' });
     lf += `<rect x="520" y="52" width="310" height="60" rx="10" fill="rgba(255,178,36,.10)" stroke="${AMB}" stroke-width="2"/>` + T(540, 80, 'tools/who_writes.py', { s: 17 }) + T(540, 100, 'promoted \u00B7 reused every session', { c: AMB, s: 13 });
-    lf += `<rect x="520" y="312" width="310" height="60" rx="10" fill="rgba(95,221,164,.10)" stroke="${GRN}" stroke-width="2"/>` + T(540, 340, 'codemigrations/0007.py', { s: 17 }) + T(540, 360, 'kept \u00B7 reviewed \u00B7 reversible', { c: GRN, s: 13 });
+    lf += `<rect x="520" y="312" width="310" height="60" rx="10" fill="rgba(95,221,164,.10)" stroke="${GRN}" stroke-width="2"/>` + T(540, 340, 'codemigrations/0007.py', { s: 17 }) + T(540, 360, 'kept and reviewed', { c: GRN, s: 13 });
     lf += `<path d="M330 342 H 516" stroke="${GRN}" stroke-width="2" marker-end="url(#aml)"/>` + T(20, 347, 'code that changes the system', { c: INK, s: 15 });
     document.getElementById('lifeviz').innerHTML = lf;
 
@@ -1047,7 +1051,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     c1 += T(0, 116, '1,204 read', { c: GRN, s: 17, w: 600 }) + T(150, 116, '31 skipped: generated code', { c: DIM, s: 16 });
     c1 += `<path d="M${W - 6} 90 V 104 H ${W - 20}" stroke="${RED}" stroke-width="1.6" fill="none"/>` + T(W - 24, 116, '3 failed: dynamic imports', { c: RED, s: 17, w: 600, a: 'end' });
     c2 += T(0, 194, '2  Does it find what we planted?', { s: 21, w: 600 });
-    c2 += `<rect x="0" y="218" width="400" height="62" rx="10" fill="${BG}" stroke="${AMB}" stroke-width="1.8" stroke-dasharray="7 6"/>` + T(20, 244, 'planted fact', { c: AMB, s: 14 }) + T(20, 268, 'refund_view writes orders.total', { s: 17 });
+    c2 += `<rect x="0" y="218" width="400" height="62" rx="10" fill="${BG}" stroke="${AMB}" stroke-width="1.8" stroke-dasharray="7 6"/>` + T(20, 244, 'planted fact', { c: AMB, s: 14 }) + T(20, 268, 'refund_view writes orders.status', { s: 17 });
     c2 += `<path d="M406 249 H 470" stroke="${AMB}" stroke-width="2.2" marker-end="url(#acv)"/>`;
     c2 += `<rect x="478" y="218" width="366" height="62" rx="10" fill="rgba(95,221,164,.10)" stroke="${GRN}" stroke-width="1.8"/>` + T(498, 256, 'the tool found it \u2713', { c: GRN, s: 19, w: 600 });
     c3 += T(0, 364, '3  Do the code and the running system agree?', { s: 21, w: 600 });
@@ -1074,7 +1078,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     ['tool', 'Read(reports/monthly.py)', '902 lines', 902],
     ['tool', 'Read(erp_sync/client.py)', '1,118 lines', 1118],
     ['again', 'Read(tickets/views.py)', 'again', 2914],
-    ['tool', 'Grep("status == 3")', '41 matches', 120],
+    ['tool', 'Grep("status == 3")', '23 matches', 120],
     ['tool', 'Read(tickets/constants.py)', '74 lines', 74],
     ['say', "status 3 isn't defined anywhere. Checking migrations.", '', 60],
     ['tool', 'Glob("**/migrations/*.py")', '212 files', 210],
