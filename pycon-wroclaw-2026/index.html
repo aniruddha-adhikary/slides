@@ -140,6 +140,10 @@ svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow
 
 #notes { position: fixed; left: max(18px, env(safe-area-inset-left, 0px)); bottom: calc(64px + env(safe-area-inset-bottom, 0px)); width: min(620px, calc(100vw - 36px)); max-height: 46vh; overflow: auto; z-index: 21; background: rgba(4,12,20,.95); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; font: 400 17px/1.55 var(--body); color: var(--ink); box-shadow: 0 20px 50px rgba(0,0,0,.5); }
 #notes .n { font: 600 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--amber); margin-bottom: 8px; display: flex; justify-content: space-between; }
+#tag { position: fixed; left: max(18px, env(safe-area-inset-left, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 20; font: 600 13px var(--mono); letter-spacing: .12em; text-transform: uppercase; padding: 8px 14px; border-radius: 999px; border: 1.5px solid currentColor; background: rgba(7,19,31,.88); transition: opacity .4s; pointer-events: none; }
+#tag.real { color: var(--green); }
+#tag.analogy { color: var(--blue); }
+#tag.none { opacity: 0; }
 #hint { position: fixed; left: 50%; top: calc(18px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); z-index: 22; font: 500 13px var(--mono); color: var(--dim); background: rgba(4,12,20,.85); border: 1px solid var(--line-faint); border-radius: 999px; padding: 8px 16px; white-space: nowrap; transition: opacity 1s; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis; }
 #hint kbd { font: inherit; color: var(--ink); }
 
@@ -668,7 +672,7 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
     </div>
   </div>
   <div class="ov hand" data-b="4" style="left:40px;top:210px;width:760px;font-size:34px;line-height:1.15">This rule lives in two places.<br>I wish it were one graph &#x2192; ask it.</div>
-  <div class="ov panel" data-b="2" style="left:840px;top:90px;width:720px;height:740px">
+  <div class="ov panel" data-b="2" data-until="3" style="left:840px;top:90px;width:720px;height:740px">
     <div class="eb" style="margin-bottom:10px">Under the query API</div>
     <div class="h2" style="font-size:38px;margin-bottom:24px">I compiled one graph <em>from many sources.</em></div>
     <svg viewBox="0 0 644 520" style="width:644px;height:520px;display:block" role="img" aria-label="Four sources, each read by its own parser, are joined into one compiled graph; the query API sits on that graph"><defs><marker id="aorm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#FFB224"/></marker></defs><g font-family="JetBrains Mono, monospace"><rect x="0" y="0" width="250" height="60" rx="8" fill="#0C2136" stroke="rgba(170,205,240,.3)"/><text x="14" y="25" font-size="15" fill="#EEF4FA" font-weight="600">Python code</text><text x="14" y="46" font-size="13" fill="#E0896A">Joern &#x2192; code property graph</text><path d="M252 30 C 300 30, 300 140, 338 140" stroke="#FFB224" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><rect x="0" y="74" width="250" height="60" rx="8" fill="#0C2136" stroke="rgba(170,205,240,.3)"/><text x="14" y="99" font-size="15" fill="#EEF4FA" font-weight="600">BPMN, XML config</text><text x="14" y="120" font-size="13" fill="#E0896A">XML parser</text><path d="M252 104 C 300 104, 300 140, 338 140" stroke="#FFB224" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><rect x="0" y="148" width="250" height="60" rx="8" fill="#0C2136" stroke="rgba(170,205,240,.3)"/><text x="14" y="173" font-size="15" fill="#EEF4FA" font-weight="600">OpenAPI, fixtures</text><text x="14" y="194" font-size="13" fill="#E0896A">JSON loader</text><path d="M252 178 C 300 178, 300 140, 338 140" stroke="#FFB224" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><rect x="0" y="222" width="250" height="60" rx="8" fill="#0C2136" stroke="rgba(170,205,240,.3)"/><text x="14" y="247" font-size="15" fill="#EEF4FA" font-weight="600">Django models, SQL</text><text x="14" y="268" font-size="13" fill="#E0896A">schema reader</text><path d="M252 252 C 300 252, 300 140, 338 140" stroke="#FFB224" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><text x="292" y="296" font-size="12" fill="#FFB224" text-anchor="middle">join on names + IDs</text><rect x="342" y="40" width="302" height="210" rx="12" fill="rgba(255,178,36,.08)" stroke="#FFB224" stroke-width="2"/><text x="360" y="68" font-size="15" fill="#FFB224" font-weight="700">one compiled graph</text><line x1="390" y1="110" x2="470" y2="100" stroke="rgba(170,205,240,.45)" stroke-width="1.4"/><line x1="470" y1="100" x2="560" y2="118" stroke="rgba(170,205,240,.45)" stroke-width="1.4"/><line x1="390" y1="110" x2="420" y2="165" stroke="rgba(170,205,240,.45)" stroke-width="1.4"/><line x1="420" y1="165" x2="520" y2="170" stroke="rgba(170,205,240,.45)" stroke-width="1.4"/><line x1="520" y1="170" x2="560" y2="118" stroke="rgba(170,205,240,.45)" stroke-width="1.4"/><line x1="520" y1="170" x2="600" y2="160" stroke="rgba(170,205,240,.45)" stroke-width="1.4"/><line x1="470" y1="100" x2="520" y2="170" stroke="rgba(170,205,240,.45)" stroke-width="1.4"/><circle cx="390" cy="110" r="7" fill="#8EC5FF"/><circle cx="470" cy="100" r="7" fill="#8EC5FF"/><circle cx="560" cy="118" r="7" fill="#5FDDA4"/><circle cx="420" cy="165" r="7" fill="#D196FF"/><circle cx="520" cy="170" r="7" fill="#8EC5FF"/><circle cx="600" cy="160" r="7" fill="#5FDDA4"/><text x="360" y="212" font-size="12" fill="#8FA8C1">functions, classes, tables, steps</text><text x="360" y="232" font-size="12" fill="#8FA8C1">calls, reads, writes, triggers</text><path d="M493 252 V 330" stroke="#FFB224" stroke-width="2" marker-end="url(#aorm)"/><rect x="200" y="336" width="444" height="76" rx="10" fill="#07131F" stroke="rgba(170,205,240,.3)"/><text x="218" y="364" font-size="13" fill="#8FA8C1">query API</text><text x="218" y="394" font-size="15" fill="#EEF4FA">Code.functions.filter(writes=<tspan fill="#9FE6C3">"orders.total"</tspan>)</text><text x="0" y="470" font-size="14" fill="#8FA8C1">built per project &#xB7; rebuilt when the code changes</text></g></svg>
@@ -742,6 +746,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
   <div id="mm"><div id="mmr"></div></div>
   <div id="mml">a line</div>
 </div>
+<div id="tag" class="none"></div>
 <aside id="notes" hidden><div class="n"><span id="nstep">1 / 29</span><span id="nlvl"></span></div><div id="ntext"></div></aside>
 <div id="hint"><kbd>&#x2192;</kbd> / <kbd>space</kbd> next &#xB7; <kbd>&#x2190;</kbd> back &#xB7; <kbd>N</kbd> notes &#xB7; <kbd>O</kbd> overview &#xB7; <kbd>F</kbd> fullscreen</div>
 
@@ -866,6 +871,8 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     ['L8',3,'Claude Code keeps each session as a JSONL file under ~/.claude/projects. Each line is one event, and the tool calls are the tool_use entries. I asked my agent to read those files, count the tool calls by name and input, and group the ones that ask the same question. My first hour went like this: twenty minutes for the survey, twenty to build the top tool, twenty to check it. [If you mention Cursor or another agent, say where its history lives.] Try this on Monday.'],
     ['L8',4,'Thank you. Point at the slides link so people can find the deck. Then take questions.'],
   ];
+  // per-step tag: real = how I actually did it; analogy = a familiar Python/dev stand-in
+  const TAGS = {3:"real",4:"real",5:"real",11:"real",12:"real",13:"real",15:"real",16:"real",18:"real",19:"real",20:"real",21:"real",22:"real",23:"real",24:"real",25:"real",26:"real",27:"real",28:"real",29:"real",30:"real",31:"real",32:"real",33:"real",34:"real",36:"real",40:"real",6:"analogy",7:"analogy",14:"analogy",17:"analogy",35:"analogy"};
   const idx = {}; STEPS.forEach(([f, b], i) => { idx[f + ':' + b] = i; });
   const first = {}; STEPS.forEach(([f], i) => { if (!(f in first)) first[f] = i; });
   const at = (f, b) => (f + ':' + b) in idx ? idx[f + ':' + b] : Infinity;
@@ -956,6 +963,9 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     document.getElementById('nstep').textContent = `${cur + 1} / ${STEPS.length}`;
     document.getElementById('nlvl').textContent = FR[cf].label;
     document.getElementById('ntext').textContent = STEPS[cur][2];
+    const tg = overview ? null : TAGS[cur + 1], tagEl = document.getElementById('tag');
+    tagEl.className = tg || 'none';
+    if (tg) tagEl.textContent = tg === 'real' ? '\u25CF Real \u00B7 how I did it' : '\u25CF Analogy \u00B7 Python stand-in';
   }
 
 
