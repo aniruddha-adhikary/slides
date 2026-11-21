@@ -99,6 +99,11 @@ em { font-style: normal; color: var(--amber); }
 .win { background: var(--panel); border: 1px solid var(--line); border-radius: 0 0 12px 12px; box-shadow: 0 24px 60px rgba(20,40,70,.16); overflow: visible; }
 .win > svg { display: block; }
 .ov.panel::before, .win::before { content: attr(data-title); position: absolute; left: -1px; right: -1px; top: -34px; height: 34px; box-sizing: border-box; border: 1px solid var(--line); border-bottom-color: var(--line-faint); border-radius: 12px 12px 0 0; background: radial-gradient(circle at 20px 17px, #FF5F57 6px, transparent 6.6px), radial-gradient(circle at 40px 17px, #FEBC2E 6px, transparent 6.6px), radial-gradient(circle at 60px 17px, #28C840 6px, transparent 6.6px), var(--chrome); font: 500 13px/34px var(--mono); color: var(--dim); text-align: center; letter-spacing: .02em; }
+/* typed terminal lines: each .tl appears in order when its window is shown */
+.typer .tl { display: block; opacity: 0; }
+.typer:not(.off) .tl { animation: tlin .28s ease forwards; animation-delay: calc(var(--i) * .42s + .3s); }
+@keyframes tlin { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .typer .tl { opacity: 1; animation: none; } }
 /* code sheets */
 .codecol { font-family: var(--mono); white-space: pre; color: #3B4B5E; }
 .codecol .ln { display: block; }
@@ -354,7 +359,7 @@ svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow
   <div data-b="0" style="left:660px;top:104px;width:880px"><div class="h1" style="font-size:60px">I pointed the agent at <em>its own history.</em></div></div>
   <div id="tiles" style="left:660px;top:340px;width:880px;height:500px;display:grid;grid-template-columns:repeat(5,1fr);gap:14px"></div>
 
-  <div class="ov panel" data-b="1" style="left:640px;top:96px;width:920px;height:760px">
+  <div class="ov panel typer" data-b="1" style="left:640px;top:96px;width:920px;height:760px">
     <div class="h2" style="font-size:44px;margin-bottom:28px">It keeps asking the <em>same questions.</em></div>
     <div style="display:grid;gap:18px;width:540px">
       <div class="bar">who writes &lt;table&gt;?<span class="num">23&#xD7;</span><div class="track"><div class="fill" style="width:100%"></div></div></div>
@@ -374,10 +379,7 @@ close_month
 sync_erp</span>
 <span class="s">4 writers &#xB7; 0.2s</span></div>
     </div>
-    <div style="position:absolute;left:38px;top:532px;width:844px"><div class="eb" style="font-size:13px;color:var(--dim);margin-bottom:10px">the prompt I used</div><div class="term" style="position:relative;height:176px"><div class="code" style="position:absolute;inset:20px 24px;font-size:17px;line-height:1.7"><span class="p">&gt;</span> You asked "who writes &lt;table&gt;?" 23 times last week.
-<span class="p">&gt;</span> Write tools/who_writes.py --table NAME. Print writers and file:line.
-<span class="p">&gt;</span> Print what you read, skipped and failed.
-<span class="p">&gt;</span> Add a test with a writer I know: refund_view writes orders.</div></div></div>
+    <div style="position:absolute;left:38px;top:532px;width:844px"><div class="eb" style="font-size:13px;color:var(--dim);margin-bottom:10px">the prompt I used</div><div class="term" style="position:relative;height:176px"><div class="code" style="position:absolute;inset:20px 24px;font-size:17px;line-height:1.7"><span class="tl" style="--i:0"><span class="p">&gt;</span> You asked "who writes &lt;table&gt;?" 23 times last week.</span><span class="tl" style="--i:1"><span class="p">&gt;</span> Write tools/who_writes.py --table NAME. Print writers and file:line.</span><span class="tl" style="--i:2"><span class="p">&gt;</span> Print what you read, skipped and failed.</span><span class="tl" style="--i:3"><span class="p">&gt;</span> Add a test with a writer I know: refund_view writes orders.</span></div></div></div>
   </div>
 
   <div class="ov panel" data-b="2" style="left:640px;top:96px;width:920px;height:760px">
@@ -581,20 +583,12 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
       <span class="mono" style="font-size:18px;color:var(--amber)">41 of 41</span>
     </div>
   </div>
-  <div class="ov panel" data-b="1" style="left:860px;top:90px;width:700px;height:740px">
+  <div class="ov panel typer" data-b="1" style="left:860px;top:90px;width:700px;height:740px">
     <div class="eb" style="margin-bottom:10px">Change</div>
     <div class="h2" style="font-size:46px;margin-bottom:22px">I treat code changes like <em>Django migrations.</em></div>
     <div class="term" style="position:relative;height:410px">
       <div class="tbar" style="height:38px;font-size:14px"><i style="width:10px;height:10px"></i><i style="width:10px;height:10px"></i><i style="width:10px;height:10px"></i></div>
-      <div class="code" style="position:absolute;inset:52px 22px 0;font-size:16.5px;line-height:1.6"><span class="p">$</span> python manage.py <span class="k">makecodemigrations</span> tickets
-  <span class="s">codemigrations/0007_refund_service.py</span>
-    - Move refund logic out of 41 views
-    - status == 3 &#x2192; OrderStatus.PAID
-<span class="p">$</span> python manage.py codemigrate <span class="k">--plan</span>
-  41 files &#xB7; 63 edits &#xB7; 0 public API changes
-  writes orders.total &#xB7; calls payments.refund
-<span class="p">$</span> python manage.py codemigrate <span class="k">--sample 5</span>
-  5/5 applied &#xB7; <span class="s">traces match</span> &#xB7; 36 to go</div>
+      <div class="code" style="position:absolute;inset:52px 22px 0;font-size:16.5px;line-height:1.6"><span class="tl" style="--i:0"><span class="p">$</span> python manage.py <span class="k">makecodemigrations</span> tickets</span><span class="tl" style="--i:1">  <span class="s">codemigrations/0007_refund_service.py</span></span><span class="tl" style="--i:2">    - Move refund logic out of 41 views</span><span class="tl" style="--i:3">    - status == 3 &#x2192; OrderStatus.PAID</span><span class="tl" style="--i:4"><span class="p">$</span> python manage.py codemigrate <span class="k">--plan</span></span><span class="tl" style="--i:5">  41 files &#xB7; 63 edits &#xB7; 0 public API changes</span><span class="tl" style="--i:6">  writes orders.total &#xB7; calls payments.refund</span><span class="tl" style="--i:7"><span class="p">$</span> python manage.py codemigrate <span class="k">--sample 5</span></span><span class="tl" style="--i:8">  5/5 applied &#xB7; <span class="s">traces match</span> &#xB7; 36 to go</span></div>
     </div>
     <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:22px">
       <span class="chip" style="color:var(--blue)">generate</span><span class="chip" style="color:var(--blue)">preview like migrate --plan</span><span class="chip" style="color:var(--blue)">run on a subset</span><span class="chip" style="color:var(--blue)">roll back</span>
@@ -667,7 +661,7 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
   <div data-b="1" class="tbl" style="left:1110px;top:740px;width:300px"><h4>users</h4><div>is_legacy</div></div>
   <div data-b="1" data-until="2" class="hand" style="left:1430px;top:330px;width:150px;font-size:36px;transform:rotate(-4deg)">where do I split?</div>
 
-  <div class="ov panel" data-b="3" style="left:840px;top:90px;width:720px;height:740px">
+  <div class="ov panel" data-b="4" style="left:840px;top:90px;width:720px;height:740px">
     <div class="eb" style="margin-bottom:10px">See</div>
     <div class="h2" style="font-size:46px;margin-bottom:26px">I built an ORM <em>for the code.</em></div>
     <div style="display:grid;grid-template-columns:1fr 104px 104px;gap:12px 14px;align-items:center">
@@ -696,7 +690,7 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
     </div>
   </div>
 
-  <div class="ov panel" data-b="4" style="left:840px;top:90px;width:720px;height:740px">
+  <div class="ov panel" data-b="5" style="left:840px;top:90px;width:720px;height:740px">
     <div class="h2" style="font-size:42px;margin-bottom:18px">I put the workflow and the classes <em>in one graph.</em></div>
     <div style="display:flex;gap:28px;font:500 16px var(--mono);color:var(--dim);margin-bottom:14px">
       <span><span style="color:#C47400">&#x25C7;</span> workflow &#xB7; eligibility.bpmn</span>
@@ -730,11 +724,15 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
       <div><b style="color:var(--red)">Contradicts:</b> the workflow accepts legacy students. The class rejects them. This is the bug.</div>
     </div>
   </div>
-  <div class="ov hand" data-b="4" style="left:40px;top:210px;width:760px;font-size:34px;line-height:1.15">This rule lives in two places.<br>I wish it were one graph &#x2192; ask it.</div>
+  <div class="ov hand" data-b="5" style="left:40px;top:210px;width:760px;font-size:34px;line-height:1.15">This rule lives in two places.<br>I wish it were one graph &#x2192; ask it.</div>
   <div class="ov panel" data-b="2" data-until="3" style="left:840px;top:90px;width:720px;height:740px">
     <div class="eb" style="margin-bottom:10px">Under the query API</div>
     <div class="h2" style="font-size:38px;margin-bottom:24px">I compiled one graph <em>from many sources.</em></div>
     <svg viewBox="0 0 644 520" style="width:644px;height:520px;display:block" role="img" aria-label="Four sources, each read by its own parser, are joined into one compiled graph; the query API sits on that graph"><defs><marker id="aorm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#C47400"/></marker></defs><g font-family="JetBrains Mono, monospace"><rect x="0" y="0" width="250" height="60" rx="8" fill="#F4F7FB" stroke="rgba(30,50,80,.25)"/><text x="14" y="25" font-size="15" fill="#15202C" font-weight="600">Python code</text><text x="14" y="46" font-size="13" fill="#B8542F">Joern &#x2192; code property graph</text><path d="M252 30 C 300 30, 300 140, 338 140" stroke="#C47400" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><rect x="0" y="74" width="250" height="60" rx="8" fill="#F4F7FB" stroke="rgba(30,50,80,.25)"/><text x="14" y="99" font-size="15" fill="#15202C" font-weight="600">BPMN, XML config</text><text x="14" y="120" font-size="13" fill="#B8542F">XML parser</text><path d="M252 104 C 300 104, 300 140, 338 140" stroke="#C47400" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><rect x="0" y="148" width="250" height="60" rx="8" fill="#F4F7FB" stroke="rgba(30,50,80,.25)"/><text x="14" y="173" font-size="15" fill="#15202C" font-weight="600">OpenAPI, fixtures</text><text x="14" y="194" font-size="13" fill="#B8542F">JSON loader</text><path d="M252 178 C 300 178, 300 140, 338 140" stroke="#C47400" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><rect x="0" y="222" width="250" height="60" rx="8" fill="#F4F7FB" stroke="rgba(30,50,80,.25)"/><text x="14" y="247" font-size="15" fill="#15202C" font-weight="600">Django models, SQL</text><text x="14" y="268" font-size="13" fill="#B8542F">schema reader</text><path d="M252 252 C 300 252, 300 140, 338 140" stroke="#C47400" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><text x="292" y="296" font-size="12" fill="#C47400" text-anchor="middle">join on names + IDs</text><rect x="342" y="40" width="302" height="210" rx="12" fill="rgba(255,178,36,.08)" stroke="#C47400" stroke-width="2"/><text x="360" y="68" font-size="15" fill="#C47400" font-weight="700">one compiled graph</text><line x1="390" y1="110" x2="470" y2="100" stroke="rgba(30,50,80,.4)" stroke-width="1.4"/><line x1="470" y1="100" x2="560" y2="118" stroke="rgba(30,50,80,.4)" stroke-width="1.4"/><line x1="390" y1="110" x2="420" y2="165" stroke="rgba(30,50,80,.4)" stroke-width="1.4"/><line x1="420" y1="165" x2="520" y2="170" stroke="rgba(30,50,80,.4)" stroke-width="1.4"/><line x1="520" y1="170" x2="560" y2="118" stroke="rgba(30,50,80,.4)" stroke-width="1.4"/><line x1="520" y1="170" x2="600" y2="160" stroke="rgba(30,50,80,.4)" stroke-width="1.4"/><line x1="470" y1="100" x2="520" y2="170" stroke="rgba(30,50,80,.4)" stroke-width="1.4"/><circle cx="390" cy="110" r="7" fill="#2763C9"/><circle cx="470" cy="100" r="7" fill="#2763C9"/><circle cx="560" cy="118" r="7" fill="#178A5A"/><circle cx="420" cy="165" r="7" fill="#D196FF"/><circle cx="520" cy="170" r="7" fill="#2763C9"/><circle cx="600" cy="160" r="7" fill="#178A5A"/><text x="360" y="212" font-size="12" fill="#5A6B7E">functions, classes, tables, steps</text><text x="360" y="232" font-size="12" fill="#5A6B7E">calls, reads, writes, triggers</text><path d="M493 252 V 330" stroke="#C47400" stroke-width="2" marker-end="url(#aorm)"/><rect x="200" y="336" width="444" height="76" rx="10" fill="#FFFFFF" stroke="rgba(30,50,80,.25)"/><text x="218" y="364" font-size="13" fill="#5A6B7E">query API</text><text x="218" y="394" font-size="15" fill="#15202C">Code.functions.filter(writes=<tspan fill="#1F7A52">"orders.total"</tspan>)</text><text x="0" y="470" font-size="14" fill="#5A6B7E">built per project &#xB7; rebuilt when the code changes</text></g></svg>
+  </div>
+  <div class="ov term typer" data-b="3" data-until="4" style="left:780px;top:70px;width:780px;height:780px">
+    <div class="tbar"><i></i><i></i><i></i><span>claude &#xB7; ~/krasnal-tickets</span></div>
+    <div style="position:absolute;inset:66px 30px 24px;font:400 16.5px/1.75 var(--mono);white-space:pre"><span class="tl" style="--i:0;color:var(--ink);background:rgba(255,255,255,.06);border-radius:6px;padding:6px 12px;margin-bottom:8px"><span class="p">&gt;</span> Who writes orders.total? Use the code graph. Do not grep.</span><span class="tl" style="--i:1;color:var(--ink)"><span class="spark">&#x25CF;</span> I'll query the code property graph.</span><span class="tl" style="--i:2;color:var(--ink)"><span class="spark">&#x25CF;</span> Bash(joern --script queries/who_writes.sc --param table=orders)</span><span class="tl" style="--i:3;color:var(--syn-c)">  &#x2502; cpg.assignment.target.code(".*\.total").method.name.dedup.l</span><span class="tl" style="--i:4;color:var(--dim)">  &#x23BF; refund_view       tickets/views.py:1188</span><span class="tl" style="--i:5;color:var(--dim)">    apply_discount    discounts/rules.py:212</span><span class="tl" style="--i:6;color:var(--dim)">    close_month       reports/monthly.py:88</span><span class="tl" style="--i:7;color:var(--dim)">    sync_erp          erp_sync/client.py:301</span><span class="tl" style="--i:8;color:var(--ink)"><span class="spark">&#x25CF;</span> Bash(joern --script queries/callers.sc --param fn=refund_view)</span><span class="tl" style="--i:9;color:var(--dim)">  &#x23BF; urls.py:41 &#x2192; RefundMixin.post &#x2192; refund_view</span><span class="tl" style="--i:10;color:var(--dim)">    api/v1.py:88 &#x2192; RefundAPI.create &#x2192; refund_view</span><span class="tl" style="--i:11;color:var(--ink)"><span class="spark">&#x25CF;</span> Bash(uv run codeq "Code.tables.get('orders').writers")</span><span class="tl" style="--i:12;color:var(--dim)">  &#x23BF; 4 writers &#xB7; 0 in tests &#xB7; 1 through settings.REFUND_RATE</span><span class="tl" style="--i:13;color:var(--ink)"><span class="spark">&#x25CF;</span> Four functions write orders.total. close_month and sync_erp</span><span class="tl" style="--i:14;color:var(--ink);padding-left:22px">sit outside payments/, so the split needs one service first.</span><span class="tl" style="--i:15;margin-top:14px;display:flex;gap:14px;align-items:center;color:var(--dim)">context <span style="flex:1;height:10px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden;display:block"><span style="display:block;height:100%;width:2%;background:var(--green)"></span></span><span style="color:var(--green)">18,240 / 1,000,000</span></span></div>
   </div>
 </section>
 
@@ -902,8 +900,9 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     ['L3',0,'Before the tools start, say this: everything from here is an example of how I built it. It is not a product. Your codebase needs its own versions. Zoom out. The file becomes one node. Show what talks to what.'],
     ['L3',1,'I joined the database graph to the code graph. Four apps write orders.total. This is the seam question: where can I split payments out, and where should I? No single file shows this.'],
     ['L3',2,'Here is what the query API really sat on. Joern parsed the Python code into a code property graph. An XML parser read the BPMN files and the config. A JSON loader read the OpenAPI specs and fixtures. A schema reader read the Django models and the SQL. I joined them on names and IDs into one compiled graph. The query API sits on that graph. The agent built and rebuilt it for this project. I did not design this API up front. I asked the agent to wrap the Joern export in a Django-style queryset, and it added filters as it needed them. The agent calls it with uv run. The first usable graph took [N hours] of agent time and [N hours] of my review. Name joins missed [queryset update() calls, F() expressions, raw SQL]. I wrote [N] resolver rules for those, and the runtime traces filled the rest.'],
-    ['L3',3,'The instrument is a programmable surface: an ORM for your code. It sits between a fixed menu of endpoints and raw grep. Rigid enough that the agent does not write a whole program every time. Flexible enough that it can really stretch.'],
-    ['L3',4,'Did you feel this? The rule lives in two places: half in the BPMN workflow, half in the classes. I wished for one graph, so I asked for it. I put both in one graph, and a solver, z3, checked it. It found a duplicate check and a contradiction. The contradiction was the bug. The agent wrote the z3 encoding from the graph facts, so I did not trust the encoding either. I checked it by replaying [N] real orders through the encoding and the old code. [What the first encoding got wrong.]'],
+    ['L3',3,'Here is the agent using it. I asked who writes orders.total and told it not to grep. It ran two Joern scripts against the code graph, then one call to the query API. It answered in four calls. Look at the context counter: about eighteen thousand tokens, against a million at the start. This session is a reconstruction on the stand-in app. [Swap in a real recording if you can show one.]'],
+    ['L3',4,'The instrument is a programmable surface: an ORM for your code. It sits between a fixed menu of endpoints and raw grep. Rigid enough that the agent does not write a whole program every time. Flexible enough that it can really stretch.'],
+    ['L3',5,'Did you feel this? The rule lives in two places: half in the BPMN workflow, half in the classes. I wished for one graph, so I asked for it. I put both in one graph, and a solver, z3, checked it. It found a duplicate check and a contradiction. The contradiction was the bug. The agent wrote the z3 encoding from the graph facts, so I did not trust the encoding either. I checked it by replaying [N] real orders through the encoding and the old code. [What the first encoding got wrong.]'],
     ['L4',0,'Zoom out to the whole codebase. The same refund logic is in 41 places. An ast-grep pattern found 23 of them, and a codemod moved them. The other 18 use an alias constant, getattr, or a mixin that reads a setting. Those needed a semantic model. For Python, I used LibCST metadata for scopes and names, plus a type checker. I resolved getattr and settings with my own rules. Kotlin has PSI plus the Analysis API for this. The agent edited some cases directly, and traces checked each edit. One ticket still covered all 41. I cannot prove that there are only 41. The traces found [N] more that static analysis missed. My claim is that the 41 I found are fixed, and the guard rule blocks new ones.'],
     ['L4',1,'Django migrations, for code. makecodemigrations generates the codemod. The --plan flag works like Django migrate --plan. A --diff flag would be the sqlmigrate equivalent. I ran it on a sample first, then on the rest. These are concept commands. I built them for each project from ast-grep and LibCST. Each code migration was a small file: an ast-grep rule for the syntax tier and a LibCST transformer for the semantic tier.'],
     ['L4',2,'How did I review 41 files? I reviewed the plan and the metric before the work started. Two axes: behavior stays flat, and the ast-grep count goes from 23 to zero. The semantic tier had its own count. Then I added a guard rule so that the old pattern cannot come back.'],
@@ -933,7 +932,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     ['L8',4,'Thank you. Point at the slides link so people can find the deck. Then take questions.'],
   ];
   // per-step tag: real = how I actually did it; analogy = a familiar Python/dev stand-in
-  const TAGS = {7:"analogy",8:"analogy",15:"analogy",18:"analogy",37:"analogy"};
+  const TAGS = {7:"analogy",8:"analogy",16:"analogy",19:"analogy",38:"analogy"};
   const idx = {}; STEPS.forEach(([f, b], i) => { idx[f + ':' + b] = i; });
   const first = {}; STEPS.forEach(([f], i) => { if (!(f in first)) first[f] = i; });
   const at = (f, b) => (f + ':' + b) in idx ? idx[f + ':' + b] : Infinity;
