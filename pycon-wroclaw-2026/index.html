@@ -212,7 +212,7 @@ svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow
     </div>
     <div style="margin-top:16px;font-size:18px;color:var(--dim)">These are my examples. Your codebase needs its own tools and its own checks.</div>
   </div>
-  <div data-b="5" style="left:60px;top:450px;width:1480px">
+  <div data-b="5" data-until="6" style="left:60px;top:450px;width:1480px">
     <div class="h1" style="font-size:60px;margin-bottom:30px">On Monday</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:26px">
       <div class="panel" style="position:relative;padding:26px 30px"><div style="font:800 64px/1 var(--display);font-stretch:112%;color:var(--amber)">1</div><div class="h3" style="margin-top:14px;font-size:32px">Survey your agent's sessions</div></div>
@@ -220,9 +220,18 @@ svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow
       <div class="panel" style="position:relative;padding:26px 30px"><div style="font:800 64px/1 var(--display);font-stretch:112%;color:var(--amber)">3</div><div class="h3" style="margin-top:14px;font-size:32px">Build that tool, <em>with a check</em></div></div>
     </div>
   </div>
-  <div data-b="5" style="left:60px;top:800px;width:1180px;display:flex;justify-content:space-between;align-items:baseline">
+  <div data-b="5" data-until="6" style="left:60px;top:800px;width:1180px;display:flex;justify-content:space-between;align-items:baseline">
     <div class="hand" style="font-size:56px">zoom out.</div>
     <div class="mono" style="font-size:20px;color:var(--dim)">Ani &#xB7; PyCon Wroc&#x142;aw 2026</div>
+  </div>
+  <div data-b="6" style="left:60px;top:430px;width:1480px">
+    <div class="h1" style="font-size:150px;line-height:.95">Thank <em>you.</em></div>
+    <div class="hand" style="margin-top:26px;font-size:60px">Questions?</div>
+  </div>
+  <div data-b="6" style="left:1180px;top:470px"><div class="sticker"><svg width="54" height="56" viewBox="0 0 26 27" fill="none" aria-hidden="true"><path d="M21.5652 23.1901C19.4189 23.9207 17.0834 23.8686 14.9718 23.0431C12.8603 22.2176 11.1087 20.6719 10.027 18.6794C8.94523 16.6869 8.60306 14.376 9.06099 12.1555C9.51892 9.93507 10.7474 7.9481 12.5292 6.54613" stroke="#4B4352" stroke-width="2.97113"/><path d="M21.17 11.8725C20.9104 13.3235 20.3081 14.6916 19.4132 15.863C18.5183 17.0344 17.3567 17.9752 16.0249 18.6072C14.6932 19.2392 13.2298 19.5441 11.7565 19.4966C10.2832 19.4491 8.84247 19.0506 7.5542 18.3342C6.26592 17.6177 5.1673 16.6041 4.34969 15.3775C3.53208 14.1509 3.01911 12.7469 2.85344 11.2821C2.68776 9.8174 2.87417 8.33426 3.39716 6.95606C3.92015 5.57786 4.76461 4.34443 5.86031 3.35834" stroke="#4B4352" stroke-width="2.97113"/><path d="M21.142 12.0339C21.3822 10.9114 21.2617 9.74174 20.7976 8.69185C20.3335 7.64195 19.5496 6.7655 18.5578 6.18761C17.566 5.60972 16.417 5.35992 15.2748 5.47389C14.1325 5.58786 13.0555 6.05975 12.1974 6.82222" stroke="#4B4352" stroke-width="2.97113"/><circle cx="21.5766" cy="23.1402" r="2.2093" transform="rotate(12.0788 21.5766 23.1402)" fill="#D196FF" stroke="#4B4352" stroke-width="1.47287"/><circle cx="5.85395" cy="3.3684" r="2.2093" transform="rotate(12.0788 5.85395 3.3684)" fill="#4B4352" stroke="#D196FF" stroke-width="1.47287"/></svg><div><b>PyCon</b><span>Wroc&#x142;aw #2026</span></div></div></div>
+  <div data-b="6" style="left:60px;top:760px;width:1160px;display:grid;grid-template-columns:auto 1fr;gap:8px 28px;font:500 22px var(--mono);color:var(--ink)">
+    <span style="color:var(--dim)">Ani</span><span>adhikary.net &#xB7; github.com/aniruddha-adhikary</span>
+    <span style="color:var(--dim)">Slides</span><span style="color:var(--amber)">aniruddha-adhikary.github.io/slides/pycon-wroclaw-2026</span>
   </div>
 </section>
 
@@ -313,7 +322,7 @@ sync_erp</span>
   </div>
 
   <div class="ov panel" data-b="3" style="left:640px;top:96px;width:920px;height:760px">
-    <div class="h2" style="font-size:44px;margin-bottom:14px">Calibrate before you <em>diagnose.</em></div>
+    <div class="h2" style="font-size:44px;margin-bottom:14px">Test the tool <em>before you trust it.</em></div>
     <svg id="calviz" viewBox="0 0 844 590" style="width:844px;height:590px;display:block" role="img" aria-label="Three checks: scan coverage per file, a planted canary found, static and runtime edges compared"></svg>
   </div>
 </section>
@@ -824,7 +833,9 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     ['L6',0,'Zoom out to the agent. Below is the session that ran out of tokens at the start. Above it is the work of today. Point the agent at its own history.'],
     ['L6',1,'The agent asks the same questions again and again. It asked who writes this table 23 times. Parameterize the question once. Every instrument in this talk started this way.'],
     ['L6',2,'The mode switch is the same zoom move as the whole talk. The agent is stuck at the task. It zooms out and builds the tool. Then it zooms in, and the task is solved. Without help, agents stay in implementer mode. Like people, they need context and permission to build the tool. An ambitious task can start it. A request to reflect can also start it. Also unlearn the rule that all code must stay. Most probes are disposable. Promote the probes that come back. Keep the code that needs an audit trail.'],
-    ['L6',3,'Who checks the x-ray? Treat instruments like lab equipment. Plant a known truth. Make static and runtime results agree. Put a canary in every query. Make every run report what it parsed, skipped and failed, like EXPLAIN ANALYZE. How do we know that the scan visited a node?'],
+    ['L6',3,'Who checks the x-ray? The agent built this tool, so test it before you trust it. First check: did it read every file? It read 1,204, skipped 31 generated files, and failed on 3 dynamic imports. Now we know its blind spots.'],
+    ['L6',4,'Second check: plant a fact that you know is true, and ask the tool. Refund_view writes orders.total. The tool found it. If it misses a planted fact, do not trust its other answers.'],
+    ['L6',5,'Third check: compare what the code says with what the running system did. 412 edges agree. 46 do not. Review those 46 first. This is EXPLAIN ANALYZE for your own tools.'],
     ['L7',0,'Zoom out to the team. Today, many teams split work this way: each person has an agent, and each handoff is text generation. Watch the rule decay. AI slop built on AI slop built on AI slop.'],
     ['L7',1,'Instead, run one job with shared context. People join where their judgment matters: the rule decision, the plan and metric, and the boundary case. Humans should not be meat-proxies.'],
     ['L7',2,'This is not new to anyone who leads a junior engineer well. Give ownership, set frameworks, define success, keep people accountable, and do not read over their shoulder.'],
@@ -834,6 +845,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     ['L8',3,'This is the takeaway. Developer tooling for one codebase was impractical before: transpilers, codemod engines, code graphs and custom linters. AI-written code is cheap now, so many of these tools are practical. Trust them only with guardrails and evaluations around them.'],
     ['L8',4,'Look back at the whole talk as one table. Each row is a tool that I built and the check that I used on it. These are my examples. They are not a product or a recipe. Your codebase needs its own tools and its own checks.'],
     ['L8',5,'Monday: sit with your agent. Ask it to survey its own sessions and tool calls. Find the tasks that it repeats. Let it build a tool for them, with a check that proves the tool works. Zoom out. Thank you.'],
+    ['L8',6,'Thank you. Point at the slides link so people can find the deck. Then take questions.'],
   ];
   const idx = {}; STEPS.forEach(([f, b], i) => { idx[f + ':' + b] = i; });
   const first = {}; STEPS.forEach(([f], i) => { if (!(f in first)) first[f] = i; });
@@ -1027,32 +1039,26 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     lf += `<path d="M330 342 H 516" stroke="${GRN}" stroke-width="2" marker-end="url(#aml)"/>` + T(20, 347, 'code that changes the system', { c: INK, s: 15 });
     document.getElementById('lifeviz').innerHTML = lf;
 
-    // L6 . calibration
-    let cv = '';
-    cv += T(0, 18, '1  Did the scan reach every file?', { s: 17, w: 600 });
-    const total = 1238, parsed = 1204, skipped = 31, PERR = 93;
-    for (let i = 0; i < total; i++) {
-      const x = (i % PERR) * 9, yy = 34 + Math.floor(i / PERR) * 9;
-      const col = i < parsed ? GRN : i < parsed + skipped ? '#3E5772' : RED;
-      cv += `<rect x="${x}" y="${yy}" width="7" height="7" rx="1" fill="${col}" opacity="${i < parsed ? .7 : 1}"/>`;
-    }
-    const lastRow = 34 + Math.floor((total - 1) / PERR) * 9, lastX = ((total - 1) % PERR) * 9;
-    cv += `<circle cx="${lastX - 5}" cy="${lastRow + 3}" r="16" fill="none" stroke="${RED}" stroke-width="2"/>`;
-    cv += T(lastX + 14, lastRow + 40, '3 failed: dynamic imports', { c: RED, s: 15, w: 600 });
-    cv += `<rect x="500" y="181" width="10" height="10" fill="${GRN}"/>` + T(516, 191, '1,204 parsed', { c: DIM, s: 14 }) + `<rect x="640" y="181" width="10" height="10" fill="#3E5772"/>` + T(656, 191, '31 skipped', { c: DIM, s: 14 });
-
-    cv += T(0, 250, '2  Does it find what we planted?', { s: 17, w: 600 });
-    cv += `<rect x="0" y="282" width="170" height="48" rx="8" fill="${BG}" stroke="${LN}"/>` + T(85, 311, 'refund_view', { s: 16, a: 'middle' });
-    cv += `<rect x="0" y="400" width="170" height="48" rx="8" fill="${BG}" stroke="${LN}"/>` + T(85, 429, 'orders.total', { s: 16, a: 'middle' });
-    cv += `<path d="M85 330 V 396" stroke="${AMB}" stroke-width="2.4" stroke-dasharray="7 5"/>` + T(100, 368, 'writes', { c: AMB, s: 14 });
-    cv += T(0, 480, 'canary edge: found \u2713', { c: GRN, s: 16, w: 600 });
-
-    cv += T(420, 250, '3  Do static and runtime agree?', { s: 17, w: 600 });
-    cv += `<circle cx="560" cy="380" r="100" fill="rgba(142,197,255,.12)" stroke="${BLU}" stroke-width="2"/><circle cx="690" cy="380" r="100" fill="rgba(95,221,164,.12)" stroke="${GRN}" stroke-width="2"/>`;
-    cv += T(515, 386, '37', { c: RED, s: 26, w: 700, a: 'middle' }) + T(625, 386, '412', { s: 26, w: 700, a: 'middle' }) + T(735, 386, '9', { c: RED, s: 26, w: 700, a: 'middle' });
-    cv += T(515, 300, 'static', { c: BLU, s: 14, a: 'middle' }) + T(735, 300, 'runtime', { c: GRN, s: 14, a: 'middle' });
-    cv += T(625, 520, '46 edges disagree: look here first', { c: RED, s: 15, a: 'middle' });
-    document.getElementById('calviz').innerHTML = cv;
+    // L6 . test the tool before you trust it: three checks, one per click
+    let c1 = '', c2 = '', c3 = '';
+    c1 += T(0, 24, '1  Did it read every file?', { s: 21, w: 600 });
+    const W = 844, wF = 12, wS = 22, wR = W - wF - wS;
+    c1 += `<rect x="0" y="48" width="${wR}" height="38" rx="6" fill="${GRN}" opacity=".75"/><rect x="${wR}" y="48" width="${wS}" height="38" fill="#3E5772"/><rect x="${wR + wS}" y="48" width="${wF}" height="38" rx="3" fill="${RED}"/>`;
+    c1 += T(0, 116, '1,204 read', { c: GRN, s: 17, w: 600 }) + T(150, 116, '31 skipped: generated code', { c: DIM, s: 16 });
+    c1 += `<path d="M${W - 6} 90 V 104 H ${W - 20}" stroke="${RED}" stroke-width="1.6" fill="none"/>` + T(W - 24, 116, '3 failed: dynamic imports', { c: RED, s: 17, w: 600, a: 'end' });
+    c2 += T(0, 194, '2  Does it find what we planted?', { s: 21, w: 600 });
+    c2 += `<rect x="0" y="218" width="400" height="62" rx="10" fill="${BG}" stroke="${AMB}" stroke-width="1.8" stroke-dasharray="7 6"/>` + T(20, 244, 'planted fact', { c: AMB, s: 14 }) + T(20, 268, 'refund_view writes orders.total', { s: 17 });
+    c2 += `<path d="M406 249 H 470" stroke="${AMB}" stroke-width="2.2" marker-end="url(#acv)"/>`;
+    c2 += `<rect x="478" y="218" width="366" height="62" rx="10" fill="rgba(95,221,164,.10)" stroke="${GRN}" stroke-width="1.8"/>` + T(498, 256, 'the tool found it \u2713', { c: GRN, s: 19, w: 600 });
+    c3 += T(0, 364, '3  Do the code and the running system agree?', { s: 21, w: 600 });
+    const a1 = 76, a3 = 44, a2 = W - a1 - a3;
+    c3 += `<rect x="0" y="388" width="${a1}" height="44" rx="6" fill="${RED}" opacity=".8"/><rect x="${a1}" y="388" width="${a2}" height="44" fill="${GRN}" opacity=".6"/><rect x="${a1 + a2}" y="388" width="${a3}" height="44" rx="6" fill="${RED}" opacity=".8"/>`;
+    c3 += T(a1 + a2 / 2, 416, '412 in both', { s: 18, w: 600, a: 'middle' });
+    c3 += T(0, 462, '37 only in the code', { c: RED, s: 16 }) + T(W, 462, '9 only at runtime', { c: RED, s: 16, a: 'end' });
+    c3 += `<rect x="0" y="494" width="${W}" height="56" rx="10" fill="rgba(255,106,85,.10)" stroke="${RED}" stroke-width="1.6"/>` + T(20, 529, 'Review the 46 that disagree first.', { c: INK, s: 19, w: 600 });
+    const cvEl = document.getElementById('calviz');
+    cvEl.innerHTML = `<defs><marker id="acv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="${AMB}"/></marker></defs><g data-b="3">${c1}</g><g data-b="4">${c2}</g><g data-b="5">${c3}</g>`;
+    cvEl.querySelectorAll('[data-b]').forEach(el => items.push({ el, f: 'L6' }));
   })();
 
   // -- cold-open session: streaming reads + growing context --
