@@ -10,26 +10,29 @@
 <style>
 /* Layout: one blueprint canvas; every level is a sheet nested inside the next at 1:3, and a camera flies between them. */
 :root {
-  color-scheme: dark;
-  --paper: #0C2136;      /* blueprint ground */
-  --term: #07131F;       /* terminal + panels */
-  --ink: #EEF4FA;
-  --dim: #8FA8C1;
-  --amber: #FFB224;      /* the one accent: highlighter */
-  --red: #FF6A55;
-  --green: #5FDDA4;
-  --blue: #8EC5FF;
-  --clay: #E0896A;       /* terminal-render accent only */
+  color-scheme: light;
+  --paper: #EDF1F6;      /* blueprint ground */
+  --term: #1B2330;       /* terminal + panels */
+  --ink: #15202C;
+  --dim: #5A6B7E;
+  --amber: #C47400;      /* the one accent: highlighter */
+  --red: #D23F2E;
+  --green: #178A5A;
+  --blue: #2763C9;
+  --clay: #C8643F;       /* terminal-render accent only */
   --pw: #D196FF;         /* PyCon Wroclaw purple */
   --pw-ink: #2E2833;     /* PyCon Wroclaw aubergine */
   --pw-paper: #F4EFF8;
-  --grid: rgba(150, 195, 240, .075);
-  --line: rgba(170, 205, 240, .30);
-  --line-faint: rgba(170, 205, 240, .14);
+  --grid: rgba(40, 70, 110, .07);
+  --line: rgba(30, 50, 80, .22);
+  --line-faint: rgba(30, 50, 80, .10);
   --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
   --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
   --hand: "Caveat", "Comic Sans MS", cursive;
+  --panel: #FFFFFF;
+  --chrome: #E8ECF1;
+  --syn-k: #A85F00; --syn-s: #1F7A52; --syn-f: #2459B8; --syn-d: #7B45C4; --syn-c: #6B7C8F;
 }
 *, *::before, *::after { box-sizing: border-box; font-variant-ligatures: none !important; }
 html, body { height: 100%; overflow: hidden; background: var(--paper); color: var(--ink); }
@@ -63,16 +66,18 @@ body { font-family: var(--body); -webkit-font-smoothing: antialiased; }
 em { font-style: normal; color: var(--amber); }
 
 /* panels */
-.panel { background: var(--term); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 30px 70px rgba(0,0,0,.42); padding: 34px 38px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 24px 60px rgba(20,40,70,.16); padding: 34px 38px; }
 .code { font: 400 21px/1.62 var(--mono); color: var(--ink); white-space: pre; }
-.k { color: #FFCB6B; } .s { color: #9FE6C3; } .c { color: #6F8AA6; font-style: italic; } .f { color: var(--blue); } .d { color: #C9A2FF; }
+.k { color: var(--syn-k); } .s { color: var(--syn-s); } .c { color: var(--syn-c); font-style: italic; } .f { color: var(--syn-f); } .d { color: var(--syn-d); }
 .p { color: var(--dim); }
 .chip { display: inline-flex; align-items: center; gap: 10px; font: 600 15px var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 6px 12px; border-radius: 6px; border: 1px solid currentColor; }
 
 /* terminal render */
-.term { background: var(--term); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 50px 100px rgba(0,0,0,.5); overflow: hidden; }
+.term { --ink: #E6EDF5; --dim: #8FA8C1; --amber: #FFB224; --red: #FF6A55; --green: #5FDDA4; --blue: #8EC5FF; --clay: #E0896A; --line: rgba(170,205,240,.3); --line-faint: rgba(170,205,240,.14); --syn-k: #FFCB6B; --syn-s: #1F7A52; --syn-f: #8EC5FF; --syn-d: #C9A2FF; --syn-c: #6F8AA6; color: var(--ink); background: var(--term); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 30px 70px rgba(20,40,70,.28); overflow: hidden; }
 .tbar { position: absolute; inset: 0 0 auto 0; height: 50px; display: flex; align-items: center; gap: 10px; padding: 0 22px; border-bottom: 1px solid var(--line-faint); font: 500 18px var(--mono); color: var(--dim); }
-.tbar i { width: 14px; height: 14px; border-radius: 50%; background: #2E4560; }
+.tbar i { width: 14px; height: 14px; border-radius: 50%; background: #FF5F57; }
+.tbar i:nth-child(2) { background: #FEBC2E; }
+.tbar i:nth-child(3) { background: #28C840; }
 .tbar span { margin-left: 14px; }
 .tbody { position: absolute; inset: 50px 0 0 0; font: 400 22px/1.62 var(--mono); color: var(--ink); }
 .tbody > * { position: absolute; }
@@ -89,23 +94,26 @@ em { font-style: normal; color: var(--amber); }
 @keyframes slin { from { opacity: 0; transform: translateX(-10px); } }
 .limit { background: rgba(255,106,85,.12); border: 1.5px solid var(--red); color: #FFC2B8; border-radius: 10px; padding: 18px 24px; font-size: 22px; }
 
+/* macOS window chrome */
+.ov.panel, .win { border-top-left-radius: 0 !important; border-top-right-radius: 0 !important; }
+.ov.panel::before, .win::before { content: attr(data-title); position: absolute; left: -1px; right: -1px; top: -34px; height: 34px; box-sizing: border-box; border: 1px solid var(--line); border-bottom-color: var(--line-faint); border-radius: 12px 12px 0 0; background: radial-gradient(circle at 20px 17px, #FF5F57 6px, transparent 6.6px), radial-gradient(circle at 40px 17px, #FEBC2E 6px, transparent 6.6px), radial-gradient(circle at 60px 17px, #28C840 6px, transparent 6.6px), var(--chrome); font: 500 13px/34px var(--mono); color: var(--dim); text-align: center; letter-spacing: .02em; }
 /* code sheets */
-.codecol { font-family: var(--mono); white-space: pre; color: #A9BED3; }
+.codecol { font-family: var(--mono); white-space: pre; color: #3B4B5E; }
 .codecol .ln { display: block; }
-.codecol .no { color: #4F6A86; }
+.codecol .no { color: #9AA9B8; }
 .codecol .hl { background: rgba(255,178,36,.16); box-shadow: inset 4px 0 0 var(--amber); color: var(--ink); }
 
 /* sketch cards */
 .mcard { width: 270px; height: 190px; padding: 18px 20px 16px; }
-.mcard .sk { position: absolute; inset: 0; border: 2.5px solid rgba(238,244,250,.82); border-radius: 10px; filter: url(#rough); pointer-events: none; }
+.mcard .sk { position: absolute; inset: 0; border: 2.5px solid rgba(21,32,44,.78); border-radius: 10px; filter: url(#rough); pointer-events: none; }
 .mcard .cap { position: absolute; left: 20px; bottom: 12px; font-family: var(--hand); font-weight: 700; font-size: 34px; color: var(--amber); }
-.mini { font: 400 15px/1.55 var(--mono); color: #C5D5E5; white-space: pre; }
+.mini { font: 400 15px/1.55 var(--mono); color: #3B4B5E; white-space: pre; }
 
 /* graph */
-.node { height: 58px; padding: 0 22px; display: flex; align-items: center; gap: 12px; border: 1.5px solid var(--line); border-radius: 10px; background: rgba(7,19,31,.86); font: 500 21px var(--mono); color: var(--ink); white-space: nowrap; }
+.node { height: 58px; padding: 0 22px; display: flex; align-items: center; gap: 12px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--panel); font: 500 21px var(--mono); color: var(--ink); white-space: nowrap; }
 .node::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: var(--blue); }
-.tbl { border: 1.5px solid var(--line); border-radius: 10px; background: rgba(7,19,31,.86); font: 400 18px/1.7 var(--mono); color: var(--dim); overflow: hidden; }
-.tbl h4 { margin: 0; padding: 8px 16px; font: 700 19px var(--mono); color: var(--ink); border-bottom: 1px solid var(--line-faint); background: rgba(142,197,255,.07); }
+.tbl { border: 1.5px solid var(--line); border-radius: 10px; background: var(--panel); font: 400 18px/1.7 var(--mono); color: var(--dim); overflow: hidden; }
+.tbl h4 { margin: 0; padding: 8px 16px; font: 700 19px var(--mono); color: var(--ink); border-bottom: 1px solid var(--line-faint); background: rgba(39,99,201,.07); }
 .tbl div { padding: 0 16px; }
 .tbl .w { color: var(--amber); }
 svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow: visible; pointer-events: none; }
@@ -131,20 +139,20 @@ svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow
 /* HUD */
 #hud { position: fixed; right: max(22px, env(safe-area-inset-right, 0px)); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); display: grid; justify-items: end; gap: 8px; z-index: 20; transition: opacity 1.2s ease; pointer-events: none; }
 #hud.off { opacity: 0; transform: none; }
-#mm { width: 152px; height: 86px; position: relative; border: 1px solid var(--line-faint); border-radius: 3px; background: rgba(7,19,31,.5); }
+#mm { width: 152px; height: 86px; position: relative; border: 1px solid var(--line); border-radius: 3px; background: rgba(255,255,255,.7); }
 #mmr { position: absolute; border: 1px solid var(--amber); background: rgba(255,178,36,.22); min-width: 2px; min-height: 2px; transition: none; }
 #hud.reveal #mm { transform: scale(1.35); transform-origin: bottom right; box-shadow: 0 0 0 2px var(--amber), 0 0 40px rgba(255,178,36,.45); }
 #mm { transition: transform .6s cubic-bezier(.2,.7,.2,1), box-shadow .6s; }
 #mml { font: 500 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: rgba(143,168,193,.7); }
 
 
-#notes { position: fixed; left: max(18px, env(safe-area-inset-left, 0px)); bottom: calc(64px + env(safe-area-inset-bottom, 0px)); width: min(620px, calc(100vw - 36px)); max-height: 46vh; overflow: auto; z-index: 21; background: rgba(4,12,20,.95); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; font: 400 17px/1.55 var(--body); color: var(--ink); box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+#notes { position: fixed; left: max(18px, env(safe-area-inset-left, 0px)); bottom: calc(64px + env(safe-area-inset-bottom, 0px)); width: min(620px, calc(100vw - 36px)); max-height: 46vh; overflow: auto; z-index: 21; background: rgba(255,255,255,.97); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; font: 400 17px/1.55 var(--body); color: var(--ink); box-shadow: 0 20px 50px rgba(0,0,0,.5); }
 #notes .n { font: 600 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--amber); margin-bottom: 8px; display: flex; justify-content: space-between; }
-#tag { position: fixed; left: max(18px, env(safe-area-inset-left, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 20; font: 600 13px var(--mono); letter-spacing: .12em; text-transform: uppercase; padding: 8px 14px; border-radius: 999px; border: 1.5px solid currentColor; background: rgba(7,19,31,.88); transition: opacity .4s; pointer-events: none; }
+#tag { position: fixed; left: max(18px, env(safe-area-inset-left, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 20; font: 600 13px var(--mono); letter-spacing: .12em; text-transform: uppercase; padding: 8px 14px; border-radius: 999px; border: 1.5px solid currentColor; background: rgba(255,255,255,.92); transition: opacity .4s; pointer-events: none; }
 #tag.real { color: var(--green); }
 #tag.analogy { color: var(--blue); }
 #tag.none { opacity: 0; }
-#hint { position: fixed; left: 50%; top: calc(18px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); z-index: 22; font: 500 13px var(--mono); color: var(--dim); background: rgba(4,12,20,.85); border: 1px solid var(--line-faint); border-radius: 999px; padding: 8px 16px; white-space: nowrap; transition: opacity 1s; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis; }
+#hint { position: fixed; left: 50%; top: calc(18px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); z-index: 22; font: 500 13px var(--mono); color: var(--dim); background: rgba(255,255,255,.92); border: 1px solid var(--line-faint); border-radius: 999px; padding: 8px 16px; white-space: nowrap; transition: opacity 1s; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis; }
 #hint kbd { font: inherit; color: var(--ink); }
 
 @media (prefers-reduced-motion: reduce) {
@@ -177,17 +185,17 @@ svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow
   </div>
   <svg data-b="1" data-until="2" viewBox="0 0 1480 290" style="left:60px;top:600px;width:1480px;height:290px" role="img" aria-label="Cost to build five kinds of developer tooling falls from above the worth-building line before to below it now">
     <g font-family="JetBrains Mono, monospace">
-      <text x="0" y="16" font-size="15" fill="#8FA8C1">cost to build, for one codebase</text>
-      <line x1="120" x2="1180" y1="122" y2="122" stroke="#FFB224" stroke-width="2" stroke-dasharray="8 7"/>
-      <text x="1200" y="127" font-size="17" fill="#FFB224" font-weight="600">worth building</text>
-      <g stroke="#8FA8C1" stroke-width="1.6" opacity=".8">
+      <text x="0" y="16" font-size="15" fill="#5A6B7E">cost to build, for one codebase</text>
+      <line x1="120" x2="1180" y1="122" y2="122" stroke="#C47400" stroke-width="2" stroke-dasharray="8 7"/>
+      <text x="1200" y="127" font-size="17" fill="#C47400" font-weight="600">worth building</text>
+      <g stroke="#5A6B7E" stroke-width="1.6" opacity=".8">
         <line x1="300" y1="14" x2="1000" y2="146"/><line x1="300" y1="36" x2="1000" y2="170"/><line x1="300" y1="58" x2="1000" y2="194"/><line x1="300" y1="80" x2="1000" y2="218"/><line x1="300" y1="102" x2="1000" y2="242"/>
       </g>
-      <g fill="#3E5772"><circle cx="300" cy="14" r="6"/><circle cx="300" cy="36" r="6"/><circle cx="300" cy="58" r="6"/><circle cx="300" cy="80" r="6"/><circle cx="300" cy="102" r="6"/></g>
-      <g fill="#FFB224"><circle cx="1000" cy="146" r="7"/><circle cx="1000" cy="170" r="7"/><circle cx="1000" cy="194" r="7"/><circle cx="1000" cy="218" r="7"/><circle cx="1000" cy="242" r="7"/></g>
-      <g font-size="17" fill="#EEF4FA"><text x="1022" y="152">a transpiler</text><text x="1022" y="176">a codemod engine</text><text x="1022" y="200">a code graph</text><text x="1022" y="224">a custom linter</text><text x="1022" y="248">a trace mapper</text></g>
-      <text x="300" y="282" font-size="16" fill="#8FA8C1" text-anchor="middle">before</text>
-      <text x="1000" y="282" font-size="16" fill="#FFB224" text-anchor="middle" font-weight="600">now</text>
+      <g fill="#A9B6C4"><circle cx="300" cy="14" r="6"/><circle cx="300" cy="36" r="6"/><circle cx="300" cy="58" r="6"/><circle cx="300" cy="80" r="6"/><circle cx="300" cy="102" r="6"/></g>
+      <g fill="#C47400"><circle cx="1000" cy="146" r="7"/><circle cx="1000" cy="170" r="7"/><circle cx="1000" cy="194" r="7"/><circle cx="1000" cy="218" r="7"/><circle cx="1000" cy="242" r="7"/></g>
+      <g font-size="17" fill="#15202C"><text x="1022" y="152">a transpiler</text><text x="1022" y="176">a codemod engine</text><text x="1022" y="200">a code graph</text><text x="1022" y="224">a custom linter</text><text x="1022" y="248">a trace mapper</text></g>
+      <text x="300" y="282" font-size="16" fill="#5A6B7E" text-anchor="middle">before</text>
+      <text x="1000" y="282" font-size="16" fill="#C47400" text-anchor="middle" font-weight="600">now</text>
     </g>
   </svg>
   <div data-b="2" data-until="3" style="left:60px;top:430px;width:1480px">
@@ -275,14 +283,6 @@ svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow
       <div class="panel" style="position:relative;padding:28px 30px"><div class="eb" style="margin-bottom:14px">Task size</div><div class="h3">One ticket covers a whole <em>class</em> of problems.</div></div>
       <div class="panel" style="position:relative;padding:28px 30px"><div class="eb" style="margin-bottom:14px">Authority</div><div class="h3">Agents own their instruments. I own the plan and the metric.</div></div>
       <div class="panel" style="position:relative;padding:28px 30px"><div class="eb" style="margin-bottom:14px">Where I step in</div><div class="h3">At the plan, the boundary case and the rule decision.</div></div>
-    </div>
-  </div>
-  <div class="ov panel" data-b="4" style="left:40px;top:40px;width:1520px;height:830px;padding:190px 70px">
-    <div class="h1" style="font-size:72px;margin-bottom:70px">Engineers using <em>better tools.</em></div>
-    <div style="display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:28px;align-items:center">
-      <div class="panel" style="position:relative;padding:26px 28px;text-align:center;opacity:.75"><div style="font-size:48px;color:var(--red);line-height:1">&#x2717;</div><div class="h3" style="margin-top:14px;font-size:28px;color:var(--dim)">Agents replace engineers</div></div>
-      <div class="panel" style="position:relative;padding:34px 30px;text-align:center;border:2px solid var(--amber);background:rgba(255,178,36,.07)"><div style="font-size:56px;color:var(--green);line-height:1">&#x2713;</div><div class="h3" style="margin-top:16px;font-size:34px">Engineers using the new tools well</div></div>
-      <div class="panel" style="position:relative;padding:26px 28px;text-align:center;opacity:.75"><div style="font-size:48px;color:var(--red);line-height:1">&#x2717;</div><div class="h3" style="margin-top:14px;font-size:28px;color:var(--dim)">Agents are hype</div></div>
     </div>
   </div>
 </section>
@@ -384,7 +384,7 @@ sync_erp</span>
     </div>
   </div>
   <div class="ov hand" data-b="3" data-until="4" style="left:1010px;top:700px;font-size:58px;transform:rotate(-3deg)">We still had work to do.</div>
-  <div class="ov" data-b="4" style="left:70px;top:46px;width:1460px;height:808px;border-radius:16px;background:linear-gradient(180deg, rgba(7,19,31,.15), rgba(7,19,31,.92) 55%);"></div>
+  <div class="ov" data-b="4" style="left:70px;top:46px;width:1460px;height:808px;border-radius:16px;background:linear-gradient(180deg, rgba(237,241,246,.15), rgba(237,241,246,.95) 55%);"></div>
   <div class="ov" data-b="4" style="left:150px;top:560px;width:1300px"><div class="h1" style="font-size:104px">So where did all<br>the tokens <em>go?</em></div></div>
 </section>
 
@@ -405,7 +405,7 @@ sync_erp</span>
 
   <!-- new system sketch -->
   <div style="left:1006.67px;top:300px;width:533.33px;height:300px">
-    <div style="position:absolute;inset:0;border:2.5px solid rgba(238,244,250,.8);border-radius:14px;filter:url(#rough)"></div>
+    <div style="position:absolute;inset:0;border:2.5px solid rgba(21,32,44,.75);border-radius:14px;filter:url(#rough)"></div>
     <div class="hand" style="position:absolute;left:26px;top:16px;color:var(--ink);font-size:40px">payments-svc</div>
     <div style="position:absolute;left:26px;top:82px;right:26px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
       <div class="node" style="position:relative;font-size:17px;height:50px;padding:0 14px">RefundService</div>
@@ -418,7 +418,7 @@ sync_erp</span>
 
   <!-- common plane -->
   <svg class="wires" data-b="3" viewBox="0 0 1600 900"><g stroke="var(--amber)" stroke-width="2" fill="none"><path d="M596 450 L 650 450" marker-end="url(#ah)"/><path d="M1004 450 L 954 450" marker-end="url(#ah)"/></g>
-    <g font-family="JetBrains Mono, monospace" font-size="14" fill="#FFB224" text-anchor="middle"><text x="623" y="436">map</text><text x="979" y="436">map</text></g>
+    <g font-family="JetBrains Mono, monospace" font-size="14" fill="#C47400" text-anchor="middle"><text x="623" y="436">map</text><text x="979" y="436">map</text></g>
     <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="var(--amber)"/></marker></defs></svg>
   <div data-b="3" style="left:656px;top:300px;width:292px;height:300px;border:1.5px solid var(--amber);border-radius:12px;background:rgba(255,178,36,.05);padding:16px 18px">
     <div class="eb" style="font-size:13px;margin-bottom:4px">common plane</div>
@@ -429,16 +429,16 @@ sync_erp</span>
   state=REFUNDED)</div>
     <div class="mono" style="margin-top:14px;font-size:17px;color:var(--amber)">old &#x2261; new <span style="color:var(--green)">&#x2713;</span></div>
   </div>
-  <div class="ov" data-b="1" data-until="4" style="left:60px;top:196px;width:1480px;height:690px"><svg id="flowviz" viewBox="0 0 1480 690" style="width:1480px;height:690px;display:block" role="img" aria-label="A refund flows through entrypoint, logic, persistence and side-effect layers in both systems; each layer is hooked, mapped into a common plane, and the transform between them is derived"></svg></div>
-  <div class="ov" data-b="4" data-until="5" style="left:60px;top:196px;width:1480px;height:690px"><svg id="covviz" viewBox="0 0 1480 690" style="width:1480px;height:690px;display:block" role="img" aria-label="Coverage matrix of entrypoint types against layers; most cells are fully mapped, most entrypoint types have gaps; signals and cron jobs have the most"></svg></div>
-  <div class="ov" data-b="5" style="left:60px;top:196px;width:1480px;height:690px;background:#07131F;border:1px solid var(--line);border-radius:14px">
+  <div class="ov win" data-title="trace-map &#xB7; staging" data-b="1" data-until="4" style="left:60px;top:214px;width:1480px;height:672px"><svg id="flowviz" viewBox="0 0 1480 690" style="width:1480px;height:690px;display:block" role="img" aria-label="A refund flows through entrypoint, logic, persistence and side-effect layers in both systems; each layer is hooked, mapped into a common plane, and the transform between them is derived"></svg></div>
+  <div class="ov win" data-title="entrypoints &#xB7; coverage" data-b="4" data-until="5" style="left:60px;top:196px;width:1480px;height:690px"><svg id="covviz" viewBox="0 0 1480 690" style="width:1480px;height:690px;display:block" role="img" aria-label="Coverage matrix of entrypoint types against layers; most cells are fully mapped, most entrypoint types have gaps; signals and cron jobs have the most"></svg></div>
+  <div class="ov win" data-title="refund &#xB7; executable spec" data-b="5" style="left:60px;top:196px;width:1480px;height:690px;background:#FFFFFF;border:1px solid var(--line);border-radius:14px">
     <svg viewBox="0 0 1480 690" style="position:absolute;inset:0;width:1480px;height:690px" aria-hidden="true">
-      <defs><marker id="ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#FFB224"/></marker></defs>
-      <g data-b="5" stroke="#FFB224" stroke-width="2.2" fill="none"><path d="M452 190 H 526" marker-end="url(#ax)"/></g>
-      <g data-b="6" stroke="#FFB224" stroke-width="2.2" fill="none"><path d="M952 190 H 1026" marker-end="url(#ax)"/></g>
-      <g data-b="7" stroke="#FFB224" stroke-width="2.2" fill="none"><path d="M1240 332 C 1240 380, 460 370, 440 414" marker-end="url(#ax)"/><path d="M1240 332 C 1240 380, 1060 380, 1040 414" marker-end="url(#ax)"/></g>
+      <defs><marker id="ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#C47400"/></marker></defs>
+      <g data-b="5" stroke="#C47400" stroke-width="2.2" fill="none"><path d="M452 190 H 526" marker-end="url(#ax)"/></g>
+      <g data-b="6" stroke="#C47400" stroke-width="2.2" fill="none"><path d="M952 190 H 1026" marker-end="url(#ax)"/></g>
+      <g data-b="7" stroke="#C47400" stroke-width="2.2" fill="none"><path d="M1240 332 C 1240 380, 460 370, 440 414" marker-end="url(#ax)"/><path d="M1240 332 C 1240 380, 1060 380, 1040 414" marker-end="url(#ax)"/></g>
     </svg>
-    <div data-b="5" style="position:absolute;background:#0C2136;border-radius:12px;padding:18px 22px;left:30px;top:50px;width:420px;height:280px;border:1.5px solid var(--line)">
+    <div data-b="5" style="position:absolute;background:#F4F7FB;border-radius:12px;padding:18px 22px;left:30px;top:50px;width:420px;height:280px;border:1.5px solid var(--line)">
       <div class="eb" style="font-size:14px;margin-bottom:12px">1 &#xB7; Entity</div>
       <div class="code" style="font-size:17px;line-height:1.6"><span class="f">Refund</span>
   order    <span class="p">Order</span>
@@ -447,7 +447,7 @@ sync_erp</span>
   state    <span class="p">REFUNDED | REJECTED</span></div>
       <div class="slabel" style="position:absolute;left:22px;bottom:16px">from the common plane</div>
     </div>
-    <div data-b="5" style="position:absolute;background:#0C2136;border-radius:12px;padding:18px 22px;left:530px;top:50px;width:420px;height:280px;border:1.5px solid var(--line)">
+    <div data-b="5" style="position:absolute;background:#F4F7FB;border-radius:12px;padding:18px 22px;left:530px;top:50px;width:420px;height:280px;border:1.5px solid var(--line)">
       <div class="eb" style="font-size:14px;margin-bottom:12px">2 &#xB7; Operation</div>
       <div class="code" style="font-size:17px;line-height:1.6"><span class="f">refund</span>(user, order) <span class="p">&#x2192;</span> Refund
 <span class="p">entry </span> POST /refunds
@@ -455,7 +455,7 @@ sync_erp</span>
 <span class="p">writes</span> orders.status, ledger</div>
       <div class="slabel" style="position:absolute;left:22px;bottom:16px">from the entrypoints and layers</div>
     </div>
-    <div data-b="6" style="position:absolute;background:#0C2136;border-radius:12px;padding:18px 22px;left:1030px;top:50px;width:420px;height:280px;border:2px solid var(--amber);background:rgba(255,178,36,.07)">
+    <div data-b="6" style="position:absolute;background:#F4F7FB;border-radius:12px;padding:18px 22px;left:1030px;top:50px;width:420px;height:280px;border:2px solid var(--amber);background:rgba(255,178,36,.07)">
       <div class="eb" style="font-size:14px;margin-bottom:12px">3 &#xB7; Transform</div>
       <div class="code" style="font-size:15px;line-height:1.6">eligible = status == PAID
          &#x2227; not user.is_legacy
@@ -464,7 +464,7 @@ amount   = (total &#xD7; 0.97).quantize(0.01)
 state    = REFUNDED if eligible</div>
       <div class="slabel" style="position:absolute;left:22px;bottom:16px"><b>z3 finds the boundary: day 30</b></div>
     </div>
-    <div data-b="7" style="position:absolute;background:#0C2136;border-radius:12px;padding:18px 22px;left:180px;top:420px;width:520px;height:240px;border:2px solid var(--green)">
+    <div data-b="7" style="position:absolute;background:#F4F7FB;border-radius:12px;padding:18px 22px;left:180px;top:420px;width:520px;height:240px;border:2px solid var(--green)">
       <div class="eb" style="font-size:14px;margin-bottom:12px;color:var(--green)">Tests &#xB7; &#x2713; check</div>
       <div class="code" style="font-size:16px;line-height:1.6"><span class="d">@given</span>(users(), orders())
 <span class="d">@example</span>(any_user(), order_on_day(30))
@@ -472,7 +472,7 @@ state    = REFUNDED if eligible</div>
     <span class="k">assert</span> impl(u, o) == transform(u, o)</div>
       <div style="margin-top:14px;font:500 16px/1.5 var(--mono);color:var(--red)">old code refunds on day 30 (.days &lt; 31)</div>
     </div>
-    <div data-b="7" style="position:absolute;background:#0C2136;border-radius:12px;padding:18px 22px;left:780px;top:420px;width:520px;height:240px;border:2px solid var(--blue)">
+    <div data-b="7" style="position:absolute;background:#F4F7FB;border-radius:12px;padding:18px 22px;left:780px;top:420px;width:520px;height:240px;border:2px solid var(--blue)">
       <div class="eb" style="font-size:14px;margin-bottom:12px;color:var(--blue)">Implementation</div>
       <div class="code" style="font-size:16px;line-height:1.6"><span class="k">class</span> <span class="f">RefundService</span>:
     <span class="k">def</span> <span class="f">run</span>(self, user, order):
@@ -545,19 +545,19 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
   <div class="ov panel" data-b="2" style="left:860px;top:90px;width:700px;height:740px">
     <div class="h2" style="font-size:42px;margin-bottom:22px">I review the plan <em>and the metric.</em> <span class="chip" style="color:var(--green);font-size:15px;vertical-align:middle">&#x2713; check</span></div>
     <svg viewBox="0 0 640 270" style="width:100%;display:block" role="img" aria-label="Old pattern count falls from 23 to 0 over eight runs while behavior stays at 100 percent">
-      <g font-family="JetBrains Mono, monospace" font-size="13" fill="#8FA8C1">
+      <g font-family="JetBrains Mono, monospace" font-size="13" fill="#5A6B7E">
         <text x="0" y="14">old pattern &#xB7; ast-grep count</text>
         <text x="0" y="168">behavior &#xB7; traces matching</text>
-        <text x="640" y="14" text-anchor="end" fill="#FFB224">23 &#x2192; 0</text>
-        <text x="640" y="168" text-anchor="end" fill="#5FDDA4">100% &#x2192; 100%</text>
+        <text x="640" y="14" text-anchor="end" fill="#C47400">23 &#x2192; 0</text>
+        <text x="640" y="168" text-anchor="end" fill="#178A5A">100% &#x2192; 100%</text>
       </g>
-      <g stroke="rgba(170,205,240,.14)"><line x1="20" x2="620" y1="130" y2="130"/><line x1="20" x2="620" y1="250" y2="250"/></g>
+      <g stroke="rgba(30,50,80,.12)"><line x1="20" x2="620" y1="130" y2="130"/><line x1="20" x2="620" y1="250" y2="250"/></g>
       <path d="M20 40 L95 40 L170 51 L245 68.5 L320 88.3 L395 105.9 L470 121.2 L545 130 L620 130 L620 130 L20 130 Z" fill="rgba(255,178,36,.16)"/>
-      <polyline points="20,40 95,40 170,51 245,68.5 320,88.3 395,105.9 470,121.2 545,130 620,130" fill="none" stroke="#FFB224" stroke-width="3"/>
-      <circle cx="620" cy="130" r="5" fill="#FFB224"/>
-      <polyline points="20,196 620,196" fill="none" stroke="#5FDDA4" stroke-width="3"/>
-      <circle cx="620" cy="196" r="5" fill="#5FDDA4"/>
-      <g font-family="JetBrains Mono, monospace" font-size="12" fill="#8FA8C1"><text x="20" y="268">run 0</text><text x="620" y="268" text-anchor="end">run 8</text></g>
+      <polyline points="20,40 95,40 170,51 245,68.5 320,88.3 395,105.9 470,121.2 545,130 620,130" fill="none" stroke="#C47400" stroke-width="3"/>
+      <circle cx="620" cy="130" r="5" fill="#C47400"/>
+      <polyline points="20,196 620,196" fill="none" stroke="#178A5A" stroke-width="3"/>
+      <circle cx="620" cy="196" r="5" fill="#178A5A"/>
+      <g font-family="JetBrains Mono, monospace" font-size="12" fill="#5A6B7E"><text x="20" y="268">run 0</text><text x="620" y="268" text-anchor="end">run 8</text></g>
     </svg>
     <div class="term" style="position:relative;height:250px;margin-top:20px">
       <div class="tbar" style="height:36px;font-size:13px"><i style="width:10px;height:10px"></i><i style="width:10px;height:10px"></i><i style="width:10px;height:10px"></i><span>rules/no-magic-status.yml &#xB7; guard</span></div>
@@ -579,7 +579,7 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
   <div class="slabel" style="left:100px;top:300px">tickets/<b>views.py</b></div>
 
   <svg class="wires" viewBox="0 0 1600 900">
-    <g stroke="rgba(142,197,255,.45)" stroke-width="2" fill="none">
+    <g stroke="rgba(39,99,201,.45)" stroke-width="2" fill="none">
       <path d="M633 400 C 680 400, 680 149, 722 149"/>
       <path d="M633 450 C 680 450, 680 329, 722 329"/>
       <path d="M633 520 C 680 520, 680 509, 722 509"/>
@@ -640,31 +640,31 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
   <div class="ov panel" data-b="4" style="left:840px;top:90px;width:720px;height:740px">
     <div class="h2" style="font-size:42px;margin-bottom:18px">I put the workflow and the classes <em>in one graph.</em></div>
     <div style="display:flex;gap:28px;font:500 16px var(--mono);color:var(--dim);margin-bottom:14px">
-      <span><span style="color:#FFB224">&#x25C7;</span> workflow &#xB7; eligibility.bpmn</span>
-      <span><span style="color:#8EC5FF">&#x25A1;</span> class &#xB7; DiscountPolicy</span>
+      <span><span style="color:#C47400">&#x25C7;</span> workflow &#xB7; eligibility.bpmn</span>
+      <span><span style="color:#2763C9">&#x25A1;</span> class &#xB7; DiscountPolicy</span>
     </div>
     <svg viewBox="0 0 644 290" style="width:100%;display:block" role="img" aria-label="Merged eligibility graph: workflow checks age and student status, then the class checks age again and rejects legacy users before the discount">
-      <defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#8FA8C1"/></marker></defs>
-      <g stroke="#8FA8C1" stroke-width="1.8" fill="none">
+      <defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#5A6B7E"/></marker></defs>
+      <g stroke="#5A6B7E" stroke-width="1.8" fill="none">
         <path d="M30 70 H68" marker-end="url(#ah2)"/><path d="M190 70 H230" marker-end="url(#ah2)"/><path d="M352 70 H410" marker-end="url(#ah2)"/>
         <path d="M487 95 V173" marker-end="url(#ah2)"/><path d="M392 200 H342" marker-end="url(#ah2)"/><path d="M200 200 H134" marker-end="url(#ah2)"/>
       </g>
-      <circle cx="18" cy="70" r="12" fill="none" stroke="#EEF4FA" stroke-width="2"/>
-      <path d="M70 70 L130 35 L190 70 L130 105 Z" fill="#07131F" stroke="#FFB224" stroke-width="2"/>
-      <path d="M232 70 L292 35 L352 70 L292 105 Z" fill="#07131F" stroke="#FFB224" stroke-width="2"/>
-      <rect x="412" y="45" width="150" height="50" rx="8" fill="#07131F" stroke="#8EC5FF" stroke-width="2"/>
-      <rect x="392" y="175" width="190" height="50" rx="8" fill="rgba(255,106,85,.10)" stroke="#FF6A55" stroke-width="2.5"/>
-      <rect x="200" y="175" width="140" height="50" rx="8" fill="#07131F" stroke="#EEF4FA" stroke-width="2"/>
-      <circle cx="120" cy="200" r="12" fill="none" stroke="#EEF4FA" stroke-width="4"/>
-      <g font-family="JetBrains Mono, monospace" font-size="14" fill="#EEF4FA" text-anchor="middle">
+      <circle cx="18" cy="70" r="12" fill="none" stroke="#15202C" stroke-width="2"/>
+      <path d="M70 70 L130 35 L190 70 L130 105 Z" fill="#FFFFFF" stroke="#C47400" stroke-width="2"/>
+      <path d="M232 70 L292 35 L352 70 L292 105 Z" fill="#FFFFFF" stroke="#C47400" stroke-width="2"/>
+      <rect x="412" y="45" width="150" height="50" rx="8" fill="#FFFFFF" stroke="#2763C9" stroke-width="2"/>
+      <rect x="392" y="175" width="190" height="50" rx="8" fill="rgba(255,106,85,.10)" stroke="#D23F2E" stroke-width="2.5"/>
+      <rect x="200" y="175" width="140" height="50" rx="8" fill="#FFFFFF" stroke="#15202C" stroke-width="2"/>
+      <circle cx="120" cy="200" r="12" fill="none" stroke="#15202C" stroke-width="4"/>
+      <g font-family="JetBrains Mono, monospace" font-size="14" fill="#15202C" text-anchor="middle">
         <text x="130" y="75">age &lt; 26</text><text x="292" y="75">student?</text><text x="487" y="75">age &lt; 26</text>
         <text x="487" y="205">is_legacy: reject</text><text x="270" y="205">discount</text>
       </g>
       <g font-family="JetBrains Mono, monospace" font-size="13" font-weight="700" letter-spacing="1.5">
-        <text x="412" y="34" fill="#8EC5FF">REDUNDANT</text>
-        <text x="392" y="250" fill="#FF6A55">CONTRADICTS</text>
+        <text x="412" y="34" fill="#2763C9">REDUNDANT</text>
+        <text x="392" y="250" fill="#D23F2E">CONTRADICTS</text>
       </g>
-      <text x="292" y="130" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#FFB224">admits legacy students</text>
+      <text x="292" y="130" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#C47400">admits legacy students</text>
     </svg>
     <div style="display:grid;gap:14px;margin-top:22px;font:400 20px/1.45 var(--body)">
       <div><b style="color:var(--blue)">Redundant:</b> the workflow checks age &lt; 26, and the class checks it again.</div>
@@ -675,7 +675,7 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
   <div class="ov panel" data-b="2" data-until="3" style="left:840px;top:90px;width:720px;height:740px">
     <div class="eb" style="margin-bottom:10px">Under the query API</div>
     <div class="h2" style="font-size:38px;margin-bottom:24px">I compiled one graph <em>from many sources.</em></div>
-    <svg viewBox="0 0 644 520" style="width:644px;height:520px;display:block" role="img" aria-label="Four sources, each read by its own parser, are joined into one compiled graph; the query API sits on that graph"><defs><marker id="aorm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#FFB224"/></marker></defs><g font-family="JetBrains Mono, monospace"><rect x="0" y="0" width="250" height="60" rx="8" fill="#0C2136" stroke="rgba(170,205,240,.3)"/><text x="14" y="25" font-size="15" fill="#EEF4FA" font-weight="600">Python code</text><text x="14" y="46" font-size="13" fill="#E0896A">Joern &#x2192; code property graph</text><path d="M252 30 C 300 30, 300 140, 338 140" stroke="#FFB224" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><rect x="0" y="74" width="250" height="60" rx="8" fill="#0C2136" stroke="rgba(170,205,240,.3)"/><text x="14" y="99" font-size="15" fill="#EEF4FA" font-weight="600">BPMN, XML config</text><text x="14" y="120" font-size="13" fill="#E0896A">XML parser</text><path d="M252 104 C 300 104, 300 140, 338 140" stroke="#FFB224" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><rect x="0" y="148" width="250" height="60" rx="8" fill="#0C2136" stroke="rgba(170,205,240,.3)"/><text x="14" y="173" font-size="15" fill="#EEF4FA" font-weight="600">OpenAPI, fixtures</text><text x="14" y="194" font-size="13" fill="#E0896A">JSON loader</text><path d="M252 178 C 300 178, 300 140, 338 140" stroke="#FFB224" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><rect x="0" y="222" width="250" height="60" rx="8" fill="#0C2136" stroke="rgba(170,205,240,.3)"/><text x="14" y="247" font-size="15" fill="#EEF4FA" font-weight="600">Django models, SQL</text><text x="14" y="268" font-size="13" fill="#E0896A">schema reader</text><path d="M252 252 C 300 252, 300 140, 338 140" stroke="#FFB224" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><text x="292" y="296" font-size="12" fill="#FFB224" text-anchor="middle">join on names + IDs</text><rect x="342" y="40" width="302" height="210" rx="12" fill="rgba(255,178,36,.08)" stroke="#FFB224" stroke-width="2"/><text x="360" y="68" font-size="15" fill="#FFB224" font-weight="700">one compiled graph</text><line x1="390" y1="110" x2="470" y2="100" stroke="rgba(170,205,240,.45)" stroke-width="1.4"/><line x1="470" y1="100" x2="560" y2="118" stroke="rgba(170,205,240,.45)" stroke-width="1.4"/><line x1="390" y1="110" x2="420" y2="165" stroke="rgba(170,205,240,.45)" stroke-width="1.4"/><line x1="420" y1="165" x2="520" y2="170" stroke="rgba(170,205,240,.45)" stroke-width="1.4"/><line x1="520" y1="170" x2="560" y2="118" stroke="rgba(170,205,240,.45)" stroke-width="1.4"/><line x1="520" y1="170" x2="600" y2="160" stroke="rgba(170,205,240,.45)" stroke-width="1.4"/><line x1="470" y1="100" x2="520" y2="170" stroke="rgba(170,205,240,.45)" stroke-width="1.4"/><circle cx="390" cy="110" r="7" fill="#8EC5FF"/><circle cx="470" cy="100" r="7" fill="#8EC5FF"/><circle cx="560" cy="118" r="7" fill="#5FDDA4"/><circle cx="420" cy="165" r="7" fill="#D196FF"/><circle cx="520" cy="170" r="7" fill="#8EC5FF"/><circle cx="600" cy="160" r="7" fill="#5FDDA4"/><text x="360" y="212" font-size="12" fill="#8FA8C1">functions, classes, tables, steps</text><text x="360" y="232" font-size="12" fill="#8FA8C1">calls, reads, writes, triggers</text><path d="M493 252 V 330" stroke="#FFB224" stroke-width="2" marker-end="url(#aorm)"/><rect x="200" y="336" width="444" height="76" rx="10" fill="#07131F" stroke="rgba(170,205,240,.3)"/><text x="218" y="364" font-size="13" fill="#8FA8C1">query API</text><text x="218" y="394" font-size="15" fill="#EEF4FA">Code.functions.filter(writes=<tspan fill="#9FE6C3">"orders.total"</tspan>)</text><text x="0" y="470" font-size="14" fill="#8FA8C1">built per project &#xB7; rebuilt when the code changes</text></g></svg>
+    <svg viewBox="0 0 644 520" style="width:644px;height:520px;display:block" role="img" aria-label="Four sources, each read by its own parser, are joined into one compiled graph; the query API sits on that graph"><defs><marker id="aorm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#C47400"/></marker></defs><g font-family="JetBrains Mono, monospace"><rect x="0" y="0" width="250" height="60" rx="8" fill="#F4F7FB" stroke="rgba(30,50,80,.25)"/><text x="14" y="25" font-size="15" fill="#15202C" font-weight="600">Python code</text><text x="14" y="46" font-size="13" fill="#B8542F">Joern &#x2192; code property graph</text><path d="M252 30 C 300 30, 300 140, 338 140" stroke="#C47400" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><rect x="0" y="74" width="250" height="60" rx="8" fill="#F4F7FB" stroke="rgba(30,50,80,.25)"/><text x="14" y="99" font-size="15" fill="#15202C" font-weight="600">BPMN, XML config</text><text x="14" y="120" font-size="13" fill="#B8542F">XML parser</text><path d="M252 104 C 300 104, 300 140, 338 140" stroke="#C47400" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><rect x="0" y="148" width="250" height="60" rx="8" fill="#F4F7FB" stroke="rgba(30,50,80,.25)"/><text x="14" y="173" font-size="15" fill="#15202C" font-weight="600">OpenAPI, fixtures</text><text x="14" y="194" font-size="13" fill="#B8542F">JSON loader</text><path d="M252 178 C 300 178, 300 140, 338 140" stroke="#C47400" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><rect x="0" y="222" width="250" height="60" rx="8" fill="#F4F7FB" stroke="rgba(30,50,80,.25)"/><text x="14" y="247" font-size="15" fill="#15202C" font-weight="600">Django models, SQL</text><text x="14" y="268" font-size="13" fill="#B8542F">schema reader</text><path d="M252 252 C 300 252, 300 140, 338 140" stroke="#C47400" stroke-width="1.6" fill="none" marker-end="url(#aorm)"/><text x="292" y="296" font-size="12" fill="#C47400" text-anchor="middle">join on names + IDs</text><rect x="342" y="40" width="302" height="210" rx="12" fill="rgba(255,178,36,.08)" stroke="#C47400" stroke-width="2"/><text x="360" y="68" font-size="15" fill="#C47400" font-weight="700">one compiled graph</text><line x1="390" y1="110" x2="470" y2="100" stroke="rgba(30,50,80,.4)" stroke-width="1.4"/><line x1="470" y1="100" x2="560" y2="118" stroke="rgba(30,50,80,.4)" stroke-width="1.4"/><line x1="390" y1="110" x2="420" y2="165" stroke="rgba(30,50,80,.4)" stroke-width="1.4"/><line x1="420" y1="165" x2="520" y2="170" stroke="rgba(30,50,80,.4)" stroke-width="1.4"/><line x1="520" y1="170" x2="560" y2="118" stroke="rgba(30,50,80,.4)" stroke-width="1.4"/><line x1="520" y1="170" x2="600" y2="160" stroke="rgba(30,50,80,.4)" stroke-width="1.4"/><line x1="470" y1="100" x2="520" y2="170" stroke="rgba(30,50,80,.4)" stroke-width="1.4"/><circle cx="390" cy="110" r="7" fill="#2763C9"/><circle cx="470" cy="100" r="7" fill="#2763C9"/><circle cx="560" cy="118" r="7" fill="#178A5A"/><circle cx="420" cy="165" r="7" fill="#D196FF"/><circle cx="520" cy="170" r="7" fill="#2763C9"/><circle cx="600" cy="160" r="7" fill="#178A5A"/><text x="360" y="212" font-size="12" fill="#5A6B7E">functions, classes, tables, steps</text><text x="360" y="232" font-size="12" fill="#5A6B7E">calls, reads, writes, triggers</text><path d="M493 252 V 330" stroke="#C47400" stroke-width="2" marker-end="url(#aorm)"/><rect x="200" y="336" width="444" height="76" rx="10" fill="#FFFFFF" stroke="rgba(30,50,80,.25)"/><text x="218" y="364" font-size="13" fill="#5A6B7E">query API</text><text x="218" y="394" font-size="15" fill="#15202C">Code.functions.filter(writes=<tspan fill="#1F7A52">"orders.total"</tspan>)</text><text x="0" y="470" font-size="14" fill="#5A6B7E">built per project &#xB7; rebuilt when the code changes</text></g></svg>
   </div>
 </section>
 
@@ -703,14 +703,14 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
    &#x2514;&#x2500; RefundMixin
       &#x2514;&#x2500; api/v1.py:88</div><div class="cap">call hierarchy</div></div>
       <div class="mcard" style="position:relative"><div class="sk"></div>
-        <svg viewBox="0 0 230 110" style="width:230px;display:block"><g fill="none" stroke="#C5D5E5" stroke-width="1.6"><rect x="4" y="10" width="86" height="70" rx="4"/><rect x="140" y="30" width="86" height="56" rx="4"/><path d="M90 45 H140"/><path d="M130 37 L140 45 L130 53"/></g><g font-family="JetBrains Mono, monospace" font-size="12" fill="#C5D5E5"><text x="12" y="28">orders</text><text x="12" y="48" fill="#8FA8C1">id</text><text x="12" y="64" fill="#8FA8C1">total</text><text x="148" y="48">refunds</text><text x="148" y="68" fill="#8FA8C1">order_id</text></g></svg>
+        <svg viewBox="0 0 230 110" style="width:230px;display:block"><g fill="none" stroke="#3B4B5E" stroke-width="1.6"><rect x="4" y="10" width="86" height="70" rx="4"/><rect x="140" y="30" width="86" height="56" rx="4"/><path d="M90 45 H140"/><path d="M130 37 L140 45 L130 53"/></g><g font-family="JetBrains Mono, monospace" font-size="12" fill="#3B4B5E"><text x="12" y="28">orders</text><text x="12" y="48" fill="#5A6B7E">id</text><text x="12" y="64" fill="#5A6B7E">total</text><text x="148" y="48">refunds</text><text x="148" y="68" fill="#5A6B7E">order_id</text></g></svg>
         <div class="cap">ER diagram</div></div>
       <div class="mcard" style="position:relative"><div class="sk"></div><div class="mini"><span style="color:var(--red)">&#x25CF;</span> 1187  if order.status&#x2026;
 <span style="color:var(--dim)">&#x2500; variables &#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;</span>
 order.status = 3
 order.total  = 120.00</div><div class="cap">debugger</div></div>
       <div class="mcard" style="position:relative"><div class="sk"></div>
-        <svg viewBox="0 0 230 110" style="width:230px;display:block"><g fill="none" stroke="#EEF4FA" stroke-width="2.2" filter="url(#rough)"><rect x="6" y="12" width="76" height="40" rx="10"/><rect x="146" y="12" width="76" height="40" rx="10"/><rect x="76" y="70" width="76" height="34" rx="10"/><path d="M82 32 H146"/><path d="M184 52 C 184 80, 160 86, 152 86"/></g><g font-family="Caveat, cursive" font-size="20" fill="#EEF4FA"><text x="14" y="38">tickets</text><text x="150" y="38">payments</text><text x="96" y="93">erp</text></g></svg>
+        <svg viewBox="0 0 230 110" style="width:230px;display:block"><g fill="none" stroke="#15202C" stroke-width="2.2" filter="url(#rough)"><rect x="6" y="12" width="76" height="40" rx="10"/><rect x="146" y="12" width="76" height="40" rx="10"/><rect x="76" y="70" width="76" height="34" rx="10"/><path d="M82 32 H146"/><path d="M184 52 C 184 80, 160 86, 152 86"/></g><g font-family="Caveat, cursive" font-size="20" fill="#15202C"><text x="14" y="38">tickets</text><text x="150" y="38">payments</text><text x="96" y="93">erp</text></g></svg>
         <div class="cap">whiteboard</div></div>
       <div class="mcard" style="position:relative"><div class="sk"></div>
         <div style="position:absolute;left:96px;top:16px;width:78px;height:112px;background:repeating-linear-gradient(180deg, rgba(197,213,229,.55) 0 2px, transparent 2px 6px);-webkit-mask:linear-gradient(90deg,#000 55%,rgba(0,0,0,.4));mask:linear-gradient(90deg,#000 55%,rgba(0,0,0,.4))"></div>
@@ -819,9 +819,9 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
   const tiles = document.getElementById('tiles');
   for (let i = 0; i < 15; i++) {
     const t = document.createElement('div');
-    t.style.cssText = 'border:1px solid var(--line-faint);border-radius:6px;background:rgba(7,19,31,.6);position:relative;overflow:hidden';
+    t.style.cssText = 'border:1px solid var(--line-faint);border-radius:6px;background:rgba(255,255,255,.8);position:relative;overflow:hidden';
     const lines = 4 + Math.floor(rnd() * 4); let html = '';
-    for (let j = 0; j < lines; j++) html += `<div style="height:5px;border-radius:3px;margin:9px 12px 0;width:${30 + rnd() * 60}%;background:${rnd() < .22 ? 'rgba(224,137,106,.55)' : 'rgba(143,168,193,.28)'}"></div>`;
+    for (let j = 0; j < lines; j++) html += `<div style="height:5px;border-radius:3px;margin:9px 12px 0;width:${30 + rnd() * 60}%;background:${rnd() < .22 ? 'rgba(200,100,63,.5)' : 'rgba(60,80,110,.25)'}"></div>`;
     t.innerHTML = html + `<div style="position:absolute;left:12px;bottom:8px;font:500 12px var(--mono);color:var(--dim)">session ${String(i + 16).padStart(2, '0')}</div>`;
     tiles.appendChild(t);
   }
@@ -864,7 +864,6 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     ['L7',1,'Instead, run one job with shared context. People join where their judgment matters: the rule decision, the plan and metric, and the boundary case. Humans should not be meat-proxies.'],
     ['L7',2,'This is not new to anyone who leads a junior engineer well. Give ownership, set frameworks, define success, keep people accountable, and do not read over their shoulder.'],
     ['L7',3,'Three things changed for me. Task size: one ticket now covers a whole class of problems. Authority: agents own their instruments, and I own the plan and the metric. Where I step in: at the plan, the boundary case and the rule decision.'],
-    ['L7',4,'This is where I stand. Agents do not make engineers unnecessary. Agents are not hype either. This talk is about engineers who use the new tools well.'],
     ['L8',0,'Reveal. Point at the minimap in the corner. It started as a dot on the first slide. This talk zoomed out too. I proposed a talk about what agents should read. The industry moved fast, and many new things became possible. The talk grew, so I zoomed out with it.'],
     ['L8',1,'This is the takeaway. Developer tooling for one codebase was impractical before: transpilers, codemod engines, code graphs and custom linters. AI-written code is cheap now, so many of these tools became practical. I trust them only with checks around them. I do not build this for small or short-lived codebases, or when ripgrep already answers the question. [A case where grep would have been enough.] I build a tool only after the agent asks the same question [N] times.'],
     ['L8',2,'Here is the whole talk as one table. Each row is a tool that I built and the check that I used on it. These are my examples, not a product or a recipe. Your codebase needs its own tools and its own checks. Most tools were under [N] lines and took about an hour. The graph and the query API were the exception: [N lines, N days].'],
@@ -872,7 +871,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     ['L8',4,'Thank you. Point at the slides link so people can find the deck. Then take questions.'],
   ];
   // per-step tag: real = how I actually did it; analogy = a familiar Python/dev stand-in
-  const TAGS = {3:"real",4:"real",5:"real",11:"real",12:"real",13:"real",15:"real",16:"real",18:"real",19:"real",20:"real",21:"real",22:"real",23:"real",24:"real",25:"real",26:"real",27:"real",28:"real",29:"real",30:"real",31:"real",32:"real",33:"real",34:"real",36:"real",40:"real",6:"analogy",7:"analogy",14:"analogy",17:"analogy",35:"analogy"};
+  const TAGS = {3:"real",4:"real",5:"real",11:"real",12:"real",13:"real",15:"real",16:"real",18:"real",19:"real",20:"real",21:"real",22:"real",23:"real",24:"real",25:"real",26:"real",27:"real",28:"real",29:"real",30:"real",31:"real",32:"real",33:"real",34:"real",36:"real",39:"real",6:"analogy",7:"analogy",14:"analogy",17:"analogy",35:"analogy"};
   const idx = {}; STEPS.forEach(([f, b], i) => { idx[f + ':' + b] = i; });
   const first = {}; STEPS.forEach(([f], i) => { if (!(f in first)) first[f] = i; });
   const at = (f, b) => (f + ':' + b) in idx ? idx[f + ':' + b] : Infinity;
@@ -973,8 +972,8 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
   // -- L5 + L6 diagrams --
   (() => {
     const F = 'JetBrains Mono, monospace';
-    const T = (x, y, t, o = {}) => `<text x="${x}" y="${y}" font-family="${o.f || F}" font-size="${o.s || 15}" fill="${o.c || '#EEF4FA'}" text-anchor="${o.a || 'start'}" font-weight="${o.w || 400}" letter-spacing="${o.ls || 0}">${t}</text>`;
-    const AMB = '#FFB224', DIM = '#8FA8C1', RED = '#FF6A55', GRN = '#5FDDA4', BLU = '#8EC5FF', INK = '#EEF4FA', BG = '#0C2136', LN = 'rgba(170,205,240,.3)';
+    const T = (x, y, t, o = {}) => `<text x="${x}" y="${y}" font-family="${o.f || F}" font-size="${o.s || 15}" fill="${o.c || '#15202C'}" text-anchor="${o.a || 'start'}" font-weight="${o.w || 400}" letter-spacing="${o.ls || 0}">${t}</text>`;
+    const AMB = '#C47400', DIM = '#5A6B7E', RED = '#D23F2E', GRN = '#178A5A', BLU = '#2763C9', INK = '#15202C', BG = '#F4F7FB', LN = 'rgba(30,50,80,.25)';
     const arrowDefs = id => `<defs><marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="${AMB}"/></marker></defs>`;
     const pill = (cx, cy, t, c) => `<rect x="${cx - t.length * 4.6 - 10}" y="${cy - 14}" width="${t.length * 9.2 + 20}" height="26" rx="6" fill="${BG}" stroke="${c}"/>` + T(cx, cy + 5, t, { c, s: 15, a: 'middle' });
 
@@ -990,18 +989,18 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     LAYERS.forEach((l, i) => { g1 += T(COLX[i] + BW / 2, 26, l.toUpperCase(), { c: DIM, s: 13, w: 600, ls: 2, a: 'middle' }); });
     g1 += T(0, OY + 36, 'monolith', { s: 19, w: 700 }) + T(0, OY + 60, '2016', { c: DIM, s: 14 });
     g1 += T(0, NY + 36, 'payments-svc', { s: 19, w: 700 }) + T(0, NY + 60, '2026', { c: DIM, s: 14 });
-    g2 += T(0, OY + 82, 'hook: sys.monitoring', { c: '#E0896A', s: 13 }) + T(0, OY + 100, '(3.12+) + DB query log', { c: '#E0896A', s: 13 });
-    g2 += T(0, NY + 82, 'hook: OpenTelemetry', { c: '#E0896A', s: 13 }) + T(0, NY + 100, '+ event tap', { c: '#E0896A', s: 13 });
+    g2 += T(0, OY + 82, 'hook: sys.monitoring', { c: '#B8542F', s: 13 }) + T(0, OY + 100, '(3.12+) + DB query log', { c: '#B8542F', s: 13 });
+    g2 += T(0, NY + 82, 'hook: OpenTelemetry', { c: '#B8542F', s: 13 }) + T(0, NY + 100, '+ event tap', { c: '#B8542F', s: 13 });
     [[OLD, OY], [NEW, NY]].forEach(([lane, y]) => {
       lane.forEach(([name, raw], i) => {
         const x = COLX[i], door = i === 0;
         if (i < 3) g1 += `<path d="M${x + BW} ${y + BH / 2} H ${COLX[i + 1] - 4}" stroke="${DIM}" stroke-width="1.8" marker-end="url(#af)"/>`;
         g1 += `<rect x="${x}" y="${y}" width="${BW}" height="${BH}" rx="10" fill="${BG}" stroke="${door ? AMB : LN}" stroke-width="${door ? 2.2 : 1.4}"/>` + T(x + 16, y + 32, name, { s: 17, w: 600 });
-        g2 += `<circle cx="${x + BW - 16}" cy="${y + 16}" r="7" fill="${'#E0896A'}"/>` + T(x + 16, y + 62, raw, { c: '#E0896A', s: 15 });
+        g2 += `<circle cx="${x + BW - 16}" cy="${y + 16}" r="7" fill="${'#B8542F'}"/>` + T(x + 16, y + 62, raw, { c: '#B8542F', s: 15 });
       });
     });
     g2 += T(740, 320, 'the raw values do not match', { c: RED, s: 18, w: 600, a: 'middle' });
-    g3 += `<rect x="190" y="270" width="1200" height="180" rx="14" fill="#0C2136" stroke="${AMB}" stroke-width="2"/>`;
+    g3 += `<rect x="190" y="270" width="1200" height="180" rx="14" fill="#F4F7FB" stroke="${AMB}" stroke-width="2"/>`;
     g3 += T(210, 300, 'COMMON PLANE', { c: AMB, s: 14, w: 600, ls: 2 }) + T(380, 300, 'map each layer, then derive the transform', { c: DIM, s: 14 });
     PLANE.forEach((f, i) => {
       const x = COLX[i], cx = x + BW / 2;
@@ -1012,13 +1011,13 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     });
     const fv = document.getElementById('flowviz');
     fv.innerHTML = `<defs><marker id="af" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="${DIM}"/></marker><marker id="af2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="${AMB}"/></marker></defs>`
-      + `<rect x="0.5" y="0.5" width="1479" height="689" rx="14" fill="#07131F" stroke="${LN}"/>`
+      + `<rect x="0.5" y="0.5" width="1479" height="689" rx="14" fill="#FFFFFF" stroke="${LN}"/>`
       + `<g transform="translate(30,0)"><g data-b="1">${g1}</g><g data-b="2">${g2}</g><g data-b="3">${g3}</g></g>`;
     fv.querySelectorAll('[data-b]').forEach(el => items.push({ el, f: 'L5' }));
 
     // L5 . coverage: every door type through every layer
     const DOORS = [['HTTP routes', 142, [142, 142, 142, 138]], ['Celery beat jobs', 12, [11, 11, 11, 9]], ['management commands', 9, [9, 9, 9, 9]], ['signals', 31, [23, 23, 21, 19]], ['queue consumers', 4, [4, 4, 4, 3]], ['DB-triggered work', 3, [2, 2, 2, 2]]];
-    let d = `<rect x="0.5" y="0.5" width="1479" height="689" rx="14" fill="#07131F" stroke="${LN}"/>`;
+    let d = `<rect x="0.5" y="0.5" width="1479" height="689" rx="14" fill="#FFFFFF" stroke="${LN}"/>`;
     const CX0 = 400, CW = 250, RY0 = 80, RH = 84;
     LAYERS.forEach((l, i) => { d += T(CX0 + i * CW + CW / 2, 56, l.toUpperCase(), { c: DIM, s: 13, w: 600, ls: 2, a: 'middle' }); });
     DOORS.forEach(([name, n, cols], r) => {
@@ -1026,7 +1025,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
       d += T(40, y + 40, name, { s: 18 }) + T(40, y + 62, `${n} entrypoints`, { c: DIM, s: 14 });
       cols.forEach((v, c) => {
         const x = CX0 + c * CW + 8, w = CW - 16, full = v === n;
-        d += `<rect x="${x}" y="${y + 10}" width="${w}" height="${RH - 20}" rx="8" fill="#0C2136" stroke="${full ? 'rgba(95,221,164,.5)' : RED}" stroke-width="${full ? 1 : 1.6}"/>`;
+        d += `<rect x="${x}" y="${y + 10}" width="${w}" height="${RH - 20}" rx="8" fill="#F4F7FB" stroke="${full ? 'rgba(95,221,164,.5)' : RED}" stroke-width="${full ? 1 : 1.6}"/>`;
         d += `<rect x="${x + 1}" y="${y + 11}" width="${(w - 2) * v / n}" height="${RH - 22}" rx="7" fill="${GRN}" opacity="${full ? .28 : .2}"/>`;
         d += T(x + w / 2, y + RH / 2 + 6, `${v}/${n}`, { c: full ? INK : RED, s: 18, w: 600, a: 'middle' });
       });
@@ -1071,7 +1070,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     let c1 = '', c2 = '', c3 = '';
     c1 += T(0, 24, '1  Did it read every file?', { s: 21, w: 600 });
     const W = 844, wF = 12, wS = 22, wR = W - wF - wS;
-    c1 += `<rect x="0" y="48" width="${wR}" height="38" rx="6" fill="${GRN}" opacity=".75"/><rect x="${wR}" y="48" width="${wS}" height="38" fill="#3E5772"/><rect x="${wR + wS}" y="48" width="${wF}" height="38" rx="3" fill="${RED}"/>`;
+    c1 += `<rect x="0" y="48" width="${wR}" height="38" rx="6" fill="${GRN}" opacity=".75"/><rect x="${wR}" y="48" width="${wS}" height="38" fill="#A9B6C4"/><rect x="${wR + wS}" y="48" width="${wF}" height="38" rx="3" fill="${RED}"/>`;
     c1 += T(0, 116, '1,204 read', { c: GRN, s: 17, w: 600 }) + T(150, 116, '31 skipped: generated code', { c: DIM, s: 16 });
     c1 += `<path d="M${W - 6} 90 V 104 H ${W - 20}" stroke="${RED}" stroke-width="1.6" fill="none"/>` + T(W - 24, 116, '3 failed: dynamic imports', { c: RED, s: 17, w: 600, a: 'end' });
     c2 += T(0, 194, '2  Does it find what we planted?', { s: 21, w: 600 });
