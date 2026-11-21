@@ -390,10 +390,10 @@ sync_erp</span>
   <div class="slabel" style="left:1006.67px;top:268px">payments-svc &#xB7; <b>2026</b></div>
 
   <div data-b="0" data-until="1" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Do the two systems <em>behave the same?</em></div></div>
-  <div class="ov" data-b="1" data-until="2" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Every flow starts at <em>a door.</em></div></div>
+  <div class="ov" data-b="1" data-until="2" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Every flow starts at <em>an entrypoint.</em></div></div>
   <div class="ov" data-b="2" data-until="3" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">I hooked <em>every layer.</em></div></div>
   <div class="ov" data-b="3" data-until="4" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">I mapped, then <em>derived the transform.</em></div></div>
-  <div class="ov" data-b="4" data-until="5" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:58px">I traced each door through <em>each layer.</em></div></div>
+  <div class="ov" data-b="4" data-until="5" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:54px">I traced each entrypoint through <em>each layer.</em></div></div>
   <div class="ov" data-b="5" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Understanding should be <em>executable.</em></div></div>
 
   <!-- new system sketch -->
@@ -423,7 +423,7 @@ sync_erp</span>
     <div class="mono" style="margin-top:14px;font-size:17px;color:var(--amber)">old &#x2261; new <span style="color:var(--green)">&#x2713;</span></div>
   </div>
   <div class="ov" data-b="1" data-until="4" style="left:60px;top:196px;width:1480px;height:690px"><svg id="flowviz" viewBox="0 0 1480 690" style="width:1480px;height:690px;display:block" role="img" aria-label="A refund flows through entrypoint, logic, persistence and side-effect layers in both systems; each layer is hooked, mapped into a common plane, and the transform between them is derived"></svg></div>
-  <div class="ov" data-b="4" data-until="5" style="left:60px;top:196px;width:1480px;height:690px"><svg id="covviz" viewBox="0 0 1480 690" style="width:1480px;height:690px;display:block" role="img" aria-label="Coverage matrix of entrypoint types against layers; most cells are fully mapped, most door types have gaps; signals and cron jobs have the most"></svg></div>
+  <div class="ov" data-b="4" data-until="5" style="left:60px;top:196px;width:1480px;height:690px"><svg id="covviz" viewBox="0 0 1480 690" style="width:1480px;height:690px;display:block" role="img" aria-label="Coverage matrix of entrypoint types against layers; most cells are fully mapped, most entrypoint types have gaps; signals and cron jobs have the most"></svg></div>
   <div class="ov" data-b="5" style="left:60px;top:196px;width:1480px;height:690px;background:#07131F;border:1px solid var(--line);border-radius:14px">
     <svg viewBox="0 0 1480 690" style="position:absolute;inset:0;width:1480px;height:690px" aria-hidden="true">
       <defs><marker id="ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#FFB224"/></marker></defs>
@@ -443,10 +443,10 @@ sync_erp</span>
     <div data-b="5" style="position:absolute;background:#0C2136;border-radius:12px;padding:18px 22px;left:530px;top:50px;width:420px;height:280px;border:1.5px solid var(--line)">
       <div class="eb" style="font-size:14px;margin-bottom:12px">2 &#xB7; Operation</div>
       <div class="code" style="font-size:17px;line-height:1.6"><span class="f">refund</span>(user, order) <span class="p">&#x2192;</span> Refund
-<span class="p">door  </span> POST /refunds
+<span class="p">entry </span> POST /refunds
 <span class="p">reads </span> orders, users
 <span class="p">writes</span> orders.status, ledger</div>
-      <div class="slabel" style="position:absolute;left:22px;bottom:16px">from the doors and layers</div>
+      <div class="slabel" style="position:absolute;left:22px;bottom:16px">from the entrypoints and layers</div>
     </div>
     <div data-b="6" style="position:absolute;background:#0C2136;border-radius:12px;padding:18px 22px;left:1030px;top:50px;width:420px;height:280px;border:2px solid var(--amber);background:rgba(255,178,36,.07)">
       <div class="eb" style="font-size:14px;margin-bottom:12px">3 &#xB7; Transform</div>
@@ -676,7 +676,7 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
   <div style="left:660px;top:770px;width:880px" class="slabel"><b>tickets/views.py</b> &#xB7; 2,914 lines &#xB7; 61 functions &#xB7; 14 authors &#xB7; since 2016</div>
 
   <div class="ov" data-b="0" data-until="1" style="left:660px;top:120px;width:880px">
-    <div class="h1" style="font-size:80px">Reading is the only door <em>we gave it.</em></div>
+    <div class="h1" style="font-size:80px">Reading files is all <em>the agent can do.</em></div>
     <p class="lead" style="margin-top:34px">Read() &#xB7; Grep() &#xB7; Read()</p>
   </div>
 
@@ -821,7 +821,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     ['T',3,'Ask the room: who has seen this screen? Keep your hand up if the work was half done. We still had work to do.'],
     ['T',4,'So where did all the tokens go? Let us look.'],
     ['L1',0,'Did you feel this? The agent reads the same file for the third time. It still does not know what status 3 means or who else writes order.status.'],
-    ['L2',0,'Zoom out to the file: 2,914 lines. Reading text is the only door we gave the agent into this system.'],
+    ['L2',0,'Zoom out to the file: 2,914 lines. Reading files is the only access that we gave the agent to this system.'],
     ['L2',1,'Look at what we built for ourselves so that we do not read code like this: folding, call hierarchies, ER diagrams, debuggers and whiteboards.'],
     ['L2',2,'And then we gave our agents a file reader.'],
     ['L2',3,'I wish I could show my agent how I see this system. Make your wish come true: ask it. This tooling was too expensive to build for one codebase. Cheap AI-written code, with checks around it, changed that. The end of the talk comes back to this. By the third time, the room says "ask it" with you.'],
@@ -833,10 +833,10 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     ['L4',1,'Django migrations, for code. makecodemigrations generates the codemod. The --plan flag works like Django migrate --plan. A --diff flag would be the sqlmigrate equivalent. I ran it on a sample first, then on the rest. These are concept commands. I built them for each project from ast-grep and LibCST.'],
     ['L4',2,'How did I review 41 files? I reviewed the plan and the metric before the work started. Two axes: behavior stays flat, and the ast-grep count goes from 23 to zero. The semantic tier had its own count. Then I added a guard rule so that the old pattern cannot come back.'],
     ['L5',0,'Two systems: the old monolith and the new service. Did you feel this? Reading both codebases does not tell you whether they behave the same. I wished I could box old and new as one unit, so I asked for it.'],
-    ['L5',1,'Every flow starts at a door. Here the door is the refund endpoint. I followed the request through the layers on both sides: entrypoint, logic, persistence and side effects.'],
+    ['L5',1,'Every flow starts at an entrypoint. Here the entrypoint is the refund endpoint. I followed the request through the layers on both sides: entrypoint, logic, persistence and side effects.'],
     ['L5',2,'I hooked every layer on both sides. On the old side, I used sys.monitoring, which needs Python 3.12 or later, and the DB query log. The callbacks give code locations, so I read the values from the frame. On older Pythons, sys.setprofile does the same job. On the new side, I used OpenTelemetry spans and the event bus. The raw values do not match.'],
     ['L5',3,'I mapped each layer into a common plane. Then I derived the transform that explains the difference: pk becomes order, and cents divided by 100 become the amount. When every layer matches, the two systems behave the same.'],
-    ['L5',4,'Objection: this covers one door. So I listed every door: routes, cron jobs, commands, signals, queues and DB triggers. Static analysis listed them. The hooks walked each door through every layer. The gaps became numbers.'],
+    ['L5',4,'Objection: this covers one entrypoint. So I listed every entrypoint: routes, cron jobs, commands, signals, queues and DB triggers. Static analysis listed them. The hooks walked each entrypoint through every layer. The gaps became numbers.'],
     ['L5',5,'Then I made the understanding executable. First the entity: what a refund is, in the shared shape. Then the operation: refund takes a user and an order and returns a refund.'],
     ['L5',6,'Then I computed the transform from both systems: eligibility, the amount with its rounding, and the state. z3 found the exact boundary of the rule: day 30.'],
     ['L5',7,'The transform gave me two things. Tests: z3 found the boundary input, and I pinned it with @example. The property test shows that the old code refunds on day 30, because it used .days < 31. Nobody knew. And the implementation: the new service follows the transform, and the tests gate every change.'],
@@ -978,7 +978,6 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
         const x = COLX[i], door = i === 0;
         if (i < 3) g1 += `<path d="M${x + BW} ${y + BH / 2} H ${COLX[i + 1] - 4}" stroke="${DIM}" stroke-width="1.8" marker-end="url(#af)"/>`;
         g1 += `<rect x="${x}" y="${y}" width="${BW}" height="${BH}" rx="10" fill="${BG}" stroke="${door ? AMB : LN}" stroke-width="${door ? 2.2 : 1.4}"/>` + T(x + 16, y + 32, name, { s: 17, w: 600 });
-        if (door) g1 += pill(x + 34, y - 2, 'door', AMB);
         g2 += `<circle cx="${x + BW - 16}" cy="${y + 16}" r="7" fill="${'#E0896A'}"/>` + T(x + 16, y + 62, raw, { c: '#E0896A', s: 15 });
       });
     });
@@ -1005,7 +1004,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     LAYERS.forEach((l, i) => { d += T(CX0 + i * CW + CW / 2, 56, l.toUpperCase(), { c: DIM, s: 13, w: 600, ls: 2, a: 'middle' }); });
     DOORS.forEach(([name, n, cols], r) => {
       const y = RY0 + r * RH;
-      d += T(40, y + 40, name, { s: 18 }) + T(40, y + 62, `${n} doors`, { c: DIM, s: 14 });
+      d += T(40, y + 40, name, { s: 18 }) + T(40, y + 62, `${n} entrypoints`, { c: DIM, s: 14 });
       cols.forEach((v, c) => {
         const x = CX0 + c * CW + 8, w = CW - 16, full = v === n;
         d += `<rect x="${x}" y="${y + 10}" width="${w}" height="${RH - 20}" rx="8" fill="#0C2136" stroke="${full ? 'rgba(95,221,164,.5)' : RED}" stroke-width="${full ? 1 : 1.6}"/>`;
@@ -1013,8 +1012,8 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
         d += T(x + w / 2, y + RH / 2 + 6, `${v}/${n}`, { c: full ? INK : RED, s: 18, w: 600, a: 'middle' });
       });
     });
-    d += T(40, 620, 'static analysis lists the doors \u00B7 the hooks walk each door through every layer', { c: DIM, s: 15 });
-    d += T(1440, 620, '180 of 201 doors mapped end to end', { c: AMB, s: 17, w: 600, a: 'end' });
+    d += T(40, 620, 'static analysis lists the entrypoints \u00B7 the hooks walk each one through every layer', { c: DIM, s: 15 });
+    d += T(1440, 620, '180 of 201 entrypoints mapped end to end', { c: AMB, s: 17, w: 600, a: 'end' });
     document.getElementById('covviz').innerHTML = d;
 
 
