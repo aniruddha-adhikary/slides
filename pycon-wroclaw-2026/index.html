@@ -154,6 +154,7 @@ svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow
 #tag.real { color: var(--green); }
 #tag.analogy { color: var(--blue); }
 #tag.none { opacity: 0; }
+#zcap { position: fixed; left: 50%; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 22; font: 700 26px var(--mono); color: var(--amber); background: rgba(255,255,255,.95); border: 2px solid var(--amber); border-radius: 999px; padding: 10px 26px; white-space: nowrap; box-shadow: 0 12px 30px rgba(20,40,70,.18); }
 #hint { position: fixed; left: 50%; top: calc(18px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); z-index: 22; font: 500 13px var(--mono); color: var(--dim); background: rgba(255,255,255,.92); border: 1px solid var(--line-faint); border-radius: 999px; padding: 8px 16px; white-space: nowrap; transition: opacity 1s; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis; }
 #hint kbd { font: inherit; color: var(--ink); }
 
@@ -178,9 +179,10 @@ svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow
 
   <div data-b="0" data-until="1" style="left:60px;top:440px;width:1480px">
     <div class="h1" style="font-size:66px">This talk <em>zoomed out too.</em></div>
-    <div class="mono" style="margin-top:40px;display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px;color:var(--ink)"><span style="font-size:16px">a line</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:19px">a file</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:22px">modules</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:26px">the codebase</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:30px">two systems</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:35px">the agent</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:41px">the team</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:50px">you</span></div>
+    <svg viewBox="0 0 1000 330" style="width:1000px;height:330px;display:block;margin-top:28px" role="img" aria-label="Eight nested levels from a line of code out to you"><rect x="1" y="1" width="998" height="328" rx="6" fill="rgba(255,255,255,.5)" stroke="#C47400" stroke-width="2.2"/><text x="13" y="24" font-family="JetBrains Mono, monospace" font-size="16" fill="#C47400" font-weight="700">08 you</text><rect x="1" y="35" width="886" height="294" rx="6" fill="none" stroke="rgba(30,50,80,.35)" stroke-width="1.3"/><text x="13" y="58" font-family="JetBrains Mono, monospace" font-size="16" fill="#5A6B7E" font-weight="500">07 the team</text><rect x="1" y="69" width="774" height="260" rx="6" fill="none" stroke="rgba(30,50,80,.35)" stroke-width="1.3"/><text x="13" y="92" font-family="JetBrains Mono, monospace" font-size="16" fill="#5A6B7E" font-weight="500">06 the agent</text><rect x="1" y="103" width="662" height="226" rx="6" fill="none" stroke="rgba(30,50,80,.35)" stroke-width="1.3"/><text x="13" y="126" font-family="JetBrains Mono, monospace" font-size="16" fill="#5A6B7E" font-weight="500">05 two systems</text><rect x="1" y="137" width="550" height="192" rx="6" fill="none" stroke="rgba(30,50,80,.35)" stroke-width="1.3"/><text x="13" y="160" font-family="JetBrains Mono, monospace" font-size="16" fill="#5A6B7E" font-weight="500">04 the codebase</text><rect x="1" y="171" width="438" height="158" rx="6" fill="none" stroke="rgba(30,50,80,.35)" stroke-width="1.3"/><text x="13" y="194" font-family="JetBrains Mono, monospace" font-size="16" fill="#5A6B7E" font-weight="500">03 modules + data</text><rect x="1" y="205" width="326" height="124" rx="6" fill="none" stroke="rgba(30,50,80,.35)" stroke-width="1.3"/><text x="13" y="228" font-family="JetBrains Mono, monospace" font-size="16" fill="#5A6B7E" font-weight="500">02 a file</text><rect x="1" y="239" width="214" height="90" rx="6" fill="rgba(196,116,0,.14)" stroke="#C47400" stroke-width="2.2"/><text x="13" y="262" font-family="JetBrains Mono, monospace" font-size="16" fill="#C47400" font-weight="700">01 a line</text></svg>
   </div>
-  <div data-b="0" data-until="1" class="hand" style="left:760px;top:790px;font-size:40px">look at the corner &#x2198;</div>
+  <div data-b="0" data-until="1" class="hand" style="left:1100px;top:580px;width:420px;font-size:38px;line-height:1.15">the minimap in the corner did the same &#x2198;</div>
+  <div data-b="0" data-until="1" class="mono" style="left:1100px;top:510px;width:420px;font-size:18px;color:var(--dim)">press R to replay the zoom</div>
   <div data-b="1" data-until="2" style="left:60px;top:440px;width:1480px">
     <div class="h1" style="font-size:62px">Impractical tooling is <em>practical now.</em></div>
     <p class="lead" style="margin:18px 0 0;max-width:52em">With checks around it, I trust AI-written tooling.</p>
@@ -749,6 +751,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
   <div id="mml">a line</div>
 </div>
 <div id="tag" class="none"></div>
+<div id="zcap" hidden></div>
 <aside id="notes" hidden><div class="n"><span id="nstep">1 / 29</span><span id="nlvl"></span></div><div id="ntext"></div></aside>
 <div id="hint"><kbd>&#x2192;</kbd> / <kbd>space</kbd> next &#xB7; <kbd>&#x2190;</kbd> back &#xB7; <kbd>N</kbd> notes &#xB7; <kbd>O</kbd> overview &#xB7; <kbd>F</kbd> fullscreen</div>
 
@@ -866,7 +869,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     ['L7',1,'Instead, run one job with shared context. People join where their judgment matters: the rule decision, the plan and metric, and the boundary case. Humans should not be meat-proxies.'],
     ['L7',2,'This is not new to anyone who leads a junior engineer well. Give ownership, set frameworks, define success, keep people accountable, and do not read over their shoulder.'],
     ['L7',3,'Three things changed for me. Task size: one ticket now covers a whole class of problems. Authority: agents own their instruments, and I own the plan and the metric. Where I step in: at the plan, the boundary case and the rule decision.'],
-    ['L8',0,'Reveal. Point at the minimap in the corner. It started as a dot on the first slide. This talk zoomed out too. I proposed a talk about what agents should read. The industry moved fast, and many new things became possible. The talk grew, so I zoomed out with it.'],
+    ['L8',0,'Stop here and say it: look, we have been zooming out the whole time. The camera now replays the path: a line, a file, modules and data, the codebase, two systems, the agent, the team, and you. Press R to replay it. The minimap in the corner did the same. I proposed a talk about what agents should read. The industry moved fast, so the talk grew, and I zoomed out with it.'],
     ['L8',1,'This is the takeaway. Developer tooling for one codebase was impractical before: transpilers, codemod engines, code graphs and custom linters. AI-written code is cheap now, so many of these tools became practical. I trust them only with checks around them. I do not build this for small or short-lived codebases, or when ripgrep already answers the question. [A case where grep would have been enough.] I build a tool only after the agent asks the same question [N] times.'],
     ['L8',2,'Here is the whole talk as one table. Each row is a tool that I built and the check that I used on it. These are my examples, not a product or a recipe. Your codebase needs its own tools and its own checks. Most tools were under [N] lines and took about an hour. The graph and the query API were the exception: [N lines, N days].'],
     ['L8',3,'Claude Code keeps each session as a JSONL file under ~/.claude/projects. Each line is one event, and the tool calls are the tool_use entries. I asked my agent to read those files, count the tool calls by name and input, and group the ones that ask the same question. My first hour went like this: twenty minutes for the survey, twenty to build the top tool, twenty to check it. [If you mention Cursor or another agent, say where its history lives.] Try this on Monday.'],
@@ -1172,7 +1175,26 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     else { sessStop(); sessSet(SESS.length); }
   }
 
+  // replay the whole zoom path from one line of code out to you
+  let replayToken = 0;
+  const zcap = document.getElementById('zcap');
+  function replay(tok) {
+    const seq = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8'];
+    let i = 0;
+    const next = () => {
+      if (tok !== replayToken || i >= seq.length) { zcap.hidden = true; return; }
+      const f = seq[i];
+      if (i === 0) { if (anim) cancelAnimationFrame(anim.raf); anim = null; cam = target(f); apply(cam); }
+      else fly(target(f));
+      zcap.hidden = false;
+      zcap.textContent = String(i + 1).padStart(2, '0') + ' \u00B7 ' + FR[f].label;
+      i++;
+      setTimeout(next, i === 1 ? 1100 : 1500);
+    };
+    next();
+  }
   function go(i, instant) {
+    replayToken++; zcap.hidden = true;
     i = Math.max(0, Math.min(STEPS.length - 1, i));
     const prevFrame = STEPS[cur][0]; const prev = cur;
     cur = i; overview = false;
@@ -1182,8 +1204,10 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     if (instant) { cam = target(tf); apply(cam); }
     else if (tf !== prevFrame || prev === cur || anim || Math.abs(cam.w - target(tf).w) > 1) fly(target(tf));
     try { history.replaceState(null, '', '#s' + (cur + 1)); } catch (e) {}
+    if (!instant && !reduce && cur === idx['L8:0'] && prev === cur - 1) { const tok = replayToken; setTimeout(() => { if (tok === replayToken) replay(tok); }, 1600); }
   }
   function toggleOverview() {
+    replayToken++; zcap.hidden = true;
     overview = !overview;
     updateBuilds(cur);
     fly(overview ? { x: L8.x, y: L8.y, w: 1600 * L8.s * 1.06 } : target(STEPS[cur][0]));
@@ -1199,6 +1223,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     else if (k === 'End') go(STEPS.length - 1);
     else if (k === 'n' || k === 'N') toggleNotes();
     else if (k === 'o' || k === 'O') toggleOverview();
+    else if ((k === 'r' || k === 'R') && cur === idx['L8:0']) { replayToken++; replay(replayToken); }
     else if (k === 'f' || k === 'F') { try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => {}); } catch (err) {} }
   });
   const notes = document.getElementById('notes');
