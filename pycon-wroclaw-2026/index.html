@@ -792,10 +792,10 @@ self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</sp
     
     <div style="position:absolute;left:38px;top:320px;width:420px;height:215px;box-sizing:border-box;border:2.5px dashed var(--blue);border-radius:14px;background:rgba(39,99,201,.05)"></div>
     <div style="position:absolute;left:54px;top:330px;font:500 13px var(--mono);color:var(--blue)">Monty sandbox &#xB7; starts in about a millisecond</div>
-    <div style="position:absolute;left:54px;top:358px;width:388px;height:160px;box-sizing:border-box;border-radius:10px;background:#1B2330;padding:14px 16px;white-space:pre;font:400 15px/1.6 var(--mono);filter:blur(5px)"><span style="color:#E6EDF5">w = who_writes(<span style="color:#9FE6C3">'orders.total'</span>)
-out = [f.name for f in w
-       if f.module != <span style="color:#9FE6C3">'payments'</span>]
-print(len(w), out)</span></div>
+    <div style="position:absolute;left:54px;top:358px;width:388px;height:160px;box-sizing:border-box;border-radius:10px;background:#1B2330;padding:14px 16px;white-space:pre;font:400 15px/1.6 var(--mono);filter:blur(5px)"><span style="color:#E6EDF5">rules = query_api(<span style="color:#9FE6C3">'eligibility'</span>)
+report = run_tests(rules)
+calls = trace(<span style="color:#9FE6C3">'POST /refunds'</span>)
+print(report.failed, len(calls))</span></div>
     <div style="position:absolute;left:54px;top:358px;width:388px;height:160px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(27,35,48,.35);font:700 18px var(--mono);color:#FFFFFF;letter-spacing:.04em">the agent&#x2019;s snippet &#xB7; to explore</div>
     <div style="position:absolute;left:500px;top:322px;font:500 13px var(--mono);color:var(--dim)">my tools</div>
     <div style="position:absolute;left:500px;top:350px;width:180px;height:38px;box-sizing:border-box;border:1.5px solid var(--blue);border-radius:8px;background:#FFFFFF;font:500 14px var(--mono);color:var(--blue);display:flex;align-items:center;justify-content:center">query_api()</div><div style="position:absolute;left:500px;top:394px;width:180px;height:38px;box-sizing:border-box;border:1.5px solid var(--blue);border-radius:8px;background:#FFFFFF;font:500 14px var(--mono);color:var(--blue);display:flex;align-items:center;justify-content:center">run_tests()</div><div style="position:absolute;left:500px;top:438px;width:180px;height:38px;box-sizing:border-box;border:1.5px solid var(--blue);border-radius:8px;background:#FFFFFF;font:500 14px var(--mono);color:var(--blue);display:flex;align-items:center;justify-content:center">trace()</div>
