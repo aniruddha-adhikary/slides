@@ -871,7 +871,7 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     ['L8',4,'Thank you. Point at the slides link so people can find the deck. Then take questions.'],
   ];
   // per-step tag: real = how I actually did it; analogy = a familiar Python/dev stand-in
-  const TAGS = {3:"real",4:"real",5:"real",11:"real",12:"real",13:"real",15:"real",16:"real",18:"real",19:"real",20:"real",21:"real",22:"real",23:"real",24:"real",25:"real",26:"real",27:"real",28:"real",29:"real",30:"real",31:"real",32:"real",33:"real",34:"real",36:"real",39:"real",6:"analogy",7:"analogy",14:"analogy",17:"analogy",35:"analogy"};
+  const TAGS = {6:"analogy",7:"analogy",14:"analogy",17:"analogy",35:"analogy"};
   const idx = {}; STEPS.forEach(([f, b], i) => { idx[f + ':' + b] = i; });
   const first = {}; STEPS.forEach(([f], i) => { if (!(f in first)) first[f] = i; });
   const at = (f, b) => (f + ':' + b) in idx ? idx[f + ':' + b] : Infinity;
