@@ -1,0 +1,1192 @@
+<!doctype html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Your Agents (Probably) Shouldn't Read Code. Ani at PyCon Wroclaw 2026.">
+<meta charset="utf-8">
+<title>Your Agents (Probably) Shouldn't Read Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Sora:wght@600;800&family=Caveat:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+/* Layout: one blueprint canvas; every level is a sheet nested inside the next at 1:3, and a camera flies between them. */
+:root {
+  color-scheme: dark;
+  --paper: #0C2136;      /* blueprint ground */
+  --term: #07131F;       /* terminal + panels */
+  --ink: #EEF4FA;
+  --dim: #8FA8C1;
+  --amber: #FFB224;      /* the one accent: highlighter */
+  --red: #FF6A55;
+  --green: #5FDDA4;
+  --blue: #8EC5FF;
+  --clay: #E0896A;       /* terminal-render accent only */
+  --pw: #D196FF;         /* PyCon Wroclaw purple */
+  --pw-ink: #2E2833;     /* PyCon Wroclaw aubergine */
+  --pw-paper: #F4EFF8;
+  --grid: rgba(150, 195, 240, .075);
+  --line: rgba(170, 205, 240, .30);
+  --line-faint: rgba(170, 205, 240, .14);
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --hand: "Caveat", "Comic Sans MS", cursive;
+}
+*, *::before, *::after { box-sizing: border-box; font-variant-ligatures: none !important; }
+html, body { height: 100%; overflow: hidden; background: var(--paper); color: var(--ink); }
+body { font-family: var(--body); -webkit-font-smoothing: antialiased; }
+
+#stage { position: fixed; inset: 0; overflow: hidden; cursor: default; touch-action: none; }
+#world { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+
+.frame { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; transform-origin: 0 0; z-index: 1;
+  transition: opacity .9s ease, visibility 0s linear 0s; }
+.frame:not(.reached) { opacity: 0; visibility: hidden; transition: opacity .5s ease, visibility 0s linear .5s; }
+.frame.current { z-index: 5; }
+.frame.culled { display: none; }
+.frame > * { position: absolute; }
+.gridbg { inset: 0; background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; }
+.slot { width: 533.334px; height: 300px; border: 1.5px dashed var(--line); pointer-events: none; }
+.slabel { font: 500 17px var(--mono); color: var(--dim); letter-spacing: .02em; }
+.slabel b { color: var(--amber); font-weight: 500; }
+
+[data-b], .ov { transition: opacity .45s ease .22s, transform .45s cubic-bezier(.2,.7,.2,1) .22s; }
+.off { opacity: 0 !important; transform: translateY(14px); pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
+
+/* type */
+.eb { font: 600 17px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--amber); }
+.h1 { font-family: var(--display); font-weight: 800; font-stretch: 112%; font-size: 84px; line-height: .98; letter-spacing: -.012em; text-wrap: balance; margin: 0; }
+.h2 { font-family: var(--display); font-weight: 750; font-stretch: 108%; font-size: 54px; line-height: 1.02; letter-spacing: -.008em; text-wrap: balance; margin: 0; }
+.h3 { font-family: var(--display); font-weight: 700; font-stretch: 104%; font-size: 30px; line-height: 1.1; margin: 0; }
+.lead { font: 400 28px/1.42 var(--body); color: var(--dim); max-width: 32em; }
+.hand { font-family: var(--hand); font-weight: 700; color: var(--amber); font-size: 46px; line-height: 1; }
+.mono { font-family: var(--mono); }
+em { font-style: normal; color: var(--amber); }
+
+/* panels */
+.panel { background: var(--term); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 30px 70px rgba(0,0,0,.42); padding: 34px 38px; }
+.code { font: 400 21px/1.62 var(--mono); color: var(--ink); white-space: pre; }
+.k { color: #FFCB6B; } .s { color: #9FE6C3; } .c { color: #6F8AA6; font-style: italic; } .f { color: var(--blue); } .d { color: #C9A2FF; }
+.p { color: var(--dim); }
+.chip { display: inline-flex; align-items: center; gap: 10px; font: 600 15px var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 6px 12px; border-radius: 6px; border: 1px solid currentColor; }
+
+/* terminal render */
+.term { background: var(--term); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 50px 100px rgba(0,0,0,.5); overflow: hidden; }
+.tbar { position: absolute; inset: 0 0 auto 0; height: 50px; display: flex; align-items: center; gap: 10px; padding: 0 22px; border-bottom: 1px solid var(--line-faint); font: 500 18px var(--mono); color: var(--dim); }
+.tbar i { width: 14px; height: 14px; border-radius: 50%; background: #2E4560; }
+.tbar span { margin-left: 14px; }
+.tbody { position: absolute; inset: 50px 0 0 0; font: 400 22px/1.62 var(--mono); color: var(--ink); }
+.tbody > * { position: absolute; }
+.spark { color: var(--clay); }
+.tool { color: var(--ink); } .tool .p { margin-left: 8px; }
+.tool.again { color: var(--red); }
+.todo { border: 1px solid var(--line-faint); border-radius: 10px; padding: 20px 24px; font-size: 20px; line-height: 1.75; background: rgba(255,255,255,.015); }
+.todo .done { color: var(--dim); text-decoration: line-through; text-decoration-color: rgba(143,168,193,.6); }
+.ctx { display: flex; align-items: center; gap: 18px; font-size: 19px; color: var(--dim); }
+.ctxtrack { flex: 1; height: 12px; border-radius: 6px; background: rgba(255,255,255,.06); overflow: hidden; }
+.ctxfill { height: 100%; width: 100%; background: linear-gradient(90deg, var(--clay), var(--red)); transform-origin: left; transition: transform .25s ease; }
+.sl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; height: 35.64px; }
+.sl.new { animation: slin .3s ease both; }
+@keyframes slin { from { opacity: 0; transform: translateX(-10px); } }
+.limit { background: rgba(255,106,85,.12); border: 1.5px solid var(--red); color: #FFC2B8; border-radius: 10px; padding: 18px 24px; font-size: 22px; }
+
+/* code sheets */
+.codecol { font-family: var(--mono); white-space: pre; color: #A9BED3; }
+.codecol .ln { display: block; }
+.codecol .no { color: #4F6A86; }
+.codecol .hl { background: rgba(255,178,36,.16); box-shadow: inset 4px 0 0 var(--amber); color: var(--ink); }
+
+/* sketch cards */
+.mcard { width: 270px; height: 190px; padding: 18px 20px 16px; }
+.mcard .sk { position: absolute; inset: 0; border: 2.5px solid rgba(238,244,250,.82); border-radius: 10px; filter: url(#rough); pointer-events: none; }
+.mcard .cap { position: absolute; left: 20px; bottom: 12px; font-family: var(--hand); font-weight: 700; font-size: 34px; color: var(--amber); }
+.mini { font: 400 15px/1.55 var(--mono); color: #C5D5E5; white-space: pre; }
+
+/* graph */
+.node { height: 58px; padding: 0 22px; display: flex; align-items: center; gap: 12px; border: 1.5px solid var(--line); border-radius: 10px; background: rgba(7,19,31,.86); font: 500 21px var(--mono); color: var(--ink); white-space: nowrap; }
+.node::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: var(--blue); }
+.tbl { border: 1.5px solid var(--line); border-radius: 10px; background: rgba(7,19,31,.86); font: 400 18px/1.7 var(--mono); color: var(--dim); overflow: hidden; }
+.tbl h4 { margin: 0; padding: 8px 16px; font: 700 19px var(--mono); color: var(--ink); border-bottom: 1px solid var(--line-faint); background: rgba(142,197,255,.07); }
+.tbl div { padding: 0 16px; }
+.tbl .w { color: var(--amber); }
+svg.wires { position: absolute; inset: 0; width: 1600px; height: 900px; overflow: visible; pointer-events: none; }
+
+/* treemap */
+.cell { border: 1.5px solid var(--line-faint); border-radius: 6px; background: rgba(142,197,255,.025); }
+.cell span { position: absolute; left: 12px; top: 8px; white-space: nowrap; font: 500 17px var(--mono); color: var(--dim); }
+.sticker { display: flex; align-items: center; gap: 14px; background: var(--pw-paper); color: var(--pw-ink); border-radius: 16px; padding: 14px 22px 14px 16px; box-shadow: 0 0 0 3px var(--pw), 0 18px 40px rgba(0,0,0,.45); transform: rotate(-4deg); font-family: Sora, var(--body); }
+.sticker b { display: block; font-weight: 800; font-size: 30px; line-height: 1; letter-spacing: -.01em; }
+.sticker span { display: block; font-weight: 600; font-size: 17px; color: #4B4352; margin-top: 4px; }
+.dot.sem { background: var(--blue); box-shadow: 0 0 0 5px rgba(142,197,255,.18), 0 0 24px rgba(142,197,255,.5); }
+.dot { position: absolute; width: 12px; height: 12px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 5px rgba(255,178,36,.18), 0 0 24px rgba(255,178,36,.55); }
+
+/* bars */
+.bar { display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; align-items: center; font: 400 19px var(--mono); color: var(--ink); }
+.track { grid-column: 1 / -1; height: 12px; border-radius: 6px; background: rgba(255,255,255,.06); overflow: hidden; }
+.fill { height: 100%; border-radius: 6px; background: var(--amber); }
+.num { font-variant-numeric: tabular-nums; color: var(--dim); }
+
+/* verdicts */
+.verdict { display: grid; grid-template-columns: 210px 1fr; gap: 16px; align-items: start; font: 400 20px/1.45 var(--body); color: var(--ink); }
+
+/* HUD */
+#hud { position: fixed; right: max(22px, env(safe-area-inset-right, 0px)); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); display: grid; justify-items: end; gap: 8px; z-index: 20; transition: opacity 1.2s ease; pointer-events: none; }
+#hud.off { opacity: 0; transform: none; }
+#mm { width: 152px; height: 86px; position: relative; border: 1px solid var(--line-faint); border-radius: 3px; background: rgba(7,19,31,.5); }
+#mmr { position: absolute; border: 1px solid var(--amber); background: rgba(255,178,36,.22); min-width: 2px; min-height: 2px; transition: none; }
+#hud.reveal #mm { transform: scale(1.35); transform-origin: bottom right; box-shadow: 0 0 0 2px var(--amber), 0 0 40px rgba(255,178,36,.45); }
+#mm { transition: transform .6s cubic-bezier(.2,.7,.2,1), box-shadow .6s; }
+#mml { font: 500 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: rgba(143,168,193,.7); }
+
+
+#notes { position: fixed; left: max(18px, env(safe-area-inset-left, 0px)); bottom: calc(64px + env(safe-area-inset-bottom, 0px)); width: min(620px, calc(100vw - 36px)); max-height: 46vh; overflow: auto; z-index: 21; background: rgba(4,12,20,.95); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; font: 400 17px/1.55 var(--body); color: var(--ink); box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+#notes .n { font: 600 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--amber); margin-bottom: 8px; display: flex; justify-content: space-between; }
+#hint { position: fixed; left: 50%; top: calc(18px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); z-index: 22; font: 500 13px var(--mono); color: var(--dim); background: rgba(4,12,20,.85); border: 1px solid var(--line-faint); border-radius: 999px; padding: 8px 16px; white-space: nowrap; transition: opacity 1s; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis; }
+#hint kbd { font: inherit; color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="3.2"/></filter>
+</svg>
+
+<div id="stage" aria-live="polite">
+<div id="world">
+
+<!-- &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; L8 &#xB7; YOU (1:2187) &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; -->
+<section class="frame" id="L8">
+  <div class="gridbg"></div>
+  <div class="slot" style="left:533.333px;top:90px"></div>
+  <div class="eb" style="left:60px;top:56px">08 &#xB7; You</div>
+  <div class="slabel" style="left:533.333px;top:398px">the team, the agent, the systems, the code &#xB7; <b>all of it</b></div>
+
+  <div data-b="0" data-until="1" style="left:60px;top:440px;width:1480px">
+    <div class="h1" style="font-size:66px">This talk <em>zoomed out too.</em></div>
+    <p class="lead" style="margin:22px 0 0;max-width:50em">I proposed a talk about what agents should read. Then the industry moved fast, and many new things became possible. The talk grew outward, so I zoomed out with it.</p>
+    <div class="mono" style="margin-top:40px;display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px;color:var(--ink)"><span style="font-size:16px">a line</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:19px">a file</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:22px">modules</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:26px">the codebase</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:30px">two systems</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:35px">the agent</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:41px">the team</span> <span style="color:var(--amber)">&#x2192;</span> <span style="font-size:50px">you</span></div>
+  </div>
+  <div data-b="0" data-until="1" class="hand" style="left:760px;top:790px;font-size:40px">look at the corner &#x2198;</div>
+  <div data-b="1" data-until="2" style="left:60px;top:440px;width:1480px">
+    <div class="h1" style="font-size:64px;margin-bottom:40px">Engineers, with <em>better tools.</em></div>
+    <div style="display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:28px;align-items:center">
+      <div class="panel" style="position:relative;padding:26px 28px;text-align:center;opacity:.75"><div style="font-size:48px;color:var(--red);line-height:1">&#x2717;</div><div class="h3" style="margin-top:14px;font-size:28px;color:var(--dim)">Agents replace engineers</div></div>
+      <div class="panel" style="position:relative;padding:34px 30px;text-align:center;border:2px solid var(--amber);background:rgba(255,178,36,.07)"><div style="font-size:56px;color:var(--green);line-height:1">&#x2713;</div><div class="h3" style="margin-top:16px;font-size:34px">Engineers using the new tools well</div></div>
+      <div class="panel" style="position:relative;padding:26px 28px;text-align:center;opacity:.75"><div style="font-size:48px;color:var(--red);line-height:1">&#x2717;</div><div class="h3" style="margin-top:14px;font-size:28px;color:var(--dim)">Agents are hype</div></div>
+    </div>
+  </div>
+  <div data-b="2" data-until="3" style="left:60px;top:470px;width:1480px">
+    <h2 class="h1" style="font-size:76px">Rethink three things.</h2>
+  </div>
+  <div data-b="2" data-until="3" style="left:60px;top:590px;width:1480px;display:grid;grid-template-columns:repeat(3,1fr);gap:28px">
+    <div class="panel" style="position:relative;padding:28px 30px"><div class="eb" style="margin-bottom:14px">Task size</div><div class="h3">One ticket covers a whole <em>class</em> of problems.</div></div>
+    <div class="panel" style="position:relative;padding:28px 30px"><div class="eb" style="margin-bottom:14px">Authority</div><div class="h3">Agents own their instruments. You own the plan and the metric.</div></div>
+    <div class="panel" style="position:relative;padding:28px 30px"><div class="eb" style="margin-bottom:14px">Where we interject</div><div class="h3">At the plan, the boundary, the decision. Never as a proxy.</div></div>
+  </div>
+
+  <div data-b="3" data-until="4" style="left:60px;top:440px;width:1480px">
+    <div class="h1" style="font-size:62px">Impractical tooling is <em>practical now.</em></div>
+    <p class="lead" style="margin:18px 0 0;max-width:52em">AI-written code is cheap. With guardrails and evaluations around it, you can trust it.</p>
+  </div>
+  <svg data-b="3" data-until="4" viewBox="0 0 1480 290" style="left:60px;top:600px;width:1480px;height:290px" role="img" aria-label="Cost to build five kinds of developer tooling falls from above the worth-building line before to below it now">
+    <g font-family="JetBrains Mono, monospace">
+      <text x="0" y="16" font-size="15" fill="#8FA8C1">cost to build, for one codebase</text>
+      <line x1="120" x2="1180" y1="122" y2="122" stroke="#FFB224" stroke-width="2" stroke-dasharray="8 7"/>
+      <text x="1200" y="127" font-size="17" fill="#FFB224" font-weight="600">worth building</text>
+      <g stroke="#8FA8C1" stroke-width="1.6" opacity=".8">
+        <line x1="300" y1="14" x2="1000" y2="146"/><line x1="300" y1="36" x2="1000" y2="170"/><line x1="300" y1="58" x2="1000" y2="194"/><line x1="300" y1="80" x2="1000" y2="218"/><line x1="300" y1="102" x2="1000" y2="242"/>
+      </g>
+      <g fill="#3E5772"><circle cx="300" cy="14" r="6"/><circle cx="300" cy="36" r="6"/><circle cx="300" cy="58" r="6"/><circle cx="300" cy="80" r="6"/><circle cx="300" cy="102" r="6"/></g>
+      <g fill="#FFB224"><circle cx="1000" cy="146" r="7"/><circle cx="1000" cy="170" r="7"/><circle cx="1000" cy="194" r="7"/><circle cx="1000" cy="218" r="7"/><circle cx="1000" cy="242" r="7"/></g>
+      <g font-size="17" fill="#EEF4FA"><text x="1022" y="152">a transpiler</text><text x="1022" y="176">a codemod engine</text><text x="1022" y="200">a code graph</text><text x="1022" y="224">a custom linter</text><text x="1022" y="248">a trace mapper</text></g>
+      <text x="300" y="282" font-size="16" fill="#8FA8C1" text-anchor="middle">before</text>
+      <text x="1000" y="282" font-size="16" fill="#FFB224" text-anchor="middle" font-weight="600">now</text>
+    </g>
+  </svg>
+  <div data-b="4" data-until="5" style="left:60px;top:430px;width:1480px">
+    <div class="h2" style="font-size:44px;margin-bottom:14px">What I built, and <em>how I checked it.</em></div>
+    <div style="display:grid;grid-template-columns:1fr 1.15fr;column-gap:48px;font:400 20px/1.3 var(--body)">
+      <div class="eb" style="padding-bottom:10px;border-bottom:1px solid var(--line)">Tool</div><div class="eb" style="padding-bottom:10px;border-bottom:1px solid var(--line);color:var(--green)">Check</div>
+      <div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">Code graph joined with the database graph</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Static and runtime edges agree</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">A query API over the code</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">A known result in each query</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">One graph for the workflow and the classes</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">A solver flags duplicate and conflicting rules</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">Codemods for syntax and for meaning</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Old pattern count goes to zero, behavior stays the same</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">Code migrations</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Plan and metric reviewed before the run</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">Trace hooks and field mappers</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Old and new traces match</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint)">tools/who_writes.py</div><div style="padding:7px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Each scan reports what it read, skipped and failed</div>
+    </div>
+    <div style="margin-top:16px;font-size:18px;color:var(--dim)">These are my examples. Your codebase needs its own tools and its own checks.</div>
+  </div>
+  <div data-b="5" style="left:60px;top:450px;width:1480px">
+    <div class="h1" style="font-size:60px;margin-bottom:30px">On Monday</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:26px">
+      <div class="panel" style="position:relative;padding:26px 30px"><div style="font:800 64px/1 var(--display);font-stretch:112%;color:var(--amber)">1</div><div class="h3" style="margin-top:14px;font-size:32px">Survey your agent's sessions</div></div>
+      <div class="panel" style="position:relative;padding:26px 30px"><div style="font:800 64px/1 var(--display);font-stretch:112%;color:var(--amber)">2</div><div class="h3" style="margin-top:14px;font-size:32px">Find what it repeats</div></div>
+      <div class="panel" style="position:relative;padding:26px 30px"><div style="font:800 64px/1 var(--display);font-stretch:112%;color:var(--amber)">3</div><div class="h3" style="margin-top:14px;font-size:32px">Build that tool, <em>with a check</em></div></div>
+    </div>
+  </div>
+  <div data-b="5" style="left:60px;top:800px;width:1180px;display:flex;justify-content:space-between;align-items:baseline">
+    <div class="hand" style="font-size:56px">zoom out.</div>
+    <div class="mono" style="font-size:20px;color:var(--dim)">Ani &#xB7; PyCon Wroc&#x142;aw 2026</div>
+  </div>
+</section>
+
+<!-- &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; L7 &#xB7; THE TEAM (1:729) &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; -->
+<section class="frame" id="L7">
+  <div class="gridbg"></div>
+  <div class="slot" style="left:533.333px;top:300px"></div>
+  <div class="eb" style="left:60px;top:50px">07 &#xB7; The team</div>
+
+  <div data-b="0" data-until="1" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:72px">AI slop built on AI slop<br>built on <em>AI slop.</em></div></div>
+  <div data-b="1" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:72px">Humans should not be<br><em>meat-proxies.</em></div></div>
+
+  <!-- before: telephone chain -->
+  <div data-b="0" data-until="1" style="left:60px;top:650px;width:1480px;display:grid;grid-template-columns:repeat(4,1fr);gap:26px">
+    <div style="position:relative"><div class="slabel" style="margin-bottom:10px">dev A + agent &#xB7; <b>logic recovery</b></div><div class="panel" style="position:relative;padding:18px 20px;font:500 20px/1.4 var(--body)">"Refunds allowed within 30 days of purchase, unless legacy user."</div></div>
+    <div style="position:relative"><div class="slabel" style="margin-bottom:10px">&#x2192; design doc</div><div class="panel" style="position:relative;padding:18px 20px;font:500 20px/1.4 var(--body);color:#D9C9A8">"Refunds: ~30 days. Legacy users are a special case."</div></div>
+    <div style="position:relative"><div class="slabel" style="margin-bottom:10px">&#x2192; PM + agent &#xB7; <b>ticket</b></div><div class="panel" style="position:relative;padding:18px 20px;font:500 20px/1.4 var(--body);color:#E8B48F">"Refund window: one month. Legacy: TBD."</div></div>
+    <div style="position:relative"><div class="slabel" style="margin-bottom:10px">&#x2192; dev B + agent &#xB7; <b>reimplement</b></div><div class="panel" style="position:relative;padding:18px 20px;font:500 19px/1.4 var(--mono);color:var(--red);border-color:var(--red)">if months_since(o) &lt;= 1:<br>    refund(o)  <span style="opacity:.7"># legacy?</span></div></div>
+  </div>
+
+  <!-- after: interaction plane -->
+  <svg class="wires" data-b="1" viewBox="0 0 1600 900">
+    <g stroke="var(--amber)" stroke-width="2" fill="none" stroke-dasharray="6 7">
+      <path d="M460 372 C 500 372, 500 400, 533 400"/>
+      <path d="M460 530 C 500 530, 500 500, 533 500"/>
+      <path d="M1140 372 C 1100 372, 1100 400, 1066 400"/>
+      <path d="M1140 530 C 1100 530, 1100 500, 1066 500"/>
+    </g>
+  </svg>
+  <div data-b="1" class="panel" style="left:110px;top:332px;width:350px;padding:16px 20px"><div class="h3" style="font-size:24px">PM</div><div style="color:var(--dim);font-size:19px">decides the rule change</div></div>
+  <div data-b="1" class="panel" style="left:110px;top:490px;width:350px;padding:16px 20px"><div class="h3" style="font-size:24px">Tech lead</div><div style="color:var(--dim);font-size:19px">approves plan + metric</div></div>
+  <div data-b="1" class="panel" style="left:1140px;top:332px;width:350px;padding:16px 20px"><div class="h3" style="font-size:24px">Domain expert</div><div style="color:var(--dim);font-size:19px">labels the boundary case</div></div>
+  <div data-b="1" class="panel" style="left:1140px;top:490px;width:350px;padding:16px 20px"><div class="h3" style="font-size:24px">QA</div><div style="color:var(--dim);font-size:19px">owns the golden master</div></div>
+  <div data-b="1" class="slabel" style="left:533.333px;top:612px;width:533px;text-align:center"><b>one context-shared job</b> &#xB7; people join where their judgment matters</div>
+
+  <div class="ov panel" data-b="2" style="left:170px;top:250px;width:1260px;padding:40px 48px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px;font:400 25px/1.5 var(--body)">
+      <div class="eb" style="padding-bottom:14px;border-bottom:1px solid var(--line)">Leading a junior engineer</div>
+      <div class="eb" style="padding-bottom:14px;border-bottom:1px solid var(--line)">Leading an agent</div>
+      <div style="padding:14px 0;border-bottom:1px solid var(--line-faint)">Give ownership</div><div style="padding:14px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">It builds and owns its instruments</div>
+      <div style="padding:14px 0;border-bottom:1px solid var(--line-faint)">Set frameworks</div><div style="padding:14px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Recipes, code migrations, guard rules</div>
+      <div style="padding:14px 0;border-bottom:1px solid var(--line-faint)">Define what success looks like</div><div style="padding:14px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Behavior flat, violations to zero</div>
+      <div style="padding:14px 0;border-bottom:1px solid var(--line-faint)">Keep them accountable</div><div style="padding:14px 0;border-bottom:1px solid var(--line-faint);color:var(--dim)">Calibrated tools, golden masters, "was the node visited?"</div>
+      <div style="padding:14px 0">Do not read over their shoulder</div><div style="padding:14px 0;color:var(--dim)">Review the plan and the metric, not every line</div>
+    </div>
+  </div>
+</section>
+
+<!-- &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; L6 &#xB7; THE AGENT (1:243) &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; -->
+<section class="frame" id="L6">
+  <div class="gridbg"></div>
+  <div class="slot" style="left:60px;top:110px"></div>
+  <div class="slot" style="left:60px;top:490px"></div>
+  <div class="slabel" style="left:60px;top:420px">session 32 &#xB7; <b>verify payments</b></div>
+  <div class="slabel" style="left:60px;top:800px">session 31 &#xB7; extract payments &#xB7; <b style="color:var(--red)">ran out</b></div>
+  <div class="eb" style="left:660px;top:56px">06 &#xB7; The agent</div>
+
+  <div data-b="0" style="left:660px;top:104px;width:880px"><div class="h1" style="font-size:66px">Point the agent at <em>its own history.</em></div></div>
+  <div id="tiles" style="left:660px;top:340px;width:880px;height:500px;display:grid;grid-template-columns:repeat(5,1fr);gap:14px"></div>
+
+  <div class="ov panel" data-b="1" style="left:640px;top:96px;width:920px;height:760px">
+    <div class="h2" style="font-size:44px;margin-bottom:28px">It keeps asking the <em>same questions.</em></div>
+    <div style="display:grid;gap:18px;width:540px">
+      <div class="bar">who writes &lt;table&gt;?<span class="num">23&#xD7;</span><div class="track"><div class="fill" style="width:100%"></div></div></div>
+      <div class="bar">callers of &lt;function&gt;?<span class="num">19&#xD7;</span><div class="track"><div class="fill" style="width:83%"></div></div></div>
+      <div class="bar">where is &lt;setting&gt; read?<span class="num">11&#xD7;</span><div class="track"><div class="fill" style="width:48%"></div></div></div>
+      <div class="bar">re-read tickets/views.py<span class="num">9&#xD7;</span><div class="track"><div class="fill" style="width:39%;background:var(--red)"></div></div></div>
+      <div class="bar">what fires on &lt;signal&gt;?<span class="num">7&#xD7;</span><div class="track"><div class="fill" style="width:30%"></div></div></div>
+    </div>
+    <div class="hand" style="position:absolute;left:600px;top:150px;font-size:40px;transform:rotate(-3deg)">parameterize once &#x2192;</div>
+    <div class="term" style="position:absolute;left:600px;top:226px;width:280px;height:290px">
+      <div class="tbar" style="height:36px;font-size:13px"><i style="width:10px;height:10px"></i><i style="width:10px;height:10px"></i><i style="width:10px;height:10px"></i></div>
+      <div class="code" style="position:absolute;inset:48px 16px 0;font-size:14.5px;line-height:1.7">$ tools/who_writes.py \
+    --table orders
+<span class="p">refund_view
+apply_discount
+close_month
+sync_erp</span>
+<span class="s">4 writers &#xB7; 0.2s</span></div>
+    </div>
+    <p class="lead" style="position:absolute;left:38px;bottom:34px;margin:0;font-size:24px;max-width:40em">The agent's transcripts are the requirements doc for its own tools.</p>
+  </div>
+
+  <div class="ov panel" data-b="2" style="left:640px;top:96px;width:920px;height:760px">
+    <div class="h2" style="font-size:42px;margin-bottom:14px">Zoom out, build the tool, <em>zoom in.</em></div>
+    <svg id="modeviz" viewBox="0 0 844 250" style="width:844px;height:250px;display:block" role="img" aria-label="A switch flipped from implementer to toolsmith, triggered by an ambitious task or a reflection prompt"></svg>
+    <svg id="lifeviz" viewBox="0 0 844 400" style="width:844px;height:360px;display:block;margin-top:6px" role="img" aria-label="Most probe scripts are deleted; the one asked 23 times becomes a tool; code changes become kept migrations"></svg>
+  </div>
+
+  <div class="ov panel" data-b="3" style="left:640px;top:96px;width:920px;height:760px">
+    <div class="h2" style="font-size:44px;margin-bottom:14px">Calibrate before you <em>diagnose.</em></div>
+    <svg id="calviz" viewBox="0 0 844 590" style="width:844px;height:590px;display:block" role="img" aria-label="Three checks: scan coverage per file, a planted canary found, static and runtime edges compared"></svg>
+  </div>
+</section>
+
+<!-- &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; T &#xB7; COLD OPEN (1:81, a tile inside L6) &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; -->
+<section class="frame" id="T">
+  <div class="gridbg"></div>
+  <div class="term" style="left:70px;top:46px;width:1460px;height:808px">
+    <div class="tbar"><i></i><i></i><i></i><span>claude &#xB7; ~/krasnal-tickets</span></div>
+    <div class="tbody">
+      <div data-b="0" data-until="1" style="left:56px;top:54px;right:56px;bottom:56px;border:2px solid var(--pw);border-radius:14px;padding:46px 54px">
+        <div style="font-size:22px;color:var(--dim)"><span style="color:var(--pw)">&#x273B;</span> Welcome to <span style="color:var(--ink)">PyCon Wroc&#x142;aw 2026</span></div>
+        <div class="h1" style="font-size:112px;margin-top:70px;line-height:.95">Your agents<br><span style="color:var(--pw)">(probably)</span> shouldn't<br>read code.</div>
+        <div style="position:absolute;left:54px;bottom:40px;font-size:22px;color:var(--dim)">Ani &#xB7; Advanced &#xB7; 40 min</div>
+        <div style="position:absolute;right:54px;bottom:40px;font-size:22px;color:var(--dim)">20&#x2013;21 Nov &#xB7; Concordia Design, Wroc&#x142;aw</div>
+        <div style="position:absolute;right:46px;top:40px"><div class="sticker"><svg width="54" height="56" viewBox="0 0 26 27" fill="none" aria-hidden="true"><path d="M21.5652 23.1901C19.4189 23.9207 17.0834 23.8686 14.9718 23.0431C12.8603 22.2176 11.1087 20.6719 10.027 18.6794C8.94523 16.6869 8.60306 14.376 9.06099 12.1555C9.51892 9.93507 10.7474 7.9481 12.5292 6.54613" stroke="#4B4352" stroke-width="2.97113"/><path d="M21.17 11.8725C20.9104 13.3235 20.3081 14.6916 19.4132 15.863C18.5183 17.0344 17.3567 17.9752 16.0249 18.6072C14.6932 19.2392 13.2298 19.5441 11.7565 19.4966C10.2832 19.4491 8.84247 19.0506 7.5542 18.3342C6.26592 17.6177 5.1673 16.6041 4.34969 15.3775C3.53208 14.1509 3.01911 12.7469 2.85344 11.2821C2.68776 9.8174 2.87417 8.33426 3.39716 6.95606C3.92015 5.57786 4.76461 4.34443 5.86031 3.35834" stroke="#4B4352" stroke-width="2.97113"/><path d="M21.142 12.0339C21.3822 10.9114 21.2617 9.74174 20.7976 8.69185C20.3335 7.64195 19.5496 6.7655 18.5578 6.18761C17.566 5.60972 16.417 5.35992 15.2748 5.47389C14.1325 5.58786 13.0555 6.05975 12.1974 6.82222" stroke="#4B4352" stroke-width="2.97113"/><circle cx="21.5766" cy="23.1402" r="2.2093" transform="rotate(12.0788 21.5766 23.1402)" fill="#D196FF" stroke="#4B4352" stroke-width="1.47287"/><circle cx="5.85395" cy="3.3684" r="2.2093" transform="rotate(12.0788 5.85395 3.3684)" fill="#4B4352" stroke="#D196FF" stroke-width="1.47287"/></svg><div><b>PyCon</b><span>Wroc&#x142;aw #2026</span></div></div></div>
+      </div>
+
+      <div data-b="1" data-until="2" style="left:56px;top:34px;right:56px;bottom:40px">
+        <div class="p">&gt; /whoami</div>
+        <div style="position:absolute;right:6px;top:-6px"><div class="sticker"><svg width="54" height="56" viewBox="0 0 26 27" fill="none" aria-hidden="true"><path d="M21.5652 23.1901C19.4189 23.9207 17.0834 23.8686 14.9718 23.0431C12.8603 22.2176 11.1087 20.6719 10.027 18.6794C8.94523 16.6869 8.60306 14.376 9.06099 12.1555C9.51892 9.93507 10.7474 7.9481 12.5292 6.54613" stroke="#4B4352" stroke-width="2.97113"/><path d="M21.17 11.8725C20.9104 13.3235 20.3081 14.6916 19.4132 15.863C18.5183 17.0344 17.3567 17.9752 16.0249 18.6072C14.6932 19.2392 13.2298 19.5441 11.7565 19.4966C10.2832 19.4491 8.84247 19.0506 7.5542 18.3342C6.26592 17.6177 5.1673 16.6041 4.34969 15.3775C3.53208 14.1509 3.01911 12.7469 2.85344 11.2821C2.68776 9.8174 2.87417 8.33426 3.39716 6.95606C3.92015 5.57786 4.76461 4.34443 5.86031 3.35834" stroke="#4B4352" stroke-width="2.97113"/><path d="M21.142 12.0339C21.3822 10.9114 21.2617 9.74174 20.7976 8.69185C20.3335 7.64195 19.5496 6.7655 18.5578 6.18761C17.566 5.60972 16.417 5.35992 15.2748 5.47389C14.1325 5.58786 13.0555 6.05975 12.1974 6.82222" stroke="#4B4352" stroke-width="2.97113"/><circle cx="21.5766" cy="23.1402" r="2.2093" transform="rotate(12.0788 21.5766 23.1402)" fill="#D196FF" stroke="#4B4352" stroke-width="1.47287"/><circle cx="5.85395" cy="3.3684" r="2.2093" transform="rotate(12.0788 5.85395 3.3684)" fill="#4B4352" stroke="#D196FF" stroke-width="1.47287"/></svg><div><b>PyCon</b><span>Wroc&#x142;aw #2026</span></div></div></div>
+        <div class="h1" style="font-size:96px;margin-top:18px">Ani <span style="font:500 26px var(--mono);color:var(--dim);letter-spacing:0;margin-left:14px">Aniruddha Adhikary</span></div>
+        <div style="font:500 28px/1.4 var(--body);color:var(--ink);margin-top:14px;max-width:46em">Software engineer. I build tech for public good in the <span style="color:var(--pw)">Singapore public sector</span>. I help AI agents modernize critical legacy systems.</div>
+        <div style="display:grid;grid-template-columns:150px 1fr;gap:12px 24px;margin-top:40px;font-size:21px;line-height:1.45">
+          <div style="color:var(--pw)">2016</div><div>My first PyCon talk, at PyCon Dhaka. I started in the Mozilla, Android and Linux open source communities.</div>
+          <div style="color:var(--pw)">2019</div><div>PyCon APAC: an introduction to testing in Python.</div>
+          <div style="color:var(--pw)">2023&#x2013;24</div><div>PyCon Thailand and PyCon Philippines: exploiting vulnerabilities in LLMs.</div>
+          <div style="color:var(--pw)">now</div><div>Agentic AI, static analysis and knowledge graphs for legacy modernization. I have written software for ten years.</div>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;gap:24px">
+          <div style="border:1.5px solid var(--pw);border-radius:10px;padding:12px 18px;font-size:19px;color:var(--ink)">I speak in a personal capacity, not for my employer. These views are my own.</div>
+          <div style="font-size:19px;color:var(--dim);white-space:nowrap">adhikary.net &#xB7; github.com/aniruddha-adhikary</div>
+        </div>
+      </div>
+      <div data-b="2" style="left:48px;top:30px;width:880px;bottom:110px">
+        <div style="color:var(--ink);background:rgba(255,255,255,.05);border-radius:8px;padding:12px 18px"><span class="p">&gt;</span> Extract payments out of the monolith. All of it.</div>
+        <div id="sview" style="position:absolute;left:0;right:0;top:80px;bottom:0;overflow:hidden;-webkit-mask:linear-gradient(180deg,transparent 0,#000 70px);mask:linear-gradient(180deg,transparent 0,#000 70px)"><div id="slist" style="position:absolute;left:0;right:0;top:0;transition:transform .22s ease"></div></div>
+      </div>
+      <div class="todo" data-b="2" style="right:48px;top:30px;width:420px"><div style="color:var(--dim);margin-bottom:6px">Todos</div><div id="todos"></div></div>
+      <div class="ctx" data-b="2" style="left:48px;right:48px;bottom:34px">
+        <span>context</span><div class="ctxtrack"><div class="ctxfill" id="cfill"></div></div>
+        <span class="num" style="min-width:340px;text-align:right"><span id="tokn">993,510</span> / 1,000,000</span>
+      </div>
+      <div class="limit" data-b="3" style="right:48px;top:420px;width:420px">
+        <b>Context limit reached.</b><br><span style="opacity:.8;font-size:19px">3 of 6 todos done. Run /compact or start a new session.</span>
+      </div>
+    </div>
+  </div>
+  <div class="ov hand" data-b="3" data-until="4" style="left:1010px;top:700px;font-size:58px;transform:rotate(-3deg)">We still had work to do.</div>
+  <div class="ov" data-b="4" style="left:70px;top:46px;width:1460px;height:808px;border-radius:16px;background:linear-gradient(180deg, rgba(7,19,31,.15), rgba(7,19,31,.92) 55%);"></div>
+  <div class="ov" data-b="4" style="left:150px;top:560px;width:1300px"><div class="h1" style="font-size:104px">So where did all<br>the tokens <em>go?</em></div></div>
+</section>
+
+<!-- &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; L5 &#xB7; TWO SYSTEMS (1:81) &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; -->
+<section class="frame" id="L5">
+  <div class="gridbg"></div>
+  <div class="slot" style="left:60px;top:300px"></div>
+  <div class="eb" style="left:60px;top:50px">05 &#xB7; Two systems</div>
+  <div class="slabel" style="left:60px;top:268px">monolith &#xB7; <b>2016</b></div>
+  <div class="slabel" style="left:1006.67px;top:268px">payments-svc &#xB7; <b>2026</b></div>
+
+  <div data-b="0" data-until="1" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Two systems. <em>Do they behave the same?</em></div></div>
+  <div class="ov" data-b="1" data-until="2" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Every flow starts at <em>a door.</em></div></div>
+  <div class="ov" data-b="2" data-until="3" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Hook <em>every layer.</em></div></div>
+  <div class="ov" data-b="3" data-until="4" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Map, then <em>derive the transform.</em></div></div>
+  <div class="ov" data-b="4" data-until="5" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Every door, through <em>every layer.</em></div></div>
+  <div class="ov" data-b="5" style="left:60px;top:96px;width:1480px"><div class="h1" style="font-size:66px">Understanding should be <em>executable.</em></div></div>
+
+  <!-- new system sketch -->
+  <div style="left:1006.67px;top:300px;width:533.33px;height:300px">
+    <div style="position:absolute;inset:0;border:2.5px solid rgba(238,244,250,.8);border-radius:14px;filter:url(#rough)"></div>
+    <div class="hand" style="position:absolute;left:26px;top:16px;color:var(--ink);font-size:40px">payments-svc</div>
+    <div style="position:absolute;left:26px;top:82px;right:26px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="node" style="position:relative;font-size:17px;height:50px;padding:0 14px">RefundService</div>
+      <div class="node" style="position:relative;font-size:17px;height:50px;padding:0 14px">Gateway</div>
+      <div class="node" style="position:relative;font-size:17px;height:50px;padding:0 14px">LedgerWriter</div>
+      <div class="node" style="position:relative;font-size:17px;height:50px;padding:0 14px">EligibilityPolicy</div>
+    </div>
+    <div class="slabel" style="position:absolute;left:26px;bottom:20px">POST /refunds &#xB7; consumes order.paid</div>
+  </div>
+
+  <!-- common plane -->
+  <svg class="wires" data-b="3" viewBox="0 0 1600 900"><g stroke="var(--amber)" stroke-width="2" fill="none"><path d="M596 450 L 650 450" marker-end="url(#ah)"/><path d="M1004 450 L 954 450" marker-end="url(#ah)"/></g>
+    <g font-family="JetBrains Mono, monospace" font-size="14" fill="#FFB224" text-anchor="middle"><text x="623" y="436">map</text><text x="979" y="436">map</text></g>
+    <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="var(--amber)"/></marker></defs></svg>
+  <div data-b="3" style="left:656px;top:300px;width:292px;height:300px;border:1.5px solid var(--amber);border-radius:12px;background:rgba(255,178,36,.05);padding:16px 18px">
+    <div class="eb" style="font-size:13px;margin-bottom:4px">common plane</div>
+    <div class="mono" style="font-size:13px;color:var(--dim);margin-bottom:10px">one shared shape</div>
+    <div class="mono" style="font-size:15px;line-height:1.55;color:var(--ink);white-space:pre">Refund(
+  order=1187,
+  amount=116.40 EUR,
+  state=REFUNDED)</div>
+    <div class="mono" style="margin-top:14px;font-size:17px;color:var(--amber)">old &#x2261; new <span style="color:var(--green)">&#x2713;</span></div>
+  </div>
+  <div class="ov" data-b="1" data-until="4" style="left:60px;top:196px;width:1480px;height:690px"><svg id="flowviz" viewBox="0 0 1480 690" style="width:1480px;height:690px;display:block" role="img" aria-label="A refund flows through entrypoint, logic, persistence and side-effect layers in both systems; each layer is hooked, mapped into a common plane, and the transform between them is derived"></svg></div>
+  <div class="ov" data-b="4" data-until="5" style="left:60px;top:196px;width:1480px;height:690px"><svg id="covviz" viewBox="0 0 1480 690" style="width:1480px;height:690px;display:block" role="img" aria-label="Coverage matrix of entrypoint types against layers; most cells are fully mapped, signals and cron jobs have gaps"></svg></div>
+  <div class="ov" data-b="5" style="left:60px;top:196px;width:1480px;height:690px;background:#07131F;border:1px solid var(--line);border-radius:14px">
+    <svg viewBox="0 0 1480 690" style="position:absolute;inset:0;width:1480px;height:690px" aria-hidden="true">
+      <defs><marker id="ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#FFB224"/></marker></defs>
+      <g data-b="5" stroke="#FFB224" stroke-width="2.2" fill="none"><path d="M452 190 H 526" marker-end="url(#ax)"/></g>
+      <g data-b="6" stroke="#FFB224" stroke-width="2.2" fill="none"><path d="M952 190 H 1026" marker-end="url(#ax)"/></g>
+      <g data-b="7" stroke="#FFB224" stroke-width="2.2" fill="none"><path d="M1240 332 C 1240 380, 460 370, 440 414" marker-end="url(#ax)"/><path d="M1240 332 C 1240 380, 1060 380, 1040 414" marker-end="url(#ax)"/></g>
+    </svg>
+    <div data-b="5" style="position:absolute;background:#0C2136;border-radius:12px;padding:18px 22px;left:30px;top:50px;width:420px;height:280px;border:1.5px solid var(--line)">
+      <div class="eb" style="font-size:14px;margin-bottom:12px">1 &#xB7; Entity</div>
+      <div class="code" style="font-size:17px;line-height:1.6"><span class="f">Refund</span>
+  order    <span class="p">Order</span>
+  user     <span class="p">User</span>
+  amount   <span class="p">Decimal (EUR)</span>
+  state    <span class="p">REFUNDED | REJECTED</span></div>
+      <div class="slabel" style="position:absolute;left:22px;bottom:16px">from the common plane</div>
+    </div>
+    <div data-b="5" style="position:absolute;background:#0C2136;border-radius:12px;padding:18px 22px;left:530px;top:50px;width:420px;height:280px;border:1.5px solid var(--line)">
+      <div class="eb" style="font-size:14px;margin-bottom:12px">2 &#xB7; Operation</div>
+      <div class="code" style="font-size:17px;line-height:1.6"><span class="f">refund</span>(user, order) <span class="p">&#x2192;</span> Refund
+<span class="p">door  </span> POST /refunds
+<span class="p">reads </span> orders, users
+<span class="p">writes</span> orders.total, ledger</div>
+      <div class="slabel" style="position:absolute;left:22px;bottom:16px">from the doors and layers</div>
+    </div>
+    <div data-b="6" style="position:absolute;background:#0C2136;border-radius:12px;padding:18px 22px;left:1030px;top:50px;width:420px;height:280px;border:2px solid var(--amber);background:rgba(255,178,36,.07)">
+      <div class="eb" style="font-size:14px;margin-bottom:12px">3 &#xB7; Transform</div>
+      <div class="code" style="font-size:16px;line-height:1.7">eligible = age &lt; 26
+       &#x2227; booked &lt; 1 Mar
+amount   = total &#xD7; 0.97
+state    = REFUNDED if eligible</div>
+      <div class="slabel" style="position:absolute;left:22px;bottom:16px">derived from both sides &#xB7; <b>z3 checks the boundary</b></div>
+    </div>
+    <div data-b="7" style="position:absolute;background:#0C2136;border-radius:12px;padding:18px 22px;left:180px;top:420px;width:520px;height:240px;border:2px solid var(--green)">
+      <div class="eb" style="font-size:14px;margin-bottom:12px;color:var(--green)">Tests</div>
+      <div class="code" style="font-size:16px;line-height:1.6"><span class="d">@given</span>(users(), orders())
+<span class="k">def</span> <span class="f">test_refund</span>(u, o):
+    <span class="k">assert</span> impl(u, o) == transform(u, o)</div>
+      <div style="margin-top:14px;font:500 16px/1.5 var(--mono);color:var(--red)">old code fails at age 26, booked 1 Mar: it used &lt;=</div>
+    </div>
+    <div data-b="7" style="position:absolute;background:#0C2136;border-radius:12px;padding:18px 22px;left:780px;top:420px;width:520px;height:240px;border:2px solid var(--blue)">
+      <div class="eb" style="font-size:14px;margin-bottom:12px;color:var(--blue)">Implementation</div>
+      <div class="code" style="font-size:16px;line-height:1.6"><span class="k">class</span> <span class="f">RefundService</span>:
+    <span class="k">def</span> <span class="f">run</span>(self, user, order):
+        <span class="k">return</span> transform(user, order)</div>
+      <div style="margin-top:14px;font:400 16px/1.5 var(--body);color:var(--dim)">The new service follows the transform. The tests gate every change.</div>
+    </div>
+  </div>
+</section>
+
+<!-- &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; L4 &#xB7; THE CODEBASE (1:27) &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; -->
+<section class="frame" id="L4">
+  <div class="gridbg"></div>
+  <div class="cell" style="left:40px;top:110px;width:593px;height:372px"><span style="color:var(--ink)">tickets/ <span style="position:static;color:var(--amber)">&#x25CF; the view we read</span></span></div>
+  <div class="slot" style="left:80px;top:160px"></div>
+  <div class="cell" style="left:643px;top:110px;width:187px;height:180px"><span>payments/</span></div>
+  <div class="cell" style="left:643px;top:300px;width:187px;height:182px"><span>accounts/</span></div>
+  <div class="cell" style="left:40px;top:492px;width:290px;height:210px"><span>discounts/</span></div>
+  <div class="cell" style="left:340px;top:492px;width:293px;height:210px"><span>reports/</span></div>
+  <div class="cell" style="left:643px;top:492px;width:187px;height:210px"><span>erp_sync/</span></div>
+  <div class="cell" style="left:40px;top:712px;width:290px;height:150px"><span>notifications/</span></div>
+  <div class="cell" style="left:340px;top:712px;width:293px;height:150px"><span>api/</span></div>
+  <div class="cell" style="left:643px;top:712px;width:187px;height:150px"><span>legacy/</span></div>
+  <div id="hot" style="left:0;top:0;width:1600px;height:900px;pointer-events:none"></div>
+
+  <div class="eb" style="left:880px;top:56px">04 &#xB7; The codebase</div>
+  <div data-b="0" style="left:880px;top:92px;width:680px"><div class="h1" style="font-size:56px">Same refund logic, <em>41 places.</em></div></div>
+  <div data-b="0" class="panel" style="left:880px;top:236px;width:680px;padding:20px 24px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px"><span class="eb" style="font-size:14px"><span style="color:var(--amber)">&#x25CF;</span> Tier 1 &#xB7; same syntax</span><span class="mono" style="font-size:16px;color:var(--amber)">23 found</span></div>
+    <div class="code" style="font-size:16px;line-height:1.55"><span class="k">if</span> <span class="d">$O</span>.status == 3 <span class="d">$$$</span>:
+    <span class="d">$AMT</span> = <span class="d">$O</span>.total * Decimal(<span class="s">'0.97'</span>)</div>
+    <div style="margin-top:8px;font-size:16px;color:var(--dim)">A syntax pattern (ast-grep) finds these. A plain codemod can move them.</div>
+  </div>
+  <div data-b="0" class="panel" style="left:880px;top:420px;width:680px;padding:20px 24px;border-color:var(--blue)">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px"><span class="eb" style="font-size:14px;color:var(--blue)"><span>&#x25CF;</span> Tier 2 &#xB7; same behavior, different code</span><span class="mono" style="font-size:16px;color:var(--blue)">18 more</span></div>
+    <div class="code" style="font-size:15px;line-height:1.6"><span class="k">if</span> o.status == OrderStatus.PAID:            <span class="c"># alias</span>
+<span class="k">if</span> getattr(o, <span class="s">"status"</span>) <span class="k">in</span> PAID_STATES:   <span class="c"># dynamic</span>
+self.object.refund(rate=settings.RATE)      <span class="c"># mixin + config</span></div>
+    <div style="margin-top:10px;font-size:16px;color:var(--dim)">These need a semantic model: types, scopes, the call graph and config values. Kotlin PSI does this for Kotlin. For Python, use LibCST and a type checker. An agent edits some cases, and traces check each edit.</div>
+  </div>
+  <div data-b="0" style="left:880px;top:676px;width:680px">
+    <div style="display:flex;height:14px;border-radius:7px;overflow:hidden"><div style="width:56%;background:var(--amber)"></div><div style="width:44%;background:var(--blue)"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:8px;font:500 15px var(--mono);color:var(--dim)"><span>23 syntactic</span><span>18 semantic</span></div>
+    <div style="margin-top:16px;display:grid;grid-template-columns:110px 1fr auto;gap:14px;align-items:center;border:2px solid var(--amber);border-radius:10px;padding:12px 18px;background:rgba(255,178,36,.06)">
+      <span class="chip" style="color:var(--amber);justify-content:center">Ticket</span>
+      <span style="font-size:19px">Move all 41 to RefundService, both tiers</span>
+      <span class="mono" style="font-size:18px;color:var(--amber)">41 of 41</span>
+    </div>
+  </div>
+  <div class="ov panel" data-b="1" style="left:860px;top:90px;width:700px;height:740px">
+    <div class="eb" style="margin-bottom:10px">Change</div>
+    <div class="h2" style="font-size:46px;margin-bottom:22px">Django migrations, <em>for code.</em></div>
+    <div class="term" style="position:relative;height:410px">
+      <div class="tbar" style="height:38px;font-size:14px"><i style="width:10px;height:10px"></i><i style="width:10px;height:10px"></i><i style="width:10px;height:10px"></i></div>
+      <div class="code" style="position:absolute;inset:52px 22px 0;font-size:16.5px;line-height:1.6"><span class="p">$</span> python manage.py <span class="k">makecodemigrations</span> tickets
+  <span class="s">codemigrations/0007_refund_service.py</span>
+    - Move refund logic out of 41 views
+    - status == 3 &#x2192; OrderStatus.PAID
+<span class="p">$</span> python manage.py codemigrate <span class="k">--plan</span>
+  41 files &#xB7; 63 edits &#xB7; 0 public API changes
+  writes orders.total &#xB7; calls payments.refund
+<span class="p">$</span> python manage.py codemigrate <span class="k">--sample 5</span>
+  5/5 applied &#xB7; <span class="s">traces match</span> &#xB7; 36 to go</div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:22px">
+      <span class="chip" style="color:var(--blue)">generate</span><span class="chip" style="color:var(--blue)">preview like sqlmigrate</span><span class="chip" style="color:var(--blue)">run on a subset</span><span class="chip" style="color:var(--blue)">roll back</span>
+    </div>
+  </div>
+
+  <div class="ov panel" data-b="2" style="left:860px;top:90px;width:700px;height:740px">
+    <div class="h2" style="font-size:42px;margin-bottom:22px">Review the plan <em>and the metric.</em></div>
+    <svg viewBox="0 0 640 270" style="width:100%;display:block" role="img" aria-label="Old pattern count falls from 41 to 0 over eight runs while behavior stays at 100 percent">
+      <g font-family="JetBrains Mono, monospace" font-size="13" fill="#8FA8C1">
+        <text x="0" y="14">old pattern &#xB7; ast-grep count</text>
+        <text x="0" y="168">behavior &#xB7; traces matching</text>
+        <text x="640" y="14" text-anchor="end" fill="#FFB224">41 &#x2192; 0</text>
+        <text x="640" y="168" text-anchor="end" fill="#5FDDA4">100% &#x2192; 100%</text>
+      </g>
+      <g stroke="rgba(170,205,240,.14)"><line x1="20" x2="620" y1="130" y2="130"/><line x1="20" x2="620" y1="250" y2="250"/></g>
+      <path d="M20 40 L95 40 L170 51 L245 68.5 L320 88.3 L395 105.9 L470 121.2 L545 130 L620 130 L620 130 L20 130 Z" fill="rgba(255,178,36,.16)"/>
+      <polyline points="20,40 95,40 170,51 245,68.5 320,88.3 395,105.9 470,121.2 545,130 620,130" fill="none" stroke="#FFB224" stroke-width="3"/>
+      <circle cx="620" cy="130" r="5" fill="#FFB224"/>
+      <polyline points="20,196 620,196" fill="none" stroke="#5FDDA4" stroke-width="3"/>
+      <circle cx="620" cy="196" r="5" fill="#5FDDA4"/>
+      <g font-family="JetBrains Mono, monospace" font-size="12" fill="#8FA8C1"><text x="20" y="268">run 0</text><text x="620" y="268" text-anchor="end">run 8</text></g>
+    </svg>
+    <div class="term" style="position:relative;height:250px;margin-top:20px">
+      <div class="tbar" style="height:36px;font-size:13px"><i style="width:10px;height:10px"></i><i style="width:10px;height:10px"></i><i style="width:10px;height:10px"></i><span>rules/no-magic-status.yml &#xB7; guard</span></div>
+      <div class="code" style="position:absolute;inset:48px 22px 0;font-size:16.5px;line-height:1.6"><span class="k">id</span>: no-magic-order-status
+<span class="k">language</span>: python
+<span class="k">rule</span>:
+  <span class="k">pattern</span>: <span class="s">$O.status == 3</span>
+<span class="k">fix</span>: <span class="s">$O.status == OrderStatus.PAID</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; L3 &#xB7; SEE (1:9) &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; -->
+<section class="frame" id="L3">
+  <div class="gridbg"></div>
+  <div class="slot" style="left:100px;top:330px"></div>
+  <div class="eb" style="left:40px;top:50px">03 &#xB7; Modules + data</div>
+  <div class="slabel" style="left:100px;top:300px">tickets/<b>views.py</b></div>
+
+  <svg class="wires" viewBox="0 0 1600 900">
+    <g stroke="rgba(142,197,255,.45)" stroke-width="2" fill="none">
+      <path d="M633 400 C 680 400, 680 149, 722 149"/>
+      <path d="M633 450 C 680 450, 680 329, 722 329"/>
+      <path d="M633 520 C 680 520, 680 509, 722 509"/>
+      <path d="M633 590 C 680 590, 680 689, 722 689"/>
+      <path d="M366 630 L 366 760"/>
+    </g>
+    <g data-b="1" stroke="var(--amber)" stroke-width="2.5" fill="none">
+      <path d="M633 470 C 860 470, 900 330, 1110 330"/>
+      <path d="M930 329 C 1010 329, 1040 360, 1110 360"/>
+      <path d="M930 509 C 1010 509, 1040 390, 1110 390"/>
+      <path d="M930 689 C 1030 689, 1050 420, 1110 420"/>
+    </g>
+  </svg>
+  <div class="node" style="left:722px;top:120px">accounts/</div>
+  <div class="node" style="left:722px;top:300px">payments/</div>
+  <div class="node" style="left:722px;top:480px">discounts/</div>
+  <div class="node" style="left:722px;top:660px">erp_sync/</div>
+  <div class="node" style="left:270px;top:760px">notifications/</div>
+
+  <div data-b="0" data-until="1" style="left:40px;top:96px;width:620px"><div class="h2" style="font-size:48px">Zoom out: <em>what talks to what.</em></div></div>
+  <div data-b="1" style="left:40px;top:96px;width:620px"><div class="h2" style="font-size:48px">Code graph <em>&#x22C8;</em> database graph.</div></div>
+
+  <div data-b="1" class="tbl" style="left:1110px;top:280px;width:300px"><h4>orders</h4><div>id</div><div>status</div><div class="w">total &#x2190; 4 writers</div><div>discount_id</div><div>created</div></div>
+  <div data-b="1" class="tbl" style="left:1110px;top:110px;width:300px"><h4>payments</h4><div>order_id &#x2192; orders</div></div>
+  <div data-b="1" class="tbl" style="left:1110px;top:560px;width:300px"><h4>refunds</h4><div>order_id &#x2192; orders</div><div>amount</div></div>
+  <div data-b="1" class="tbl" style="left:1110px;top:740px;width:300px"><h4>users</h4><div>is_legacy</div></div>
+  <div data-b="1" data-until="2" class="hand" style="left:1430px;top:330px;width:150px;font-size:36px;transform:rotate(-4deg)">where do I split?</div>
+
+  <div class="ov panel" data-b="2" style="left:840px;top:90px;width:720px;height:740px">
+    <div class="eb" style="margin-bottom:10px">See</div>
+    <div class="h2" style="font-size:46px;margin-bottom:26px">An ORM <em>for your code.</em></div>
+    <div style="display:grid;grid-template-columns:1fr 104px 104px;gap:12px 14px;align-items:center">
+      <div></div>
+      <div class="eb" style="font-size:12px;text-align:center;color:var(--dim)">rigid<br>enough</div>
+      <div class="eb" style="font-size:12px;text-align:center;color:var(--dim)">flexible<br>enough</div>
+
+      <div style="padding:14px 18px;border:1px solid var(--line-faint);border-radius:10px"><div class="eb" style="font-size:13px;color:var(--dim);margin-bottom:6px">Fixed tools</div><div class="code" style="font-size:15px;line-height:1.5">find_callers(<span class="s">"refund_view"</span>)</div><div style="color:var(--dim);font-size:16px;margin-top:6px">Answers only the questions someone planned for.</div></div>
+      <div style="text-align:center;font-size:34px;color:var(--green)">&#x2713;</div>
+      <div style="text-align:center;font-size:34px;color:var(--red)">&#x2717;</div>
+
+      <div style="padding:14px 18px;border:2px solid var(--amber);border-radius:10px;background:rgba(255,178,36,.06)"><div class="eb" style="font-size:13px;margin-bottom:6px">Query surface</div><div class="code" style="font-size:15px;line-height:1.5">Code.functions
+  .filter(writes=<span class="s">"orders.total"</span>)
+  .exclude(module__startswith=<span class="s">"tests"</span>)</div><div style="color:var(--dim);font-size:16px;margin-top:6px">Composable queries, plus plain Python when needed.</div></div>
+      <div style="text-align:center;font-size:34px;color:var(--green)">&#x2713;</div>
+      <div style="text-align:center;font-size:34px;color:var(--green)">&#x2713;</div>
+
+      <div style="padding:14px 18px;border:1px solid var(--line-faint);border-radius:10px"><div class="eb" style="font-size:13px;color:var(--dim);margin-bottom:6px">Raw code</div><div class="code" style="font-size:15px;line-height:1.5"><span class="k">for</span> f <span class="k">in</span> glob(<span class="s">"**/*.py"</span>):
+    ast.parse(open(f).read())</div><div style="color:var(--dim);font-size:16px;margin-top:6px">Any question is possible. Each one starts from zero.</div></div>
+      <div style="text-align:center;font-size:34px;color:var(--red)">&#x2717;</div>
+      <div style="text-align:center;font-size:34px;color:var(--green)">&#x2713;</div>
+    </div>
+    <div style="margin-top:24px;display:grid;gap:8px;font:400 18px/1.4 var(--body);color:var(--dim)">
+      <div><b style="color:var(--ink)">Rigid enough</b> that the agent does not write a whole program every time.</div>
+      <div><b style="color:var(--ink)">Flexible enough</b> that it can really stretch.</div>
+    </div>
+  </div>
+
+  <div class="ov panel" data-b="3" style="left:840px;top:90px;width:720px;height:740px">
+    <div class="h2" style="font-size:42px;margin-bottom:18px">One graph for the workflow <em>and the classes.</em></div>
+    <div style="display:flex;gap:28px;font:500 16px var(--mono);color:var(--dim);margin-bottom:14px">
+      <span><span style="color:#FFB224">&#x25C7;</span> workflow &#xB7; eligibility.bpmn</span>
+      <span><span style="color:#8EC5FF">&#x25A1;</span> class &#xB7; DiscountPolicy</span>
+    </div>
+    <svg viewBox="0 0 644 290" style="width:100%;display:block" role="img" aria-label="Merged eligibility graph: workflow checks age and student status, then the class checks age again and rejects legacy users before the discount">
+      <defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#8FA8C1"/></marker></defs>
+      <g stroke="#8FA8C1" stroke-width="1.8" fill="none">
+        <path d="M30 70 H68" marker-end="url(#ah2)"/><path d="M190 70 H230" marker-end="url(#ah2)"/><path d="M352 70 H410" marker-end="url(#ah2)"/>
+        <path d="M487 95 V173" marker-end="url(#ah2)"/><path d="M392 200 H342" marker-end="url(#ah2)"/><path d="M200 200 H134" marker-end="url(#ah2)"/>
+      </g>
+      <circle cx="18" cy="70" r="12" fill="none" stroke="#EEF4FA" stroke-width="2"/>
+      <path d="M70 70 L130 35 L190 70 L130 105 Z" fill="#07131F" stroke="#FFB224" stroke-width="2"/>
+      <path d="M232 70 L292 35 L352 70 L292 105 Z" fill="#07131F" stroke="#FFB224" stroke-width="2"/>
+      <rect x="412" y="45" width="150" height="50" rx="8" fill="#07131F" stroke="#8EC5FF" stroke-width="2"/>
+      <rect x="392" y="175" width="190" height="50" rx="8" fill="rgba(255,106,85,.10)" stroke="#FF6A55" stroke-width="2.5"/>
+      <rect x="200" y="175" width="140" height="50" rx="8" fill="#07131F" stroke="#EEF4FA" stroke-width="2"/>
+      <circle cx="120" cy="200" r="12" fill="none" stroke="#EEF4FA" stroke-width="4"/>
+      <g font-family="JetBrains Mono, monospace" font-size="14" fill="#EEF4FA" text-anchor="middle">
+        <text x="130" y="75">age &lt; 26</text><text x="292" y="75">student?</text><text x="487" y="75">age &lt; 26</text>
+        <text x="487" y="205">is_legacy: reject</text><text x="270" y="205">discount</text>
+      </g>
+      <g font-family="JetBrains Mono, monospace" font-size="13" font-weight="700" letter-spacing="1.5">
+        <text x="412" y="34" fill="#8EC5FF">REDUNDANT</text>
+        <text x="392" y="250" fill="#FF6A55">CONTRADICTS</text>
+      </g>
+      <text x="292" y="130" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#FFB224">admits legacy students</text>
+    </svg>
+    <div style="display:grid;gap:14px;margin-top:22px;font:400 20px/1.45 var(--body)">
+      <div><b style="color:var(--blue)">Redundant:</b> the workflow checks age &lt; 26, and the class checks it again.</div>
+      <div><b style="color:var(--red)">Contradicts:</b> the workflow accepts legacy students. The class rejects them. This is the bug.</div>
+    </div>
+  </div>
+</section>
+
+<!-- &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; L2 &#xB7; A FILE (1:3) &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; -->
+<section class="frame" id="L2">
+  <div class="gridbg"></div>
+  <div class="codecol" id="l2top" style="left:40px;top:0;width:533.33px;font-size:17.333px;line-height:30px"></div>
+  <div class="codecol" id="l2bot" style="left:40px;top:600px;width:533.33px;font-size:17.333px;line-height:30px"></div>
+  <div class="eb" style="left:660px;top:56px">02 &#xB7; A file</div>
+  <div style="left:660px;top:770px;width:880px" class="slabel"><b>tickets/views.py</b> &#xB7; 2,914 lines &#xB7; 61 functions &#xB7; 14 authors &#xB7; since 2016</div>
+
+  <div class="ov" data-b="0" data-until="1" style="left:660px;top:120px;width:880px">
+    <div class="h1" style="font-size:80px">Reading is the only door <em>we gave it.</em></div>
+    <p class="lead" style="margin-top:34px">The agent gets the system as text, one file at a time: Read(), Grep(), Read().</p>
+  </div>
+
+  <div class="ov" data-b="1" data-until="3" style="left:660px;top:104px;width:880px">
+    <div class="h3" style="color:var(--dim);margin-bottom:22px;white-space:nowrap">What we built so that we do not read code:</div>
+    <div style="display:grid;grid-template-columns:repeat(3,270px);gap:22px 25px">
+      <div class="mcard" style="position:relative"><div class="sk"></div><div class="mini">&#x25B8; def refund_view(&#x2026;) <span style="color:var(--amber)">&#xB7;&#xB7;&#xB7;48</span>
+&#x25B8; def stripe_webhook <span style="color:var(--amber)">&#xB7;&#xB7;&#xB7;112</span>
+&#x25B8; class OrderAdmin <span style="color:var(--amber)">&#xB7;&#xB7;&#xB7;230</span></div><div class="cap">code folding</div></div>
+      <div class="mcard" style="position:relative"><div class="sk"></div><div class="mini">refund_view
+&#x2514;&#x2500; urls.py:41
+   &#x2514;&#x2500; RefundMixin
+      &#x2514;&#x2500; api/v1.py:88</div><div class="cap">call hierarchy</div></div>
+      <div class="mcard" style="position:relative"><div class="sk"></div>
+        <svg viewBox="0 0 230 110" style="width:230px;display:block"><g fill="none" stroke="#C5D5E5" stroke-width="1.6"><rect x="4" y="10" width="86" height="70" rx="4"/><rect x="140" y="30" width="86" height="56" rx="4"/><path d="M90 45 H140"/><path d="M130 37 L140 45 L130 53"/></g><g font-family="JetBrains Mono, monospace" font-size="12" fill="#C5D5E5"><text x="12" y="28">orders</text><text x="12" y="48" fill="#8FA8C1">id</text><text x="12" y="64" fill="#8FA8C1">total</text><text x="148" y="48">refunds</text><text x="148" y="68" fill="#8FA8C1">order_id</text></g></svg>
+        <div class="cap">ER diagram</div></div>
+      <div class="mcard" style="position:relative"><div class="sk"></div><div class="mini"><span style="color:var(--red)">&#x25CF;</span> 1187  if order.status&#x2026;
+<span style="color:var(--dim)">&#x2500; variables &#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;</span>
+order.status = 3
+order.total  = 120.00</div><div class="cap">debugger</div></div>
+      <div class="mcard" style="position:relative"><div class="sk"></div>
+        <svg viewBox="0 0 230 110" style="width:230px;display:block"><g fill="none" stroke="#EEF4FA" stroke-width="2.2" filter="url(#rough)"><rect x="6" y="12" width="76" height="40" rx="10"/><rect x="146" y="12" width="76" height="40" rx="10"/><rect x="76" y="70" width="76" height="34" rx="10"/><path d="M82 32 H146"/><path d="M184 52 C 184 80, 160 86, 152 86"/></g><g font-family="Caveat, cursive" font-size="20" fill="#EEF4FA"><text x="14" y="38">tickets</text><text x="150" y="38">payments</text><text x="96" y="93">erp</text></g></svg>
+        <div class="cap">whiteboard</div></div>
+      <div class="mcard" style="position:relative"><div class="sk"></div>
+        <div style="position:absolute;left:96px;top:16px;width:78px;height:112px;background:repeating-linear-gradient(180deg, rgba(197,213,229,.55) 0 2px, transparent 2px 6px);-webkit-mask:linear-gradient(90deg,#000 55%,rgba(0,0,0,.4));mask:linear-gradient(90deg,#000 55%,rgba(0,0,0,.4))"></div>
+        <div style="position:absolute;left:92px;top:52px;width:86px;height:30px;border:2px solid var(--amber);background:rgba(255,178,36,.15)"></div>
+        <div class="cap">minimap</div></div>
+    </div>
+  </div>
+  <div class="ov" data-b="2" data-until="3" style="left:660px;top:620px;width:880px"><div class="h2" style="font-size:50px">&#x2026;and then we gave our agents <em>a file reader.</em></div></div>
+
+  <div class="ov" data-b="3" style="left:660px;top:120px;width:880px">
+    <div class="h1" style="font-size:78px">I wish I could show my agent how <em>I</em> see this system.</div>
+    <div class="hand" style="margin-top:56px;font-size:72px;transform:rotate(-2deg);transform-origin:left">Make your wish come true:<br>ask it.</div>
+    <p class="lead" style="margin-top:40px;font-size:24px">Tooling like this was too expensive to build for one codebase. Cheap code changes that.</p>
+  </div>
+</section>
+
+<!-- &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; L1 &#xB7; A LINE (1:1) &#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550;&#x2550; -->
+<section class="frame" id="L1">
+  <div class="gridbg"></div>
+  <div class="codecol" id="l1code" style="left:0;top:0;width:1600px;font-size:52px;line-height:90px"></div>
+  <div class="ov panel" data-b="0" style="left:1060px;top:16px;width:500px;padding:16px 22px;font:500 22px var(--mono);color:var(--red)">Read(tickets/views.py) &#xB7; <b>3rd time</b></div>
+  <div class="ov panel" data-b="0" style="left:1330px;top:722px;width:254px;padding:14px 18px">
+    <div style="font:800 46px/1 var(--display);font-stretch:108%;color:var(--red);font-variant-numeric:tabular-nums"><span data-count="306020,937010">937,010</span></div>
+    <div style="color:var(--dim);font-size:17px;margin-top:4px">tokens spent reading</div>
+    <div class="hand" style="margin-top:6px;font-size:34px">did you feel this?</div>
+  </div>
+</section>
+
+</div>
+</div>
+
+<div id="hud" class="off" aria-hidden="true">
+  <div id="mm"><div id="mmr"></div></div>
+  <div id="mml">a line</div>
+</div>
+<aside id="notes" hidden><div class="n"><span id="nstep">1 / 29</span><span id="nlvl"></span></div><div id="ntext"></div></aside>
+<div id="hint"><kbd>&#x2192;</kbd> / <kbd>space</kbd> next &#xB7; <kbd>&#x2190;</kbd> back &#xB7; <kbd>N</kbd> notes &#xB7; <kbd>O</kbd> overview &#xB7; <kbd>F</kbd> fullscreen</div>
+
+<script>
+(() => {
+  const SW = 1600 / 3, SH = 300;
+  const FR = {
+    L8: { s: 3 ** 7, label: 'you' },
+    L7: { s: 3 ** 6, parent: 'L8', slot: [533.333, 90], label: 'the team' },
+    L6: { s: 3 ** 5, parent: 'L7', slot: [533.333, 300], label: 'the agent' },
+    T:  { s: 3 ** 4, parent: 'L6', slot: [60, 490], label: 'a session' },
+    L5: { s: 3 ** 4, parent: 'L6', slot: [60, 110], label: 'two systems' },
+    L4: { s: 3 ** 3, parent: 'L5', slot: [60, 300], label: 'the codebase' },
+    L3: { s: 3 ** 2, parent: 'L4', slot: [80, 160], label: 'modules + data' },
+    L2: { s: 3, parent: 'L3', slot: [100, 330], label: 'a file' },
+    L1: { s: 1, parent: 'L2', slot: [40, 300], label: 'a line' },
+  };
+  FR.L8.x = 0; FR.L8.y = 0;
+  for (const id of ['L7','L6','T','L5','L4','L3','L2','L1']) {
+    const f = FR[id], p = FR[f.parent];
+    f.x = p.x + (f.slot[0] + SW / 2 - 800) * p.s;
+    f.y = p.y + (f.slot[1] + SH / 2 - 450) * p.s;
+  }
+  // holes in each parent's grid where children sit
+  const holes = {};
+  for (const id in FR) if (FR[id].parent) (holes[FR[id].parent] ||= []).push(FR[id].slot);
+
+  for (const id in FR) {
+    const f = FR[id], el = document.getElementById(id);
+    f.el = el;
+    el.style.transform = `translate(${f.x - 800 * f.s}px, ${f.y - 450 * f.s}px) scale(${f.s})`;
+    const g = el.querySelector('.gridbg'), h = holes[id];
+    if (g && h) {
+      const imgs = Array(h.length + 1).fill('linear-gradient(#000,#000)').join(',');
+      const sizes = ['100% 100%', ...h.map(() => `${SW}px ${SH}px`)].join(',');
+      const pos = ['0 0', ...h.map(([x, y]) => `${x}px ${y}px`)].join(',');
+      for (const pre of ['webkitMask', 'mask']) {
+        g.style[pre + 'Image'] = imgs; g.style[pre + 'Size'] = sizes;
+        g.style[pre + 'Position'] = pos; g.style[pre + 'Repeat'] = 'no-repeat';
+      }
+      g.style.webkitMaskComposite = 'xor'; g.style.maskComposite = 'exclude';
+    }
+  }
+
+  // \u2500\u2500 code sheets (L1 nests seamlessly inside L2's column) \u2500\u2500
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const hi = s => esc(s).replace(/(#.*$)|('[^']*'|"[^"]*")|(@\w+)|\b(def|if|and|not|return|from|import|elif|else|or|class)\b/g,
+    (m, c, str, dec, kw) => c ? `<span class="c">${c}</span>` : str ? `<span class="s">${str}</span>` : dec ? `<span class="d">${dec}</span>` : `<span class="k">${kw}</span>`);
+  const render = (lines, start, hl) => lines.map((t, i) => {
+    const n = start + i;
+    return `<span class="ln${n === hl ? ' hl' : ''}"> <span class="no">${n}</span> ${hi(t)}</span>`;
+  }).join('');
+  const top = ['', '# TODO(2017): move to payments app', 'from .utils import *', '', '', 'def _legacy_total(order):', '    t = order.total', '    if order.discount_id:', '        t -= order.discount.amount', '    return t'];
+  const mid = ['@login_required', 'def refund_view(request, pk):', '    order = Order.objects.get(pk=pk)', '    u = request.user', '    if order.status == 3 and not u.is_legacy:', "        amt = order.total * Decimal('0.97')", '        if (now() - order.created).days < 31:', '            order.status = 7  # refunded?', '            order.save()', '            sync_erp(order, amt)'];
+  const bot = ['        else:', '            messages.error(request, "too late")', '    elif order.status == 3:', '        return render(request, "legacy.html")', '    return redirect("orders")', '', '', '@csrf_exempt', 'def stripe_webhook(request):', '    payload = json.loads(request.body)'];
+  document.getElementById('l2top').innerHTML = render(top, 1173);
+  document.getElementById('l1code').innerHTML = render(mid, 1183, 1187);
+  document.getElementById('l2bot').innerHTML = render(bot, 1193);
+
+  // \u2500\u2500 hotspots (L4) and session tiles (L6) \u2500\u2500
+  let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const cells = [[40,110,593,372],[643,110,187,180],[643,300,187,182],[40,492,290,210],[340,492,293,210],[643,492,187,210],[40,712,290,150],[340,712,293,150],[643,712,187,150]];
+  const hot = document.getElementById('hot'); let placed = 0, guard = 0;
+  while (placed < 40 && guard++ < 5000) {
+    const c = cells[Math.floor(rnd() * cells.length)];
+    const x = c[0] + 22 + rnd() * (c[2] - 44), y = c[1] + 48 + rnd() * (c[3] - 66);
+    if (c === cells[0]) continue; // tickets/ holds the view we already read (the slot)
+    const d = document.createElement('i'); d.className = placed < 22 ? 'dot' : 'dot sem'; d.style.left = (x - 7) + 'px'; d.style.top = (y - 7) + 'px'; hot.appendChild(d); placed++;
+  }
+  const tiles = document.getElementById('tiles');
+  for (let i = 0; i < 15; i++) {
+    const t = document.createElement('div');
+    t.style.cssText = 'border:1px solid var(--line-faint);border-radius:6px;background:rgba(7,19,31,.6);position:relative;overflow:hidden';
+    const lines = 4 + Math.floor(rnd() * 4); let html = '';
+    for (let j = 0; j < lines; j++) html += `<div style="height:5px;border-radius:3px;margin:9px 12px 0;width:${30 + rnd() * 60}%;background:${rnd() < .22 ? 'rgba(224,137,106,.55)' : 'rgba(143,168,193,.28)'}"></div>`;
+    t.innerHTML = html + `<div style="position:absolute;left:12px;bottom:8px;font:500 12px var(--mono);color:var(--dim)">session ${String(i + 16).padStart(2, '0')}</div>`;
+    tiles.appendChild(t);
+  }
+
+  // \u2500\u2500 the script \u2500\u2500
+  const STEPS = [
+    ['T',0,'This is the title. Let the room settle. Do not explain the zoom idea. Start.'],
+    ['T',1,'Say who you are in thirty seconds. Introduce yourself as Ani. Say that you speak in a personal capacity, not for your employer. Then go to the session.'],
+    ['T',2,'I gave my agent an ambitious task: extract payments from the monolith, all of it. Watch it read, read, grep and read. It opens views.py again and again.'],
+    ['T',3,'Ask the room: who has seen this screen? Keep your hand up if the work was half done. We still had work to do.'],
+    ['T',4,'So where did all the tokens go? Let us look.'],
+    ['L1',0,'Did you feel this? The agent reads the same file for the third time. It still does not know what status 3 means or who else writes order.status.'],
+    ['L2',0,'Zoom out to the file: 2,914 lines. Reading text is the only door we gave the agent into this system.'],
+    ['L2',1,'Look at what we built for ourselves so that we do not read code like this. Folding, call hierarchies, ER diagrams, debuggers, whiteboards and the minimap. Do not point at the corner. Let the room find it.'],
+    ['L2',2,'And then we gave our agents a file reader.'],
+    ['L2',3,'I wish I could show my agent how I see this system. Make your wish come true: ask it. Then state the thesis quietly. Tooling like this was too expensive for one codebase. Cheap code changes that. The end of the talk comes back to this. By the third time, the room says "ask it" with you.'],
+    ['L3',0,'Before the tools start, say this: everything from here is an example of how I built it. It is not a product. Your codebase needs its own versions. Zoom out. The file becomes one node. Show what talks to what.'],
+    ['L3',1,'Join the database world to the code world. Four apps write orders.total. This is the seam question: where can I split payments out, and where should I? No single file shows this.'],
+    ['L3',2,'The instrument is a programmable surface: an ORM for your code. It sits between a fixed menu of endpoints and raw grep. It is rigid enough that the agent does not write a whole program every time. It is flexible enough that it can stretch.'],
+    ['L3',3,'Wish: the rule lives in two places. Half is in the BPMN workflow, and half is in the classes. Put both in one graph and let a solver check it. The solver finds redundant checks and contradictions. The contradiction is your bug.'],
+    ['L4',0,'Zoom out to the whole codebase. The same refund logic is in 41 places. Be honest about the split. 23 places use the same syntax, and a pattern plus a codemod moves them. The other 18 do the same thing with different code: an alias constant, getattr, or a mixin that reads a setting. These need a semantic model, the Python version of Kotlin PSI: LibCST, a type checker, the call graph and config values. An agent edits some of them, and traces check each edit. One ticket still covers all 41.'],
+    ['L4',1,'Django migrations, for code. makecodemigrations generates the codemod. The --plan flag is the sqlmigrate preview, like EXPLAIN for a refactor. Run it on a sample first, then on the rest. These are concept commands. You build them for each project from ast-grep and LibCST.'],
+    ['L4',2,'How do you review 41 files? Review the plan and the metric before the work starts. Use two axes: behavior stays flat, and violations go to zero. Then add a guard rule so that the old pattern cannot come back.'],
+    ['L5',0,'Two systems: the old monolith and the new service. The question is simple: do they behave the same? Reading both codebases does not answer it.'],
+    ['L5',1,'Every flow starts at a door. Here the door is the refund endpoint. Follow the request through the layers on both sides: entrypoint, logic, persistence and side effects.'],
+    ['L5',2,'Hook every layer on both sides. On the old side, use sys.monitoring and the DB query log. On the new side, use OpenTelemetry spans and the event bus. Record the raw values. They do not match.'],
+    ['L5',3,'Map each layer into a common plane. Then derive the transform that explains the difference: pk becomes order, total times 0.97 becomes amount, cents divided by 100 becomes amount. When every layer matches, the two systems behave the same.'],
+    ['L5',4,'Objection: this covers one door. So list every door: routes, cron jobs, commands, signals, queues and DB triggers. Static analysis lists them. The hooks walk each door through every layer. The gaps become numbers.'],
+    ['L5',5,'Now make the understanding executable. First map the entity: what a refund is, in the shared shape. Then map the operation: refund takes a user and an order and returns a refund.'],
+    ['L5',6,'Then compute the transform. It comes from both systems: eligibility, the amount and the state. z3 checks the exact boundary of the rule.'],
+    ['L5',7,'The transform gives you two things. Tests: property tests check any implementation against the transform. They found that the old code used <= at the boundary. Nobody knew. And the implementation: the new service follows the transform, and the tests gate every change.'],
+    ['L6',0,'Zoom out to the agent. Below is the session that ran out of tokens at the start. Above it is the work of today. Point the agent at its own history.'],
+    ['L6',1,'The agent asks the same questions again and again. It asked who writes this table 23 times. Parameterize the question once. Every instrument in this talk started this way.'],
+    ['L6',2,'The mode switch is the same zoom move as the whole talk. The agent is stuck at the task. It zooms out and builds the tool. Then it zooms in, and the task is solved. Without help, agents stay in implementer mode. Like people, they need context and permission to build the tool. An ambitious task can start it. A request to reflect can also start it. Also unlearn the rule that all code must stay. Most probes are disposable. Promote the probes that come back. Keep the code that needs an audit trail.'],
+    ['L6',3,'Who checks the x-ray? Treat instruments like lab equipment. Plant a known truth. Make static and runtime results agree. Put a canary in every query. Make every run report what it parsed, skipped and failed, like EXPLAIN ANALYZE. How do we know that the scan visited a node?'],
+    ['L7',0,'Zoom out to the team. Today, many teams split work this way: each person has an agent, and each handoff is text generation. Watch the rule decay. AI slop built on AI slop built on AI slop.'],
+    ['L7',1,'Instead, run one job with shared context. People join where their judgment matters: the rule decision, the plan and metric, and the boundary case. Humans should not be meat-proxies.'],
+    ['L7',2,'This is not new to anyone who leads a junior engineer well. Give ownership, set frameworks, define success, keep people accountable, and do not read over their shoulder.'],
+    ['L8',0,'Reveal. Point at the minimap in the corner. It started as a dot on the first slide. This talk zoomed out too. I proposed a talk about what agents should read. The industry moved fast, and many new things became possible. The talk grew, so I zoomed out with it.'],
+    ['L8',1,'Be clear about where this talk stands. It does not say that agents are so good that we do not need engineers. It does not say that agents are hype. It is about engineers who use the new tools well.'],
+    ['L8',2,'All the way out: you. Augmenting with AI is not the same as giving everyone an agent. It means rethinking task size, authority and where we interject.'],
+    ['L8',3,'This is the takeaway. Developer tooling for one codebase was impractical before: transpilers, codemod engines, code graphs and custom linters. AI-written code is cheap now, so many of these tools are practical. Trust them only with guardrails and evaluations around them.'],
+    ['L8',4,'Look back at the whole talk as one table. Each row is a tool that I built and the check that I used on it. These are my examples. They are not a product or a recipe. Your codebase needs its own tools and its own checks.'],
+    ['L8',5,'Monday: sit with your agent. Ask it to survey its own sessions and tool calls. Find the tasks that it repeats. Let it build a tool for them, with a check that proves the tool works. Zoom out. Thank you.'],
+  ];
+  const idx = {}; STEPS.forEach(([f, b], i) => { idx[f + ':' + b] = i; });
+  const first = {}; STEPS.forEach(([f], i) => { if (!(f in first)) first[f] = i; });
+  const at = (f, b) => (f + ':' + b) in idx ? idx[f + ':' + b] : Infinity;
+
+  const items = [];
+  for (const id in FR) FR[id].el.querySelectorAll('[data-b], .ov').forEach(el => items.push({ el, f: id }));
+
+  // \u2500\u2500 camera \u2500\u2500
+  const world = document.getElementById('world');
+  let W, H, fitK, cam, anim = null, cur = 0, overview = false;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fit = () => { W = innerWidth; H = innerHeight; fitK = Math.min(W / 1600, H / 900); };
+  const target = id => ({ x: FR[id].x, y: FR[id].y, w: 1600 * FR[id].s });
+  const L8 = FR.L8, WW = 1600 * L8.s, WH = 900 * L8.s;
+  const mm = document.getElementById('mm'), mmr = document.getElementById('mmr');
+  function apply(c) {
+    const k = fitK * 1600 / c.w;
+    world.style.transform = `translate(${W / 2 - c.x * k}px, ${H / 2 - c.y * k}px) scale(${k})`;
+    // only render sheets near the current zoom: huge or sub-pixel sheets stall the compositor
+    for (const id in FR) {
+      const sw = 1600 * FR[id].s * k, show = sw > 2 && sw < W * 14;
+      if (FR[id].shown !== show) { FR[id].shown = show; FR[id].el.classList.toggle('culled', !show); }
+    }
+    const vw = W / k, vh = H / k, mw = mm.clientWidth, mh = mm.clientHeight;
+    let x0 = (c.x - vw / 2 + WW / 2) / WW, x1 = (c.x + vw / 2 + WW / 2) / WW;
+    let y0 = (c.y - vh / 2 + WH / 2) / WH, y1 = (c.y + vh / 2 + WH / 2) / WH;
+    x0 = Math.max(0, x0); y0 = Math.max(0, y0); x1 = Math.min(1, x1); y1 = Math.min(1, y1);
+    mmr.style.left = (x0 * mw) + 'px'; mmr.style.top = (y0 * mh) + 'px';
+    mmr.style.width = Math.max(2, (x1 - x0) * mw) + 'px'; mmr.style.height = Math.max(2, (y1 - y0) * mh) + 'px';
+  }
+  function interp(p0, p1) { // van Wijk & Nuij smooth zoom
+    const rho = Math.SQRT2, r2 = 2, r4 = 4;
+    const dx = p1.x - p0.x, dy = p1.y - p0.y, d2 = dx * dx + dy * dy, w0 = p0.w, w1 = p1.w;
+    if (d2 < 1e-9 * w0 * w0) {
+      const S = Math.log(w1 / w0) / rho;
+      return { S: Math.abs(S), f: t => ({ x: p0.x + t * dx, y: p0.y + t * dy, w: w0 * Math.exp(rho * t * S) }) };
+    }
+    const d1 = Math.sqrt(d2);
+    const b0 = (w1 * w1 - w0 * w0 + r4 * d2) / (2 * w0 * r2 * d1);
+    const b1 = (w1 * w1 - w0 * w0 - r4 * d2) / (2 * w1 * r2 * d1);
+    const q0 = -Math.asinh(b0), q1 = -Math.asinh(b1), S = (q1 - q0) / rho;
+    return { S: Math.abs(S), f: t => {
+      const s = t * S, c0 = Math.cosh(q0), u = w0 / (r2 * d1) * (c0 * Math.tanh(rho * s + q0) - Math.sinh(q0));
+      return { x: p0.x + u * dx, y: p0.y + u * dy, w: w0 * c0 / Math.cosh(rho * s + q0) };
+    } };
+  }
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  function fly(to) {
+    if (anim) cancelAnimationFrame(anim.raf);
+    if (reduce) { cam = to; apply(cam); return; }
+    const { f, S } = interp(cam, to);
+    if (!isFinite(S)) { cam = to; apply(cam); return; }
+    const dur = Math.min(2600, Math.max(900, 520 + S * 620)), t0 = performance.now();
+    anim = {};
+    const tick = now => {
+      const t = Math.min(1, (now - t0) / dur);
+      cam = t >= 1 ? to : f(ease(t)); apply(cam);
+      if (t < 1) anim.raf = requestAnimationFrame(tick); else anim = null;
+    };
+    anim.raf = requestAnimationFrame(tick);
+  }
+
+  // \u2500\u2500 builds \u2500\u2500
+  const countUp = el => {
+    const [a, b] = el.dataset.count.split(',').map(Number), t0 = performance.now(), d = reduce ? 0 : 2600;
+    const step = now => { const t = d ? Math.min(1, (now - t0) / d) : 1; el.textContent = Math.round(a + (b - a) * (1 - Math.pow(1 - t, 3))).toLocaleString('en-US'); if (t < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  };
+  function updateBuilds(prev) {
+    const [cf] = STEPS[cur];
+    for (const id in FR) {
+      FR[id].el.classList.toggle('reached', overview || first[id] <= cur);
+      FR[id].el.classList.toggle('current', id === cf && !overview);
+    }
+    for (const { el, f } of items) {
+      const b = +(el.dataset.b || 0), u = el.dataset.until;
+      let vis = at(f, b) <= cur;
+      if (u != null) vis = vis && cur < at(f, +u);
+      if (el.classList.contains('ov')) vis = vis && f === cf && !overview;
+      const was = !el.classList.contains('off');
+      el.classList.toggle('off', !vis);
+      if (vis && !was) el.querySelectorAll('[data-count]').forEach(countUp);
+      if (vis && !was && el.dataset.count) countUp(el);
+    }
+    document.getElementById('hud').classList.toggle('off', cf === 'T' && !overview);
+    document.getElementById('hud').classList.toggle('reveal', cur === idx['L8:0'] && !overview);
+    document.getElementById('mml').textContent = overview ? 'overview' : FR[cf].label;
+    document.getElementById('nstep').textContent = `${cur + 1} / ${STEPS.length}`;
+    document.getElementById('nlvl').textContent = FR[cf].label;
+    document.getElementById('ntext').textContent = STEPS[cur][2];
+  }
+
+
+
+  // -- L5 + L6 diagrams --
+  (() => {
+    const F = 'JetBrains Mono, monospace';
+    const T = (x, y, t, o = {}) => `<text x="${x}" y="${y}" font-family="${o.f || F}" font-size="${o.s || 15}" fill="${o.c || '#EEF4FA'}" text-anchor="${o.a || 'start'}" font-weight="${o.w || 400}" letter-spacing="${o.ls || 0}">${t}</text>`;
+    const AMB = '#FFB224', DIM = '#8FA8C1', RED = '#FF6A55', GRN = '#5FDDA4', BLU = '#8EC5FF', INK = '#EEF4FA', BG = '#0C2136', LN = 'rgba(170,205,240,.3)';
+    const arrowDefs = id => `<defs><marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="${AMB}"/></marker></defs>`;
+    const pill = (cx, cy, t, c) => `<rect x="${cx - t.length * 4.6 - 10}" y="${cy - 14}" width="${t.length * 9.2 + 20}" height="26" rx="6" fill="${BG}" stroke="${c}"/>` + T(cx, cy + 5, t, { c, s: 15, a: 'middle' });
+
+    // L5 . flow through layers, revealed in phases (1 lanes, 2 hooks + raw values, 3 common plane + derived transforms)
+    const COLX = [200, 510, 820, 1130], BW = 250, BH = 84, OY = 60, NY = 560;
+    const LAYERS = ['entrypoint', 'logic', 'persistence', 'side effects'];
+    const OLD = [['POST /refund/1187', 'pk = 1187'], ['refund_view()', 'total = 120.00'], ['UPDATE orders', 'status = 7'], ['sync_erp()', 'erp: 116.40']];
+    const NEW = [['POST /refunds', 'order_id = 1187'], ['RefundService.run', 'amount_cents = 11640'], ['LedgerWriter', 'RefundIssued'], ['event RefundIssued', 'amount_cents = 11640']];
+    const PLANE = ['order = 1187', 'amount = 116.40', 'state = REFUNDED', 'erp_amount = 116.40'];
+    const TOLD = ['pk \u2192 order', '\u00D7 0.97', '7 \u2192 REFUNDED', 'same value'];
+    const TNEW = ['order_id \u2192 order', '\u00F7 100', 'event \u2192 REFUNDED', '\u00F7 100'];
+    let g1 = '', g2 = '', g3 = '';
+    LAYERS.forEach((l, i) => { g1 += T(COLX[i] + BW / 2, 26, l.toUpperCase(), { c: DIM, s: 13, w: 600, ls: 2, a: 'middle' }); });
+    g1 += T(0, OY + 36, 'monolith', { s: 19, w: 700 }) + T(0, OY + 60, '2016', { c: DIM, s: 14 });
+    g1 += T(0, NY + 36, 'payments-svc', { s: 19, w: 700 }) + T(0, NY + 60, '2026', { c: DIM, s: 14 });
+    g2 += T(0, OY + 82, 'hook: sys.monitoring', { c: '#E0896A', s: 13 }) + T(0, OY + 100, '+ DB query log', { c: '#E0896A', s: 13 });
+    g2 += T(0, NY + 82, 'hook: OpenTelemetry', { c: '#E0896A', s: 13 }) + T(0, NY + 100, '+ event tap', { c: '#E0896A', s: 13 });
+    [[OLD, OY], [NEW, NY]].forEach(([lane, y]) => {
+      lane.forEach(([name, raw], i) => {
+        const x = COLX[i], door = i === 0;
+        if (i < 3) g1 += `<path d="M${x + BW} ${y + BH / 2} H ${COLX[i + 1] - 4}" stroke="${DIM}" stroke-width="1.8" marker-end="url(#af)"/>`;
+        g1 += `<rect x="${x}" y="${y}" width="${BW}" height="${BH}" rx="10" fill="${BG}" stroke="${door ? AMB : LN}" stroke-width="${door ? 2.2 : 1.4}"/>` + T(x + 16, y + 32, name, { s: 17, w: 600 });
+        if (door) g1 += pill(x + 34, y - 2, 'door', AMB);
+        g2 += `<circle cx="${x + BW - 16}" cy="${y + 16}" r="7" fill="${'#E0896A'}"/>` + T(x + 16, y + 62, raw, { c: '#E0896A', s: 15 });
+      });
+    });
+    g2 += T(740, 320, 'the raw values do not match', { c: RED, s: 18, w: 600, a: 'middle' });
+    g3 += `<rect x="190" y="270" width="1200" height="180" rx="14" fill="#0C2136" stroke="${AMB}" stroke-width="2"/>`;
+    g3 += T(210, 300, 'COMMON PLANE', { c: AMB, s: 14, w: 600, ls: 2 }) + T(380, 300, 'map each layer, then derive the transform', { c: DIM, s: 14 });
+    PLANE.forEach((f, i) => {
+      const x = COLX[i], cx = x + BW / 2;
+      g3 += `<path d="M${cx} ${OY + BH} V 326" stroke="${AMB}" stroke-width="2" marker-end="url(#af2)"/><path d="M${cx} ${NY} V 384" stroke="${AMB}" stroke-width="2" marker-end="url(#af2)"/>`;
+      g3 += pill(cx, 205, TOLD[i], AMB) + pill(cx, 505, TNEW[i], AMB);
+      g3 += `<rect x="${x}" y="330" width="${BW}" height="50" rx="8" fill="rgba(255,178,36,.12)" stroke="${AMB}" stroke-width="1.6"/>` + T(cx, 361, f, { s: 16, a: 'middle' });
+      g3 += T(cx, 426, 'old \u2261 new \u2713', { c: GRN, s: 14, a: 'middle' });
+    });
+    const fv = document.getElementById('flowviz');
+    fv.innerHTML = `<defs><marker id="af" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="${DIM}"/></marker><marker id="af2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="${AMB}"/></marker></defs>`
+      + `<rect x="0.5" y="0.5" width="1479" height="689" rx="14" fill="#07131F" stroke="${LN}"/>`
+      + `<g transform="translate(30,0)"><g data-b="1">${g1}</g><g data-b="2">${g2}</g><g data-b="3">${g3}</g></g>`;
+    fv.querySelectorAll('[data-b]').forEach(el => items.push({ el, f: 'L5' }));
+
+    // L5 . coverage: every door type through every layer
+    const DOORS = [['HTTP routes', 142, [142, 142, 142, 138]], ['Celery beat jobs', 12, [11, 11, 11, 9]], ['management commands', 9, [9, 9, 9, 9]], ['signals', 31, [23, 23, 21, 19]], ['queue consumers', 4, [4, 4, 4, 3]], ['DB-triggered work', 3, [2, 2, 2, 2]]];
+    let d = `<rect x="0.5" y="0.5" width="1479" height="689" rx="14" fill="#07131F" stroke="${LN}"/>`;
+    const CX0 = 400, CW = 250, RY0 = 80, RH = 84;
+    LAYERS.forEach((l, i) => { d += T(CX0 + i * CW + CW / 2, 56, l.toUpperCase(), { c: DIM, s: 13, w: 600, ls: 2, a: 'middle' }); });
+    DOORS.forEach(([name, n, cols], r) => {
+      const y = RY0 + r * RH;
+      d += T(40, y + 40, name, { s: 18 }) + T(40, y + 62, `${n} doors`, { c: DIM, s: 14 });
+      cols.forEach((v, c) => {
+        const x = CX0 + c * CW + 8, w = CW - 16, full = v === n;
+        d += `<rect x="${x}" y="${y + 10}" width="${w}" height="${RH - 20}" rx="8" fill="#0C2136" stroke="${full ? 'rgba(95,221,164,.5)' : RED}" stroke-width="${full ? 1 : 1.6}"/>`;
+        d += `<rect x="${x + 1}" y="${y + 11}" width="${(w - 2) * v / n}" height="${RH - 22}" rx="7" fill="${GRN}" opacity="${full ? .28 : .2}"/>`;
+        d += T(x + w / 2, y + RH / 2 + 6, `${v}/${n}`, { c: full ? INK : RED, s: 18, w: 600, a: 'middle' });
+      });
+    });
+    d += T(40, 620, 'static analysis lists the doors \u00B7 the hooks walk each door through every layer', { c: DIM, s: 15 });
+    d += T(1440, 620, '180 of 201 doors mapped end to end', { c: AMB, s: 17, w: 600, a: 'end' });
+    document.getElementById('covviz').innerHTML = d;
+
+
+
+    // L6 . mode switch as a zoom loop: work -> zoom out -> tool -> zoom in -> solved
+    let ms = arrowDefs('amm');
+    ms += `<rect x="20" y="104" width="200" height="92" rx="10" fill="${BG}" stroke="${LN}" stroke-width="1.6"/>` + T(40, 138, 'work', { s: 20, w: 700 }) + T(40, 164, 'Read, Read, Read\u2026', { c: RED, s: 14 }) + T(40, 184, 'stuck at the task', { c: DIM, s: 13 });
+    ms += `<rect x="296" y="6" width="252" height="150" rx="12" fill="rgba(255,178,36,.10)" stroke="${AMB}" stroke-width="2"/>` + T(316, 40, 'build the tool', { c: AMB, s: 20, w: 700 }) + T(316, 64, 'who_writes.py', { s: 14 });
+    ms += `<rect x="392" y="96" width="62" height="34" rx="5" fill="none" stroke="${LN}" stroke-dasharray="4 4"/>` + T(423, 118, 'task', { c: DIM, s: 12, a: 'middle' });
+    ms += `<rect x="624" y="104" width="200" height="92" rx="10" fill="rgba(95,221,164,.10)" stroke="${GRN}" stroke-width="2"/>` + T(644, 138, 'solved \u2713', { c: GRN, s: 20, w: 700 }) + T(644, 164, 'one query, 0.2s', { s: 14 }) + T(644, 184, 'kept for next time', { c: DIM, s: 13 });
+    ms += `<path d="M220 130 C 255 130, 262 96, 292 84" stroke="${AMB}" stroke-width="2.2" fill="none" marker-end="url(#amm)"/>` + T(286, 70, 'zoom out', { c: AMB, s: 14, w: 600, a: 'end' });
+    ms += `<path d="M548 84 C 580 96, 590 130, 620 130" stroke="${AMB}" stroke-width="2.2" fill="none" marker-end="url(#amm)"/>` + T(566, 74, 'zoom in', { c: AMB, s: 14, w: 600 });
+    ms += T(20, 236, 'what triggers the zoom out:', { c: DIM, s: 14 }) + pill(400, 231, 'an ambitious task', DIM) + pill(650, 231, '"what slowed you down?"', DIM);
+    document.getElementById('modeviz').innerHTML = ms;
+
+    // L6 . lifecycle of agent code
+    const file = (x, y, o = {}) => `<g opacity="${o.op || 1}"><path d="M${x} ${y} h24 l10 10 v32 h-34 z" fill="${BG}" stroke="${o.c || LN}" stroke-width="${o.w || 1.4}"/><path d="M${x + 24} ${y} v10 h10" fill="none" stroke="${o.c || LN}" stroke-width="${o.w || 1.4}"/></g>`;
+    let lf = arrowDefs('aml');
+    lf += T(20, 24, '/tmp', { c: DIM, s: 15, w: 600 }) + T(70, 24, 'probes the agent wrote', { c: DIM, s: 14 });
+    const HX = 3, HY = 1;
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 6; c++) {
+      const x = 20 + c * 50, yy = 44 + r * 58;
+      if (c === HX && r === HY) lf += file(x, yy, { c: AMB, w: 2.4 });
+      else lf += file(x, yy, { op: .32 }) + `<path d="M${x + 8} ${yy + 16} l18 18 M${x + 26} ${yy + 16} l-18 18" stroke="${RED}" stroke-width="1.6" opacity=".55"/>`;
+    }
+    lf += T(20 + HX * 50 + 17, 44 + HY * 58 - 6, '\u00D723', { c: AMB, s: 15, w: 700, a: 'middle' });
+    lf += T(20, 292, 'used once, then deleted', { c: DIM, s: 15 });
+    const fx = 20 + HX * 50 + 40, fy = 44 + HY * 58 + 21;
+    lf += `<path d="M${fx} ${fy} C 430 ${fy}, 440 82, 516 82" stroke="${AMB}" stroke-width="2" fill="none" marker-end="url(#aml)"/>` + T(420, 72, 'promote', { c: AMB, s: 14, a: 'middle' });
+    lf += `<rect x="520" y="52" width="310" height="60" rx="10" fill="rgba(255,178,36,.10)" stroke="${AMB}" stroke-width="2"/>` + T(540, 80, 'tools/who_writes.py', { s: 17 }) + T(540, 100, 'promoted \u00B7 reused every session', { c: AMB, s: 13 });
+    lf += `<rect x="520" y="312" width="310" height="60" rx="10" fill="rgba(95,221,164,.10)" stroke="${GRN}" stroke-width="2"/>` + T(540, 340, 'codemigrations/0007.py', { s: 17 }) + T(540, 360, 'kept \u00B7 reviewed \u00B7 reversible', { c: GRN, s: 13 });
+    lf += `<path d="M330 342 H 516" stroke="${GRN}" stroke-width="2" marker-end="url(#aml)"/>` + T(20, 347, 'code that changes the system', { c: INK, s: 15 });
+    document.getElementById('lifeviz').innerHTML = lf;
+
+    // L6 . calibration
+    let cv = '';
+    cv += T(0, 18, '1  Did the scan reach every file?', { s: 17, w: 600 });
+    const total = 1238, parsed = 1204, skipped = 31, PERR = 93;
+    for (let i = 0; i < total; i++) {
+      const x = (i % PERR) * 9, yy = 34 + Math.floor(i / PERR) * 9;
+      const col = i < parsed ? GRN : i < parsed + skipped ? '#3E5772' : RED;
+      cv += `<rect x="${x}" y="${yy}" width="7" height="7" rx="1" fill="${col}" opacity="${i < parsed ? .7 : 1}"/>`;
+    }
+    const lastRow = 34 + Math.floor((total - 1) / PERR) * 9, lastX = ((total - 1) % PERR) * 9;
+    cv += `<circle cx="${lastX - 5}" cy="${lastRow + 3}" r="16" fill="none" stroke="${RED}" stroke-width="2"/>`;
+    cv += T(lastX + 14, lastRow + 40, '3 failed: dynamic imports', { c: RED, s: 15, w: 600 });
+    cv += `<rect x="500" y="181" width="10" height="10" fill="${GRN}"/>` + T(516, 191, '1,204 parsed', { c: DIM, s: 14 }) + `<rect x="640" y="181" width="10" height="10" fill="#3E5772"/>` + T(656, 191, '31 skipped', { c: DIM, s: 14 });
+
+    cv += T(0, 250, '2  Does it find what we planted?', { s: 17, w: 600 });
+    cv += `<rect x="0" y="282" width="170" height="48" rx="8" fill="${BG}" stroke="${LN}"/>` + T(85, 311, 'refund_view', { s: 16, a: 'middle' });
+    cv += `<rect x="0" y="400" width="170" height="48" rx="8" fill="${BG}" stroke="${LN}"/>` + T(85, 429, 'orders.total', { s: 16, a: 'middle' });
+    cv += `<path d="M85 330 V 396" stroke="${AMB}" stroke-width="2.4" stroke-dasharray="7 5"/>` + T(100, 368, 'writes', { c: AMB, s: 14 });
+    cv += T(0, 480, 'canary edge: found \u2713', { c: GRN, s: 16, w: 600 });
+
+    cv += T(420, 250, '3  Do static and runtime agree?', { s: 17, w: 600 });
+    cv += `<circle cx="560" cy="380" r="100" fill="rgba(142,197,255,.12)" stroke="${BLU}" stroke-width="2"/><circle cx="690" cy="380" r="100" fill="rgba(95,221,164,.12)" stroke="${GRN}" stroke-width="2"/>`;
+    cv += T(515, 386, '37', { c: RED, s: 26, w: 700, a: 'middle' }) + T(625, 386, '412', { s: 26, w: 700, a: 'middle' }) + T(735, 386, '9', { c: RED, s: 26, w: 700, a: 'middle' });
+    cv += T(515, 300, 'static', { c: BLU, s: 14, a: 'middle' }) + T(735, 300, 'runtime', { c: GRN, s: 14, a: 'middle' });
+    cv += T(625, 520, '46 edges disagree: look here first', { c: RED, s: 15, a: 'middle' });
+    document.getElementById('calviz').innerHTML = cv;
+  })();
+
+  // -- cold-open session: streaming reads + growing context --
+  const SESS = [
+    ['say', "I'll start by understanding how payments work.", '', 60],
+    ['tool', 'Read(tickets/views.py)', '2,914 lines', 2914],
+    ['tool', 'Read(tickets/models.py)', '1,206 lines', 1206],
+    ['tool', 'Grep("refund")', '214 matches', 640],
+    ['tool', 'Read(payments/signals.py)', '388 lines', 388],
+    ['tool', 'Read(discounts/rules.py)', '640 lines', 640],
+    ['say', 'Refunds touch orders.total. Who else writes it?', '', 60],
+    ['tool', 'Grep("\\.total =")', '37 matches', 110],
+    ['tool', 'Read(reports/monthly.py)', '902 lines', 902],
+    ['tool', 'Read(erp_sync/client.py)', '1,118 lines', 1118],
+    ['again', 'Read(tickets/views.py)', 'again', 2914],
+    ['tool', 'Grep("status == 3")', '41 matches', 120],
+    ['tool', 'Read(tickets/constants.py)', '74 lines', 74],
+    ['say', "status 3 isn't defined anywhere. Checking migrations.", '', 60],
+    ['tool', 'Glob("**/migrations/*.py")', '212 files', 210],
+    ['tool', 'Read(tickets/migrations/0031_status.py)', '58 lines', 58],
+    ['tool', 'Read(tickets/migrations/0047_legacy.py)', '96 lines', 96],
+    ['tool', 'Read(accounts/models.py)', '733 lines', 733],
+    ['tool', 'Grep("is_legacy")', '66 matches', 200],
+    ['tool', 'Read(api/v1.py)', '1,540 lines', 1540],
+    ['tool', 'Read(payments/admin.py)', '611 lines', 611],
+    ['again', 'Read(tickets/views.py)', '3rd time', 2914],
+    ['say', 'The same refund logic is in 41 places. Reading each.', '', 60],
+    ['tool', 'Read(tickets/views_old.py)', '2,207 lines', 2207],
+    ['tool', 'Read(legacy/refunds.py)', '845 lines', 845],
+    ['tool', 'Read(api/v2/refunds.py)', '430 lines', 430],
+    ['tool', 'Grep("Decimal(\'0.97\')")', '29 matches', 90],
+    ['tool', 'Read(discounts/policy.py)', '512 lines', 512],
+    ['tool', 'Read(eligibility.bpmn)', '1,904 lines', 1904],
+    ['tool', 'Read(notifications/tasks.py)', '377 lines', 377],
+    ['again', 'Read(tickets/models.py)', 'again', 1206],
+    ['tool', 'Read(settings/base.py)', '688 lines', 688],
+    ['tool', 'Grep("REFUND_")', '18 matches', 60],
+    ['tool', 'Read(erp_sync/mapping.py)', '1,302 lines', 1302],
+    ['again', 'Read(discounts/rules.py)', 'again', 640],
+    ['say', 'Drafting PaymentService. Re-checking the views first.', '', 60],
+    ['again', 'Read(tickets/views.py)', '4th time', 2914],
+    ['tool', 'Read(payments/services.py)', '120 lines', 120],
+    ['tool', 'Grep("refund_view")', '23 matches', 70],
+    ['tool', 'Read(api/v1/serializers.py)', '980 lines', 980],
+    ['again', 'Read(erp_sync/client.py)', 'again', 1118],
+    ['again', 'Read(tickets/views.py)', '5th time', 2914],
+  ];
+  const TODOS = [['Map payment entry points', 10], ['Find refund logic', 21], ['Draft PaymentService', 35], ['Move models + data', 1e9], ['Update 41 call sites', 1e9], ['Verify behavior', 1e9]];
+  const T0 = 62155, T1 = 993510, LH = 35.64, VIEWH = 538;
+  const wsum = SESS.reduce((a, l) => a + l[3], 0); const cum = [0];
+  SESS.forEach((l, i) => cum.push(cum[i] + l[3]));
+  const slist = document.getElementById('slist'), cfill = document.getElementById('cfill'), tokn = document.getElementById('tokn'), todos = document.getElementById('todos');
+  const lineHtml = (l, isNew) => {
+    const cls = 'sl' + (l[0] === 'again' ? ' tool again' : l[0] === 'tool' ? ' tool' : '') + (isNew ? ' new' : '');
+    const res = l[2] ? `<span class="p" style="margin-left:10px">\u23BF ${esc(l[2])}</span>` : '';
+    return `<div class="${cls}"><span class="spark">\u25CF</span> ${esc(l[1])}${res}</div>`;
+  };
+  let shown = -1, sessTimer = null;
+  function sessSet(n, animateLast) {
+    if (n === shown) return;
+    if (n === shown + 1 && n > 0) slist.insertAdjacentHTML('beforeend', lineHtml(SESS[n - 1], animateLast));
+    else slist.innerHTML = SESS.slice(0, n).map(l => lineHtml(l, false)).join('');
+    shown = n;
+    slist.style.transform = `translateY(${Math.min(0, VIEWH - n * LH)}px)`;
+    const tk = Math.round(T0 + (T1 - T0) * cum[n] / wsum);
+    tokn.textContent = tk.toLocaleString('en-US');
+    cfill.style.transform = `scaleX(${tk / 1e6})`;
+    todos.innerHTML = TODOS.map(([t, at]) => n >= at ? `<div class="done">\u2612 ${t}</div>` : `<div>\u2610 ${t}</div>`).join('');
+  }
+  function sessStop() { if (sessTimer) { clearTimeout(sessTimer); sessTimer = null; } }
+  function sessPlay() {
+    sessStop(); sessSet(0);
+    if (reduce) { sessSet(SESS.length); return; }
+    let i = 0;
+    const tick = () => { i++; sessSet(i, true); if (i < SESS.length) sessTimer = setTimeout(tick, Math.max(110, 420 - i * 9)); else sessTimer = null; };
+    sessTimer = setTimeout(tick, 600);
+  }
+  function sessionSync(prev) {
+    const k = idx['T:2'];
+    if (cur < k) { sessStop(); sessSet(0); }
+    else if (cur === k) { if (prev !== k) sessPlay(); }
+    else { sessStop(); sessSet(SESS.length); }
+  }
+
+  function go(i, instant) {
+    i = Math.max(0, Math.min(STEPS.length - 1, i));
+    const prevFrame = STEPS[cur][0]; const prev = cur;
+    cur = i; overview = false;
+    updateBuilds(prev);
+    sessionSync(prev);
+    const tf = STEPS[cur][0];
+    if (instant) { cam = target(tf); apply(cam); }
+    else if (tf !== prevFrame || prev === cur || anim || Math.abs(cam.w - target(tf).w) > 1) fly(target(tf));
+    try { history.replaceState(null, '', '#s' + (cur + 1)); } catch (e) {}
+  }
+  function toggleOverview() {
+    overview = !overview;
+    updateBuilds(cur);
+    fly(overview ? { x: L8.x, y: L8.y, w: 1600 * L8.s * 1.06 } : target(STEPS[cur][0]));
+  }
+
+  // \u2500\u2500 input \u2500\u2500
+  addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key;
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(k)) { e.preventDefault(); go(cur + 1); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(k)) { e.preventDefault(); go(cur - 1); }
+    else if (k === 'Home') go(0);
+    else if (k === 'End') go(STEPS.length - 1);
+    else if (k === 'n' || k === 'N') toggleNotes();
+    else if (k === 'o' || k === 'O') toggleOverview();
+    else if (k === 'f' || k === 'F') { try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => {}); } catch (err) {} }
+  });
+  const notes = document.getElementById('notes');
+  const toggleNotes = () => { notes.hidden = !notes.hidden; };
+  const stage = document.getElementById('stage');
+  let tx = null;
+  stage.addEventListener('pointerdown', e => { tx = [e.clientX, e.clientY]; });
+  stage.addEventListener('pointerup', e => {
+    if (!tx) return; const dx = e.clientX - tx[0], dy = e.clientY - tx[1]; tx = null;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) go(cur + (dx < 0 ? 1 : -1));
+    else if (Math.abs(dx) < 8 && Math.abs(dy) < 8) go(cur + 1);
+  });
+  addEventListener('resize', () => { fit(); apply(cam); });
+  addEventListener('hashchange', () => { const m = /^#s(\d+)$/.exec(location.hash); if (m && +m[1] - 1 !== cur) go(+m[1] - 1); });
+
+  // \u2500\u2500 boot \u2500\u2500
+  fit();
+  const m = /^#s(\d+)$/.exec(location.hash);
+  cur = m ? Math.max(0, Math.min(STEPS.length - 1, +m[1] - 1)) : 0;
+  cam = target(STEPS[cur][0]); apply(cam); updateBuilds(cur); sessionSync(-1);
+  const hint = document.getElementById('hint');
+  setTimeout(() => { hint.style.opacity = '0'; }, 5200);
+})();
+</script>
+
+</html>
