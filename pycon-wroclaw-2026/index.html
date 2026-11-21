@@ -96,6 +96,8 @@ em { font-style: normal; color: var(--amber); }
 
 /* macOS window chrome */
 .ov.panel, .win { border-top-left-radius: 0 !important; border-top-right-radius: 0 !important; }
+.win { background: var(--panel); border: 1px solid var(--line); border-radius: 0 0 12px 12px; box-shadow: 0 24px 60px rgba(20,40,70,.16); overflow: visible; }
+.win > svg { display: block; }
 .ov.panel::before, .win::before { content: attr(data-title); position: absolute; left: -1px; right: -1px; top: -34px; height: 34px; box-sizing: border-box; border: 1px solid var(--line); border-bottom-color: var(--line-faint); border-radius: 12px 12px 0 0; background: radial-gradient(circle at 20px 17px, #FF5F57 6px, transparent 6.6px), radial-gradient(circle at 40px 17px, #FEBC2E 6px, transparent 6.6px), radial-gradient(circle at 60px 17px, #28C840 6px, transparent 6.6px), var(--chrome); font: 500 13px/34px var(--mono); color: var(--dim); text-align: center; letter-spacing: .02em; }
 /* code sheets */
 .codecol { font-family: var(--mono); white-space: pre; color: #3B4B5E; }
@@ -429,9 +431,9 @@ sync_erp</span>
   state=REFUNDED)</div>
     <div class="mono" style="margin-top:14px;font-size:17px;color:var(--amber)">old &#x2261; new <span style="color:var(--green)">&#x2713;</span></div>
   </div>
-  <div class="ov win" data-title="trace-map &#xB7; staging" data-b="1" data-until="4" style="left:60px;top:214px;width:1480px;height:672px"><svg id="flowviz" viewBox="0 0 1480 690" style="width:1480px;height:690px;display:block" role="img" aria-label="A refund flows through entrypoint, logic, persistence and side-effect layers in both systems; each layer is hooked, mapped into a common plane, and the transform between them is derived"></svg></div>
-  <div class="ov win" data-title="entrypoints &#xB7; coverage" data-b="4" data-until="5" style="left:60px;top:196px;width:1480px;height:690px"><svg id="covviz" viewBox="0 0 1480 690" style="width:1480px;height:690px;display:block" role="img" aria-label="Coverage matrix of entrypoint types against layers; most cells are fully mapped, most entrypoint types have gaps; signals and cron jobs have the most"></svg></div>
-  <div class="ov win" data-title="refund &#xB7; executable spec" data-b="5" style="left:60px;top:196px;width:1480px;height:690px;background:#FFFFFF;border:1px solid var(--line);border-radius:14px">
+  <div class="ov win" data-title="trace-map &#xB7; staging" data-b="1" data-until="4" style="left:60px;top:212px;width:1480px;height:676px"><svg id="flowviz" viewBox="0 0 1480 690" preserveAspectRatio="xMidYMid meet" style="width:1478px;height:674px;display:block" role="img" aria-label="A refund flows through entrypoint, logic, persistence and side-effect layers in both systems; each layer is hooked, mapped into a common plane, and the transform between them is derived"></svg></div>
+  <div class="ov win" data-title="entrypoints &#xB7; coverage" data-b="4" data-until="5" style="left:60px;top:212px;width:1480px;height:676px"><svg id="covviz" viewBox="0 0 1480 690" preserveAspectRatio="xMidYMid meet" style="width:1478px;height:674px;display:block" role="img" aria-label="Coverage matrix of entrypoint types against layers; most cells are fully mapped, most entrypoint types have gaps; signals and cron jobs have the most"></svg></div>
+  <div class="ov win" data-title="refund &#xB7; executable spec" data-b="5" style="left:60px;top:212px;width:1480px;height:676px">
     <svg viewBox="0 0 1480 690" style="position:absolute;inset:0;width:1480px;height:690px" aria-hidden="true">
       <defs><marker id="ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#C47400"/></marker></defs>
       <g data-b="5" stroke="#C47400" stroke-width="2.2" fill="none"><path d="M452 190 H 526" marker-end="url(#ax)"/></g>
@@ -1011,13 +1013,13 @@ order.total  = 120.00</div><div class="cap">debugger</div></div>
     });
     const fv = document.getElementById('flowviz');
     fv.innerHTML = `<defs><marker id="af" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="${DIM}"/></marker><marker id="af2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="${AMB}"/></marker></defs>`
-      + `<rect x="0.5" y="0.5" width="1479" height="689" rx="14" fill="#FFFFFF" stroke="${LN}"/>`
+      + ``
       + `<g transform="translate(30,0)"><g data-b="1">${g1}</g><g data-b="2">${g2}</g><g data-b="3">${g3}</g></g>`;
     fv.querySelectorAll('[data-b]').forEach(el => items.push({ el, f: 'L5' }));
 
     // L5 . coverage: every door type through every layer
     const DOORS = [['HTTP routes', 142, [142, 142, 142, 138]], ['Celery beat jobs', 12, [11, 11, 11, 9]], ['management commands', 9, [9, 9, 9, 9]], ['signals', 31, [23, 23, 21, 19]], ['queue consumers', 4, [4, 4, 4, 3]], ['DB-triggered work', 3, [2, 2, 2, 2]]];
-    let d = `<rect x="0.5" y="0.5" width="1479" height="689" rx="14" fill="#FFFFFF" stroke="${LN}"/>`;
+    let d = ``;
     const CX0 = 400, CW = 250, RY0 = 80, RH = 84;
     LAYERS.forEach((l, i) => { d += T(CX0 + i * CW + CW / 2, 56, l.toUpperCase(), { c: DIM, s: 13, w: 600, ls: 2, a: 'middle' }); });
     DOORS.forEach(([name, n, cols], r) => {
